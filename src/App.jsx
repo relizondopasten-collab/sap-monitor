@@ -172,16 +172,16 @@ export default function App() {
         />
       )}
 
-      {/* HUB Sap & Soil */}
-      {tab === "sapsoil" && (
+      {/* HUB Sap & Soil · solo admin */}
+      {tab === "sapsoil" && profile.rol === "admin" && (
         <HubSapSoil
           profile={profile}
           onSelectModulo={openModulo}
         />
       )}
 
-      {/* MÓDULO SELECCIONADO */}
-      {moduloActivo && (
+      {/* MÓDULO SELECCIONADO · solo admin */}
+      {moduloActivo && profile.rol === "admin" && (
         <ModuleViewer
           modulo={moduloActivo}
           onBack={backToHub}
