@@ -27,14 +27,16 @@ export default function Header({ profile, onLogout, tab, setTab, empresaNombre }
           <button className={`tab-btn ${tab === "charts" ? "active" : ""}`} onClick={() => setTab("charts")}>
             <BarChart3 size={14} /> Gráficas
           </button>
-          {/* NUEVO · Sap & Soil suite */}
-          <button
-            className={`tab-btn tab-btn-amber ${sapsoilActive ? "active" : ""}`}
-            onClick={() => setTab("sapsoil")}
-            title="Suite agronómica Sap & Soil"
-          >
-            <Layers size={14} /> Suite
-          </button>
+          {/* NUEVO · Sap & Soil suite · solo visible para admin */}
+          {profile.rol === "admin" && (
+            <button
+              className={`tab-btn tab-btn-amber ${sapsoilActive ? "active" : ""}`}
+              onClick={() => setTab("sapsoil")}
+              title="Suite agronómica Sap & Soil"
+            >
+              <Layers size={14} /> Suite
+            </button>
+          )}
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
