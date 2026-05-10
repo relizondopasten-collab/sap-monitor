@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sap & Soil · Análisis de Fertilidad de Suelo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --purple:#5A4A8A;--purple-pale:#F0EDFA;
+  --blue:#1E5A8C;--blue-pale:#DEEAF5;
+  --earth:#7A4F2F;--earth-pale:#F2E8DD;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;padding-bottom:70px}
+
+/* TOP BAR */
+.topbar{background:var(--navy);color:#fff;padding:.8rem 1.1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.15)}
+.tb-brand{display:flex;align-items:center;gap:.55rem}
+.tb-logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--earth),#D4A574);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.tb-name em{color:#D4A574;font-style:italic}
+.tb-sub{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:-.1rem}
+.tb-context{font-size:.7rem;color:rgba(255,255,255,.55);text-align:right;line-height:1.3}
+.tb-context strong{color:#D4A574;display:block;font-weight:600}
+
+/* TAB NAV */
+.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 .5rem;display:flex;gap:.2rem;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:51px;z-index:49;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.tab{flex-shrink:0;padding:.7rem .85rem;background:none;border:none;cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:.35rem}
+.tab:hover{color:var(--earth)}
+.tab.active{color:var(--earth);border-bottom-color:var(--earth)}
+.tab-icon{font-size:.95rem}
+
+/* PAGES */
+.page{display:none;padding:0 0 1rem;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:#fff;margin:.85rem .85rem;border-radius:11px;padding:1.1rem;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--line)}
+.card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+.card-num{width:30px;height:30px;background:var(--earth);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.card-titles{flex:1}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--earth);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.18rem;color:var(--navy);font-weight:600;line-height:1.15}
+
+/* CONTEXT BAR */
+.context-bar{background:#fff;margin:.85rem .85rem;border-radius:10px;padding:.65rem .8rem;border:1px solid var(--line);display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem}
+.context-bar.cols-3{grid-template-columns:repeat(3,1fr)}
+.context-bar.cols-4{grid-template-columns:repeat(2,1fr) repeat(2,1fr)}
+.cb-field{display:flex;flex-direction:column;gap:.15rem}
+.cb-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.cb-inp,.cb-sel{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.38rem .55rem;font-size:.85rem;font-family:'Karla',sans-serif;color:var(--ink);outline:none;font-weight:500;width:100%}
+.cb-inp:focus,.cb-sel:focus{border-color:var(--earth);background:#fff}
+
+/* INPUT GROUPS */
+.section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--earth);margin:1rem 0 .5rem;padding-bottom:.3rem;border-bottom:1.5px solid var(--earth-pale);display:flex;justify-content:space-between;align-items:baseline}
+.section-title:first-child{margin-top:.2rem}
+.section-title small{font-family:'Karla',sans-serif;font-weight:400;font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0}
+.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-bottom:.5rem}
+.input-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.input-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+.inp-cell{background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:.45rem .55rem;display:flex;flex-direction:column;gap:.15rem;transition:all .15s}
+.inp-cell.focus,.inp-cell:focus-within{border-color:var(--earth);background:#fff}
+.inp-cell.cation{background:#EBF9F9;border-color:#9ED5D5}
+.inp-cell.cation:focus-within{background:#fff;border-color:var(--teal)}
+.inp-cell.anion{background:#FFF8EC;border-color:#E8C470}
+.inp-cell.anion:focus-within{background:#fff;border-color:var(--amber)}
+.inp-cell.physical{background:var(--earth-pale);border-color:#D4A574}
+.inp-cell.physical:focus-within{background:#fff;border-color:var(--earth)}
+.inp-cell.micro{background:var(--purple-pale);border-color:#C0B5E5}
+.inp-cell.micro:focus-within{background:#fff;border-color:var(--purple)}
+.inp-cell.heavy{background:#F8E8E5;border-color:#E8A090}
+.inp-cell.heavy:focus-within{background:#fff;border-color:var(--red)}
+.inp-lbl{display:flex;justify-content:space-between;align-items:baseline;gap:.3rem}
+.inp-name{font-weight:700;font-size:.74rem;color:var(--navy)}
+.inp-sub{font-size:.58rem;color:var(--muted);font-style:italic}
+.inp-field{background:#fff;border:1px solid var(--line);border-radius:4px;padding:.3rem .5rem;font-size:.95rem;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);outline:none;width:100%}
+.inp-field:focus{border-color:var(--earth)}
+.inp-field[readonly]{background:rgba(0,0,0,.04);color:var(--purple);font-style:italic}
+.inp-unit{font-size:.58rem;color:var(--muted);text-align:right}
+
+/* SUMMARY METRICS */
+.metrics{background:var(--navy);border-radius:9px;padding:.8rem;color:#fff;margin-top:.7rem}
+.metrics-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);margin-bottom:.55rem}
+.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+.metrics-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.metrics-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.m-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:.55rem .35rem;text-align:center}
+.m-box.alert-low{background:rgba(212,130,10,.2);border-color:rgba(212,130,10,.4)}
+.m-box.alert-high{background:rgba(181,54,30,.2);border-color:rgba(181,54,30,.4)}
+.m-box.ok{background:rgba(42,96,65,.2);border-color:rgba(42,96,65,.4)}
+.m-val{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:#D4A574;font-weight:700;display:block;line-height:1}
+.m-box.alert-low .m-val{color:#FFD89A}
+.m-box.alert-high .m-val{color:#FFB5A0}
+.m-box.ok .m-val{color:#A5E5C0}
+.m-lbl{font-size:.58rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:.2rem;line-height:1.2}
+
+/* ALERT MESSAGES */
+.alert-msg{margin-top:.6rem;padding:.55rem .75rem;border-radius:6px;font-size:.74rem;line-height:1.45;display:none}
+.am-ok{background:rgba(42,96,65,.13);border:1px solid rgba(42,96,65,.32);color:#1F4530;display:block}
+.am-warn{background:rgba(212,130,10,.13);border:1px solid rgba(212,130,10,.32);color:#7A4810;display:block}
+.am-err{background:rgba(181,54,30,.13);border:1px solid rgba(181,54,30,.32);color:#7A2010;display:block}
+
+/* DIAGNOSIS CARDS (Recommendations screen) */
+.diag-block{margin:1rem 0}
+.diag-title-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}
+.diag-title-bar h3{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--navy);font-weight:700}
+.diag-count{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace}
+.diag-cards{display:flex;flex-direction:column;gap:.55rem}
+.diag-card{border-radius:9px;padding:.75rem .85rem;border:1.5px solid;position:relative;display:grid;grid-template-columns:auto 1fr;gap:.6rem;align-items:start}
+.diag-card.critical{background:var(--red-pale);border-color:#E8A090}
+.diag-card.warning{background:var(--amber-pale);border-color:#E8C470}
+.diag-card.ok{background:var(--green-pale);border-color:#9CD0B5}
+.diag-icon{font-size:1.3rem;line-height:1;flex-shrink:0;margin-top:.05rem}
+.diag-content{flex:1;min-width:0}
+.diag-param{font-weight:700;font-size:.85rem;color:var(--navy);line-height:1.2}
+.diag-vals{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--ink2);margin:.25rem 0;line-height:1.5}
+.diag-vals strong{color:var(--navy)}
+.diag-msg{font-size:.78rem;color:var(--ink2);line-height:1.5;margin-top:.3rem}
+.diag-action{margin-top:.4rem;padding:.4rem .55rem;background:rgba(255,255,255,.55);border-radius:5px;font-size:.75rem;color:var(--navy);font-weight:600;line-height:1.4;border:1px solid rgba(0,0,0,.06)}
+.diag-action strong{color:var(--earth);display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem;font-weight:700}
+
+/* CULTIVO SELECTOR */
+.crop-selector{background:linear-gradient(135deg,var(--teal-pale) 0%,var(--bg) 100%);border:1.5px solid #9ED5D5;border-radius:9px;padding:.7rem .8rem;margin-bottom:1rem}
+.cs-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:.55rem}
+.cs-buttons{display:flex;flex-wrap:wrap;gap:.3rem}
+.crop-btn{background:#fff;border:1.5px solid var(--line);color:var(--ink2);border-radius:5px;padding:.32rem .65rem;font-size:.75rem;font-family:'Karla',sans-serif;cursor:pointer;transition:all .15s;font-weight:500}
+.crop-btn:hover{border-color:var(--teal-lt);color:var(--teal)}
+.crop-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:700}
+
+/* RECOMMENDATIONS SUMMARY */
+.recs-summary{background:linear-gradient(135deg,var(--earth-pale) 0%,#fff 100%);border:1.5px solid #D4A574;border-radius:11px;padding:1rem;margin-top:1rem}
+.recs-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--earth);font-weight:700;margin-bottom:.6rem}
+.recs-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.recs-table th{background:var(--earth);color:#fff;padding:.4rem .5rem;font-size:.65rem;font-weight:600;text-align:left;letter-spacing:.04em}
+.recs-table th.r{text-align:right}
+.recs-table td{padding:.42rem .5rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace}
+.recs-table td.r{text-align:right;font-weight:600;color:var(--navy)}
+.recs-table td:first-child{font-family:'Karla',sans-serif;font-weight:600;color:var(--navy);font-size:.8rem}
+.recs-table tr:nth-child(even) td{background:rgba(255,255,255,.5)}
+
+/* CATALOG TABLE */
+.catalog-table{width:100%;border-collapse:collapse;font-size:.76rem}
+.catalog-table th{background:var(--earth);color:#fff;padding:.45rem .5rem;font-size:.62rem;font-weight:600;text-align:left;letter-spacing:.04em;position:sticky;top:0}
+.catalog-table th.r{text-align:right}
+.catalog-table td{padding:.45rem .5rem;border-bottom:1px solid var(--line);font-size:.74rem;font-family:'DM Mono',monospace;vertical-align:top}
+.catalog-table td.r{text-align:right;font-weight:600;color:var(--navy)}
+.catalog-table td:first-child{font-family:'Karla',sans-serif;font-weight:600;color:var(--navy);font-size:.8rem}
+.catalog-table tr:nth-child(even) td{background:var(--bg)}
+.catalog-table tr:hover td{background:var(--earth-pale);cursor:pointer}
+.catalog-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px;border:1px solid var(--line)}
+
+/* PRODUCT CARD - for catalog display */
+.product-card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:.85rem .95rem;margin-bottom:.6rem;cursor:pointer;transition:all .15s;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:start}
+.product-card:hover{border-color:var(--earth);box-shadow:0 2px 8px rgba(122,79,47,.1)}
+.product-card.expanded{border-color:var(--earth);background:linear-gradient(180deg,#fff,var(--earth-pale))}
+.pc-main{flex:1;min-width:0}
+.pc-name{font-weight:700;color:var(--navy);font-size:.92rem;line-height:1.2;margin-bottom:.15rem}
+.pc-empresa{font-size:.7rem;color:var(--muted);margin-bottom:.4rem}
+.pc-tags{display:flex;flex-wrap:wrap;gap:.25rem}
+.pc-tag{font-size:.6rem;padding:.12rem .4rem;border-radius:3px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.pc-tag.green{background:var(--green-pale);color:var(--green)}
+.pc-tag.amber{background:var(--amber-pale);color:#7A4810}
+.pc-tag.red{background:var(--red-pale);color:var(--red)}
+.pc-tag.purple{background:var(--purple-pale);color:var(--purple)}
+.pc-tag.blue{background:var(--blue-pale);color:var(--blue)}
+.pc-tag.teal{background:var(--teal-pale);color:var(--teal)}
+.pc-stat{text-align:right;flex-shrink:0}
+.pc-stat-val{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--earth);line-height:1}
+.pc-stat-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.1rem}
+.pc-detail{grid-column:1/-1;margin-top:.7rem;padding-top:.65rem;border-top:1px solid rgba(0,0,0,.08);display:none}
+.product-card.expanded .pc-detail{display:block}
+
+.detail-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.5rem}
+.detail-cell{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.35rem .45rem;text-align:center}
+.dc-val{font-family:'DM Mono',monospace;font-weight:700;color:var(--navy);font-size:.8rem;display:block}
+.dc-lbl{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:.1rem;display:block}
+
+.alert-list{margin-top:.6rem;padding:.55rem .7rem;background:#fff;border-radius:6px;border:1px solid rgba(0,0,0,.08)}
+.al-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);margin-bottom:.35rem}
+.al-item{font-size:.74rem;line-height:1.45;margin:.25rem 0;color:var(--ink2);display:flex;gap:.4rem;align-items:flex-start}
+.al-item .icon{flex-shrink:0;font-size:.85rem;line-height:1.3}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:.5rem;margin-top:.9rem;flex-wrap:wrap}
+.btn{flex:1;min-width:120px;padding:.65rem 1rem;border-radius:7px;border:none;font-size:.82rem;font-weight:600;font-family:'Karla',sans-serif;cursor:pointer;transition:all .15s;text-align:center}
+.btn-primary{background:var(--earth);color:#fff}
+.btn-primary:hover{background:#5C3A1F}
+.btn-secondary{background:var(--bg);color:var(--ink2);border:1px solid var(--line)}
+.btn-secondary:hover{background:#EAEFEF}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:#0a5959}
+.btn-danger{background:var(--red-pale);color:var(--red);border:1px solid #E8A090}
+.btn-icon-only{flex:0 0 auto;min-width:auto;padding:.5rem .65rem}
+
+/* FORM GROUP for adding products */
+.form-section{margin-bottom:1.2rem}
+.form-section h4{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--navy);font-weight:600;margin-bottom:.5rem}
+
+/* TOGGLE / RADIO GROUP */
+.radio-group{display:flex;gap:.4rem;margin-top:.3rem}
+.radio-btn{flex:1;background:var(--bg);border:1.5px solid var(--line);color:var(--ink2);border-radius:5px;padding:.4rem .5rem;font-size:.74rem;cursor:pointer;text-align:center;font-family:'Karla',sans-serif;transition:all .15s;font-weight:500}
+.radio-btn:hover{border-color:var(--earth);color:var(--earth)}
+.radio-btn.active{background:var(--earth);color:#fff;border-color:var(--earth);font-weight:700}
+
+/* RESOLVER (Pantalla 3) */
+.solver-row{display:grid;grid-template-columns:1fr;gap:.6rem;margin-bottom:.7rem}
+.need-card{background:linear-gradient(135deg,var(--red-pale) 0%,#fff 100%);border:1.5px solid #E8A090;border-radius:9px;padding:.7rem .8rem}
+.nc-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red);margin-bottom:.35rem}
+.nc-target{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy);font-weight:700;margin-bottom:.45rem;line-height:1}
+.nc-target small{font-family:'Karla',sans-serif;font-size:.7rem;color:var(--muted);font-weight:400}
+.solver-options{display:flex;flex-direction:column;gap:.45rem}
+.solver-opt{background:#fff;border:1.5px solid var(--line);border-radius:7px;padding:.55rem .7rem;cursor:pointer;transition:all .15s;display:grid;grid-template-columns:1fr auto;gap:.5rem;align-items:center}
+.solver-opt:hover{border-color:var(--earth);background:var(--earth-pale)}
+.solver-opt.selected{background:var(--earth-pale);border-color:var(--earth)}
+.so-name{font-weight:600;color:var(--navy);font-size:.82rem}
+.so-sub{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.1rem}
+.so-stat{text-align:right}
+.so-dose{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--earth);line-height:1}
+.so-cost{font-size:.68rem;color:var(--muted);font-family:'DM Mono',monospace;margin-top:.15rem}
+.so-aports{grid-column:1/-1;margin-top:.4rem;padding-top:.4rem;border-top:1px dashed rgba(0,0,0,.1);font-size:.7rem;color:var(--muted);line-height:1.4}
+.so-aports strong{color:var(--ink2)}
+
+/* COST SUMMARY */
+.cost-summary{background:var(--navy);color:#fff;border-radius:11px;padding:1rem 1.1rem;margin-top:1rem}
+.cs-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:#D4A574;margin-bottom:.7rem}
+.cs-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:.82rem}
+.cs-row:last-child{border-bottom:none;padding-top:.6rem;margin-top:.3rem;border-top:2px solid rgba(212,165,116,.4)}
+.cs-row.total{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700}
+.cs-row.total span:last-child{color:#D4A574}
+.cs-lbl{color:rgba(255,255,255,.75)}
+.cs-val{font-family:'DM Mono',monospace;font-weight:600}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:1.4rem 1.2rem}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--navy);margin-bottom:.5rem;font-weight:700}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);line-height:1}
+
+.note{background:var(--bg);border-left:3px solid var(--earth);padding:.6rem .8rem;border-radius:0 5px 5px 0;font-size:.72rem;color:var(--muted);margin-top:.7rem;line-height:1.55}
+.note strong{color:var(--ink2);display:block;margin-bottom:.2rem;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em}
+
+/* SUB-TABS dentro de "Cargar análisis" */
+.subtabs{display:flex;gap:.3rem;margin:0 .85rem .8rem;background:#fff;border-radius:9px;padding:.3rem;border:1px solid var(--line)}
+.subtab{flex:1;background:none;border:none;cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;font-weight:600;color:var(--muted);padding:.55rem .5rem;border-radius:7px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:.35rem}
+.subtab:hover{color:var(--earth);background:var(--bg)}
+.subtab.active{background:var(--earth);color:#fff}
+.subtab-icon{font-size:.95rem}
+
+.subpage{display:none}
+.subpage.active{display:block}
+
+/* UNIT SELECTOR */
+.unit-selector{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:5px;padding:.15rem;gap:.1rem;margin-left:.5rem}
+.unit-btn{background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);padding:.18rem .4rem;border-radius:3px;transition:all .15s;font-weight:600;letter-spacing:.02em}
+.unit-btn:hover{color:var(--earth)}
+.unit-btn.active{background:var(--teal);color:#fff}
+
+.section-title-with-unit{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;justify-content:space-between}
+.section-title-with-unit small{font-family:'Karla',sans-serif;font-weight:400;font-size:.68rem;color:var(--muted);text-transform:none;letter-spacing:0}
+
+/* SALINITY CLASS BADGE */
+.salinity-classbox{background:linear-gradient(135deg,var(--purple-pale) 0%,#fff 100%);border:1.5px solid #C0B5E5;border-radius:10px;padding:.85rem 1rem;margin-top:.8rem;text-align:center}
+.scb-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:.45rem}
+.scb-class{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;line-height:1;margin-bottom:.3rem}
+.scb-class.normal{color:var(--green)}
+.scb-class.salino{color:var(--amber)}
+.scb-class.sodico{color:var(--purple)}
+.scb-class.salino-sodico{color:var(--red)}
+.scb-desc{font-size:.78rem;color:var(--ink2);line-height:1.5}
+
+/* CULTIVO TOLERANCIA INDICATOR */
+.tol-bar{margin-top:.7rem;background:#fff;border-radius:9px;padding:.7rem .85rem;border:1px solid var(--line)}
+.tb-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+.tb-cult{font-size:.78rem;font-weight:600;color:var(--navy)}
+.tb-tol{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-left:auto}
+.tb-progress{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--line);position:relative}
+.tb-fill{height:100%;background:linear-gradient(90deg,var(--green) 0%,var(--green) 60%,var(--amber) 60%,var(--amber) 85%,var(--red) 85%,var(--red) 100%);transition:width .3s}
+.tb-marker{position:absolute;top:-3px;width:2px;height:14px;background:var(--navy);z-index:2}
+
+@media (min-width:600px){
+  .input-grid{grid-template-columns:repeat(3,1fr)}
+  .input-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  .context-bar{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🌱</div>
+    <div>
+      <div class="tb-name">Sap & <em>Soil</em></div>
+      <span class="tb-sub">Análisis de fertilidad</span>
+    </div>
+  </div>
+  <div class="tb-context">
+    <strong id="tb-pred">Sin predio</strong>
+    <span id="tb-fecha">—</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab active" data-page="cargar"><span class="tab-icon">📝</span>Cargar análisis</button>
+  <button class="tab" data-page="recomendar"><span class="tab-icon">🎯</span>Recomendaciones</button>
+  <button class="tab" data-page="resolver"><span class="tab-icon">⚖️</span>Resolver con catálogo</button>
+  <button class="tab" data-page="enmiendas"><span class="tab-icon">🌿</span>Enmiendas orgánicas</button>
+  <button class="tab" data-page="minerales"><span class="tab-icon">🧪</span>Fertilizantes minerales</button>
+</nav>
+
+<!-- ═══════ PAGE 1: CARGAR ANÁLISIS ═══════ -->
+<div class="page active" id="page-cargar">
+  <div class="context-bar cols-4">
+    <div class="cb-field">
+      <label class="cb-lbl">Fecha</label>
+      <input type="date" id="an-fecha" class="cb-inp">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">Predio</label>
+      <input type="text" id="an-predio" class="cb-inp" placeholder="Predio">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">Sector / Cuartel</label>
+      <input type="text" id="an-sector" class="cb-inp" placeholder="Sector">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">N° Lab</label>
+      <input type="text" id="an-lab" class="cb-inp" placeholder="Informe">
+    </div>
+  </div>
+
+  <!-- Sub-tabs -->
+  <div class="subtabs">
+    <button class="subtab active" data-subtab="fertilidad">
+      <span class="subtab-icon">🧪</span>Fertilidad
+    </button>
+    <button class="subtab" data-subtab="saturado">
+      <span class="subtab-icon">💧</span>Extracto saturado
+    </button>
+  </div>
+
+  <!-- ─── SUB-PAGE: FERTILIDAD ─── -->
+  <div class="subpage active" id="subpage-fertilidad">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Identificación de la muestra</div>
+        <div class="card-title">Datos generales</div>
+      </div>
+    </div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">Profundidad min</span></div>
+        <input class="inp-field" id="prof-min" type="number" value="0" min="0" step="5">
+        <div class="inp-unit">cm</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">Profundidad max</span></div>
+        <input class="inp-field" id="prof-max" type="number" value="20" min="5" step="5">
+        <div class="inp-unit">cm</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">Laboratorio</span></div>
+        <select class="inp-field" id="lab-name" style="font-family:'Karla',sans-serif;font-size:.82rem">
+          <option value="">— elegir —</option>
+          <option value="Agrolab">Agrolab</option>
+          <option value="LaboquimTerra">LaboquimTerra</option>
+          <option value="otro">Otro</option>
+        </select>
+        <div class="inp-unit">origen del análisis</div>
+      </div>
+    </div>
+
+    <div class="section-title">Fertilidad básica <small>parámetros químicos generales</small></div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">pH</span><span class="inp-sub">agua 1:2,5</span></div>
+        <input class="inp-field" id="ph" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">unidades</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">CE</span><span class="inp-sub">extracto saturado</span></div>
+        <input class="inp-field" id="ce" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">dS/m</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">M.O.</span><span class="inp-sub">Walkley-Black</span></div>
+        <input class="inp-field" id="mo" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">%</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">N disponible</span></div>
+        <input class="inp-field" id="n" type="number" step="1" placeholder="—">
+        <div class="inp-unit">mg/kg (ppm)</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">P Olsen</span></div>
+        <input class="inp-field" id="p" type="number" step="1" placeholder="—">
+        <div class="inp-unit">mg/kg</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">K disponible</span></div>
+        <input class="inp-field" id="k-disp" type="number" step="1" placeholder="—">
+        <div class="inp-unit">mg/kg</div>
+      </div>
+    </div>
+
+    <div class="section-title">Cationes intercambiables <small>en meq/100g (= cmol+/kg)</small></div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell cation">
+        <div class="inp-lbl"><span class="inp-name">Ca²⁺</span></div>
+        <input class="inp-field" id="ca" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">meq/100g</div>
+      </div>
+      <div class="inp-cell cation">
+        <div class="inp-lbl"><span class="inp-name">Mg²⁺</span></div>
+        <input class="inp-field" id="mg" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">meq/100g</div>
+      </div>
+      <div class="inp-cell cation">
+        <div class="inp-lbl"><span class="inp-name">K⁺</span></div>
+        <input class="inp-field" id="k" type="number" step="0.01" placeholder="—">
+        <div class="inp-unit">meq/100g</div>
+      </div>
+      <div class="inp-cell cation">
+        <div class="inp-lbl"><span class="inp-name">Na⁺</span></div>
+        <input class="inp-field" id="na" type="number" step="0.01" placeholder="—">
+        <div class="inp-unit">meq/100g</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">CIC</span><span class="inp-sub">cap. intercambio</span></div>
+        <input class="inp-field" id="cic" type="number" step="0.1" placeholder="—">
+        <div class="inp-unit">meq/100g</div>
+      </div>
+      <div class="inp-cell">
+        <div class="inp-lbl"><span class="inp-name">Suma bases</span><span class="inp-sub">auto</span></div>
+        <input class="inp-field" id="sum-bases" type="number" readonly>
+        <div class="inp-unit">meq/100g</div>
+      </div>
+    </div>
+
+    <div class="metrics" style="margin-top:.7rem">
+      <div class="metrics-title">⚖️ Validación del análisis</div>
+      <div class="metrics-grid cols-4">
+        <div class="m-box" id="mb-cic"><span class="m-val" id="m-cic-status">—</span><span class="m-lbl">CIC ≥ Bases</span></div>
+        <div class="m-box" id="mb-pct"><span class="m-val" id="m-pct-cic">—</span><span class="m-lbl">% bases CIC</span></div>
+        <div class="m-box" id="mb-camg"><span class="m-val" id="m-camg">—</span><span class="m-lbl">Ratio Ca/Mg</span></div>
+        <div class="m-box" id="mb-mgk"><span class="m-val" id="m-mgk">—</span><span class="m-lbl">Ratio Mg/K</span></div>
+      </div>
+      <div class="alert-msg" id="balance-alert"></div>
+    </div>
+
+    <div class="section-title">Microelementos <small>disponibles, en mg/kg (ppm)</small></div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">Fe</span></div><input class="inp-field" id="fe" type="number" step="0.1" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">Mn</span></div><input class="inp-field" id="mn" type="number" step="0.1" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">Zn</span></div><input class="inp-field" id="zn" type="number" step="0.01" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">Cu</span></div><input class="inp-field" id="cu" type="number" step="0.1" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">B</span></div><input class="inp-field" id="b" type="number" step="0.01" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+      <div class="inp-cell micro"><div class="inp-lbl"><span class="inp-name">S</span><span class="inp-sub">opcional</span></div><input class="inp-field" id="s" type="number" step="0.1" placeholder="—"><div class="inp-unit">mg/kg</div></div>
+    </div>
+
+    <div class="section-title">Físicos del suelo <small>opcional · usado para cálculos volumétricos</small></div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">Arena</span></div><input class="inp-field" id="arena" type="number" step="1" placeholder="—"><div class="inp-unit">%</div></div>
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">Limo</span></div><input class="inp-field" id="limo" type="number" step="1" placeholder="—"><div class="inp-unit">%</div></div>
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">Arcilla</span></div><input class="inp-field" id="arcilla" type="number" step="1" placeholder="—"><div class="inp-unit">%</div></div>
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">Da</span><span class="inp-sub">terrón</span></div><input class="inp-field" id="da" type="number" step="0.01" placeholder="—"><div class="inp-unit">g/cc</div></div>
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">CC</span></div><input class="inp-field" id="cc" type="number" step="0.1" placeholder="—"><div class="inp-unit">% vol</div></div>
+      <div class="inp-cell physical"><div class="inp-lbl"><span class="inp-name">PMP</span></div><input class="inp-field" id="pmp" type="number" step="0.1" placeholder="—"><div class="inp-unit">% vol</div></div>
+    </div>
+
+    <div class="alert-msg" id="texture-alert"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="loadExample()">📋 Cargar ejemplo Cuncumen</button>
+      <button class="btn btn-primary" onclick="goPage('recomendar')">Ver recomendaciones →</button>
+    </div>
+  </div>
+  </div><!-- /subpage fertilidad -->
+
+  <!-- ─── SUB-PAGE: EXTRACTO SATURADO ─── -->
+  <div class="subpage" id="subpage-saturado">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">💧</div>
+        <div class="card-titles">
+          <div class="card-eyebrow">Solución del suelo · análisis directo</div>
+          <div class="card-title">Pasta saturada / Extracto saturado</div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:0;margin-bottom:1rem">
+        <strong>📐 Diferencia con análisis de fertilidad</strong>
+        El extracto saturado mide lo que está disuelto AHORA en la solución del suelo (lo que las raíces "ven"). Es clave para diagnóstico de salinidad, sodicidad y nutrición real disponible. Complementa al análisis de fertilidad estándar.
+      </div>
+
+      <div class="crop-selector">
+        <div class="cs-title">🌾 Cultivo objetivo · para diagnóstico nutricional</div>
+        <div class="cs-buttons" id="sat-crop-buttons">
+          <button class="crop-btn" data-crop="tomate">🍅 Tomate</button>
+          <button class="crop-btn" data-crop="pimiento">🫑 Pimiento</button>
+          <button class="crop-btn" data-crop="pepino">🥒 Pepino</button>
+          <button class="crop-btn" data-crop="sandia">🍉 Sandía</button>
+          <button class="crop-btn" data-crop="cebolla">🧅 Cebolla</button>
+          <button class="crop-btn" data-crop="frutilla">🍓 Frutilla</button>
+          <button class="crop-btn" data-crop="limon">🍋 Limón</button>
+          <button class="crop-btn" data-crop="palto">🥑 Palto</button>
+        </div>
+      </div>
+
+      <div class="section-title">Datos generales del extracto</div>
+      <div class="input-grid cols-3">
+        <div class="inp-cell">
+          <div class="inp-lbl"><span class="inp-name">Humedad saturación</span><span class="inp-sub">HS</span></div>
+          <input class="inp-field" id="ss-hs" type="number" step="0.5" placeholder="—">
+          <div class="inp-unit">%</div>
+        </div>
+        <div class="inp-cell">
+          <div class="inp-lbl"><span class="inp-name">pH</span><span class="inp-sub">en pasta o extracto</span></div>
+          <input class="inp-field" id="ss-ph" type="number" step="0.01" placeholder="—">
+          <div class="inp-unit">unidades</div>
+        </div>
+        <div class="inp-cell">
+          <div class="inp-lbl"><span class="inp-name">CE</span><span class="inp-sub">a 25°C</span></div>
+          <input class="inp-field" id="ss-ce" type="number" step="0.01" placeholder="—">
+          <div class="inp-unit">dS/m</div>
+        </div>
+      </div>
+
+      <div class="section-title-with-unit" style="margin-top:1rem">
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--earth)">Cationes solubles</span>
+          <div class="unit-selector" data-group="cat">
+            <button class="unit-btn active" data-unit="mmol">mmol/L</button>
+            <button class="unit-btn" data-unit="meq">meq/L</button>
+            <button class="unit-btn" data-unit="mg">mg/L</button>
+          </div>
+        </div>
+        <small id="cat-conv-label">ingreso en mmol/L · conversión automática</small>
+      </div>
+      <div class="input-grid cols-4">
+        <div class="inp-cell cation">
+          <div class="inp-lbl"><span class="inp-name">Ca²⁺</span></div>
+          <input class="inp-field cat-input" id="ss-ca" type="number" step="0.01" placeholder="—" data-ion="Ca">
+          <div class="inp-unit ss-unit-cat">mmol/L</div>
+        </div>
+        <div class="inp-cell cation">
+          <div class="inp-lbl"><span class="inp-name">Mg²⁺</span></div>
+          <input class="inp-field cat-input" id="ss-mg" type="number" step="0.01" placeholder="—" data-ion="Mg">
+          <div class="inp-unit ss-unit-cat">mmol/L</div>
+        </div>
+        <div class="inp-cell cation">
+          <div class="inp-lbl"><span class="inp-name">K⁺</span></div>
+          <input class="inp-field cat-input" id="ss-k" type="number" step="0.01" placeholder="—" data-ion="K">
+          <div class="inp-unit ss-unit-cat">mmol/L</div>
+        </div>
+        <div class="inp-cell cation">
+          <div class="inp-lbl"><span class="inp-name">Na⁺</span></div>
+          <input class="inp-field cat-input" id="ss-na" type="number" step="0.01" placeholder="—" data-ion="Na">
+          <div class="inp-unit ss-unit-cat">mmol/L</div>
+        </div>
+      </div>
+
+      <div class="section-title-with-unit" style="margin-top:1rem">
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--earth)">Aniones solubles</span>
+          <div class="unit-selector" data-group="an">
+            <button class="unit-btn active" data-unit="mmol">mmol/L</button>
+            <button class="unit-btn" data-unit="meq">meq/L</button>
+            <button class="unit-btn" data-unit="mg">mg/L</button>
+          </div>
+        </div>
+        <small id="an-conv-label">ingreso en mmol/L · conversión automática</small>
+      </div>
+      <div class="input-grid cols-4">
+        <div class="inp-cell anion">
+          <div class="inp-lbl"><span class="inp-name">HCO₃⁻</span><span class="inp-sub">bicarbonatos</span></div>
+          <input class="inp-field an-input" id="ss-hco3" type="number" step="0.01" placeholder="—" data-ion="HCO3">
+          <div class="inp-unit ss-unit-an">mmol/L</div>
+        </div>
+        <div class="inp-cell anion">
+          <div class="inp-lbl"><span class="inp-name">Cl⁻</span><span class="inp-sub">cloruros</span></div>
+          <input class="inp-field an-input" id="ss-cl" type="number" step="0.01" placeholder="—" data-ion="Cl">
+          <div class="inp-unit ss-unit-an">mmol/L</div>
+        </div>
+        <div class="inp-cell anion">
+          <div class="inp-lbl"><span class="inp-name">SO₄²⁻</span><span class="inp-sub">sulfatos</span></div>
+          <input class="inp-field an-input" id="ss-so4" type="number" step="0.01" placeholder="—" data-ion="SO4">
+          <div class="inp-unit ss-unit-an">mmol/L</div>
+        </div>
+        <div class="inp-cell anion">
+          <div class="inp-lbl"><span class="inp-name">NO₃⁻</span><span class="inp-sub">nitratos</span></div>
+          <input class="inp-field an-input" id="ss-no3" type="number" step="0.01" placeholder="—" data-ion="NO3">
+          <div class="inp-unit ss-unit-an">mmol/L</div>
+        </div>
+      </div>
+
+      <div class="metrics" style="margin-top:.9rem">
+        <div class="metrics-title">⚖️ Validación e índices calculados</div>
+        <div class="metrics-grid cols-4">
+          <div class="m-box" id="ss-mb-cat"><span class="m-val" id="ss-cat-meq">—</span><span class="m-lbl">Σ Cationes (meq/L)</span></div>
+          <div class="m-box" id="ss-mb-an"><span class="m-val" id="ss-an-meq">—</span><span class="m-lbl">Σ Aniones (meq/L)</span></div>
+          <div class="m-box" id="ss-mb-bal"><span class="m-val" id="ss-bal">—</span><span class="m-lbl">Balance Cat/An</span></div>
+          <div class="m-box" id="ss-mb-ras"><span class="m-val" id="ss-ras">—</span><span class="m-lbl">RAS</span></div>
+        </div>
+        <div class="alert-msg" id="ss-balance-alert"></div>
+      </div>
+
+      <div class="salinity-classbox" id="ss-classbox" style="display:none">
+        <div class="scb-title">Clasificación USDA del suelo</div>
+        <div class="scb-class" id="ss-class">—</div>
+        <div class="scb-desc" id="ss-class-desc">—</div>
+      </div>
+
+      <div class="tol-bar" id="ss-tol-bar" style="display:none">
+        <div class="tb-row">
+          <span class="tb-cult">📊 Tolerancia del cultivo: <span id="ss-tol-cult">—</span></span>
+          <span class="tb-tol" id="ss-tol-text">—</span>
+        </div>
+        <div class="tb-progress">
+          <div class="tb-fill" id="ss-tb-fill" style="width:0%"></div>
+          <div class="tb-marker" id="ss-tb-marker" style="left:0%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);margin-top:.25rem;font-family:'DM Mono',monospace">
+          <span>0</span><span>umbral</span><span>10% pérdida</span><span>50%+ pérdida</span>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:1rem">Recomendaciones según clasificación</div>
+      <div id="ss-recs"></div>
+
+      <div class="note">
+        <strong>📐 Cómo se calcula el RAS</strong>
+        RAS = Na / √((Ca + Mg) / 2) — todos los iones en meq/L. La clasificación USDA combina CE y RAS:
+        Normal (CE&lt;4 dS/m, RAS&lt;13) · Salino (CE&gt;4, RAS&lt;13) · Sódico (CE&lt;4, RAS&gt;13) · Salino-sódico (CE&gt;4, RAS&gt;13).
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="loadExampleSat()">📋 Cargar ejemplo</button>
+        <button class="btn btn-secondary" onclick="clearSaturado()">🗑️ Limpiar</button>
+      </div>
+    </div>
+  </div><!-- /subpage saturado -->
+
+</div><!-- /page-cargar -->
+
+<!-- ═══════ PAGE 2: RECOMENDACIONES ═══════ -->
+<div class="page" id="page-recomendar">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Interpretación + recomendaciones</div>
+        <div class="card-title">Diagnóstico nutricional por cultivo</div>
+      </div>
+    </div>
+
+    <div class="crop-selector">
+      <div class="cs-title">🌾 Cultivo objetivo</div>
+      <div class="cs-buttons" id="rec-crop-buttons">
+        <button class="crop-btn active" data-crop="tomate">🍅 Tomate</button>
+        <button class="crop-btn" data-crop="pimiento">🫑 Pimiento</button>
+        <button class="crop-btn" data-crop="pepino">🥒 Pepino</button>
+        <button class="crop-btn" data-crop="sandia">🍉 Sandía</button>
+        <button class="crop-btn" data-crop="cebolla">🧅 Cebolla</button>
+        <button class="crop-btn" data-crop="frutilla">🍓 Frutilla</button>
+        <button class="crop-btn" data-crop="limon">🍋 Limón</button>
+        <button class="crop-btn" data-crop="palto">🥑 Palto</button>
+      </div>
+    </div>
+
+    <div id="rec-empty" style="text-align:center;padding:1.5rem;color:var(--muted);font-style:italic">
+      Cargue primero un análisis de suelo en la pestaña <strong>Cargar análisis</strong>.
+    </div>
+
+    <div id="rec-content" style="display:none">
+      <div class="diag-block" id="diag-critical">
+        <div class="diag-title-bar">
+          <h3>🔴 Crítico</h3>
+          <span class="diag-count" id="count-critical">0 parámetros</span>
+        </div>
+        <div class="diag-cards" id="cards-critical"></div>
+      </div>
+
+      <div class="diag-block" id="diag-warning">
+        <div class="diag-title-bar">
+          <h3>🟡 Atención</h3>
+          <span class="diag-count" id="count-warning">0 parámetros</span>
+        </div>
+        <div class="diag-cards" id="cards-warning"></div>
+      </div>
+
+      <div class="diag-block" id="diag-ok">
+        <div class="diag-title-bar">
+          <h3>🟢 Adecuado</h3>
+          <span class="diag-count" id="count-ok">0 parámetros</span>
+        </div>
+        <div class="diag-cards" id="cards-ok"></div>
+      </div>
+
+      <div class="recs-summary">
+        <div class="recs-title">📋 Resumen de aportes recomendados</div>
+        <table class="recs-table">
+          <thead><tr><th>Nutriente</th><th class="r">Aporte</th><th>Forma</th><th>Momento</th></tr></thead>
+          <tbody id="recs-tbody"></tbody>
+        </table>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goPage('cargar')">← Modificar análisis</button>
+          <button class="btn btn-primary" onclick="goPage('resolver')">Resolver con catálogo →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 3: RESOLVER CON CATÁLOGO ═══════ -->
+<div class="page" id="page-resolver">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">3</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Plan de fertilización con costeo</div>
+        <div class="card-title">Resolver con el catálogo</div>
+      </div>
+    </div>
+
+    <div class="context-bar cols-3">
+      <div class="cb-field">
+        <label class="cb-lbl">Superficie del sector</label>
+        <input type="number" id="r-sup" class="cb-inp" value="1" step="0.1" min="0.1">
+      </div>
+      <div class="cb-field">
+        <label class="cb-lbl">Unidad</label>
+        <select id="r-sup-unit" class="cb-sel">
+          <option value="ha">hectáreas</option>
+          <option value="m2">m²</option>
+        </select>
+      </div>
+      <div class="cb-field">
+        <label class="cb-lbl">Sistema cultivo</label>
+        <select id="r-sistema" class="cb-sel">
+          <option value="suelo">Suelo</option>
+          <option value="sustrato">Sustrato</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="resolver-empty" style="text-align:center;padding:1.5rem;color:var(--muted);font-style:italic">
+      Genere primero las recomendaciones en la pestaña anterior.
+    </div>
+
+    <div id="resolver-content" style="display:none">
+      <div class="section-title">🎯 Aportes a resolver</div>
+      <div id="solver-cards"></div>
+
+      <div class="cost-summary" id="cost-summary" style="display:none">
+        <div class="cs-title">💰 Resumen de costos</div>
+        <div id="cost-rows"></div>
+      </div>
+
+      <div class="note">
+        <strong>📐 Cómo se calcula</strong>
+        Las dosis se calculan dividiendo el aporte recomendado (kg/ha) entre la concentración del nutriente en el producto seleccionado. El volumen equivalente se obtiene con la densidad aparente del producto. El costo se basa en el precio actual editable de cada producto en el catálogo. Si un producto aporta varios nutrientes simultáneamente, se descuentan automáticamente del resto de las necesidades.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 4: ENMIENDAS ORGÁNICAS ═══════ -->
+<div class="page" id="page-enmiendas">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">4</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Catálogo único compartido</div>
+        <div class="card-title">Enmiendas orgánicas</div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:.8rem;margin-top:0">
+      <button class="btn btn-primary" onclick="openAddProductModal('enmienda')">+ Agregar producto</button>
+    </div>
+
+    <div id="enmiendas-list"></div>
+  </div>
+</div>
+
+<!-- ═══════ PAGE 5: FERTILIZANTES MINERALES ═══════ -->
+<div class="page" id="page-minerales">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">5</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Catálogo precargado</div>
+        <div class="card-title">Fertilizantes minerales</div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-bottom:.8rem;margin-top:0">
+      <button class="btn btn-primary" onclick="openAddProductModal('mineral')">+ Agregar fertilizante</button>
+    </div>
+
+    <div id="minerales-categories"></div>
+  </div>
+</div>
+
+<!-- MODAL: detail/edit product -->
+<div class="modal-bg" id="modal-product">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-product')">×</button>
+    <div id="modal-product-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: add product -->
+<div class="modal-bg" id="modal-add">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-add')">×</button>
+    <div id="modal-add-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════ DATOS BASE ═══════════════
+
+// Conversiones óxido <-> elemento
+const CONV = {
+  P_to_P2O5: 2.291, P2O5_to_P: 0.4364,
+  K_to_K2O: 1.2046, K2O_to_K: 0.8301,
+  Ca_to_CaO: 1.3992, CaO_to_Ca: 0.7147,
+  Mg_to_MgO: 1.6582, MgO_to_Mg: 0.6030,
+};
+
+// Catálogo enmiendas orgánicas precargado
+const ENMIENDAS_BASE = [
+  {
+    id: 'enm_001',
+    nombre: 'Compost N°3 San Carlos',
+    empresa: 'Residuos Agroindustriales del Sur',
+    tipo: 'compost',
+    origen: 'vegetal',
+    n_pct: 1.60, p2o5_pct: 5.5, k2o_pct: 0.56, cao_pct: null, mgo_pct: null,
+    mo_pct: 45.5, c_n: 15.8, ph: 7.8, ce_dsm: 6.5, humedad_pct: 46,
+    densidad_kgm3: 430,
+    nh4: 640, no3: 235, nh4_no3: 2.7,
+    fe: 18596, mn: 224, zn: 173, cu: 190, b: 51,
+    cumple_clase_a: false,
+    cumple_clase_b: true,
+    alertas: ['NH4 alto (640 mg/kg, sobre límite 500) — aún no totalmente estable', 'CE 6.5 dS/m — moderada'],
+    precio_ton: null, precio_m3: null,
+    n_lab: '34614', fecha_analisis: '2024-08-15',
+  },
+  {
+    id: 'enm_002',
+    nombre: 'Guano gallina ponedora',
+    empresa: 'Agrícola El Erial',
+    tipo: 'guano_compostado',
+    origen: 'gallinaza',
+    n_pct: 1.26, p2o5_pct: 4.1, k2o_pct: 2.2, cao_pct: 8.0, mgo_pct: 1.1,
+    mo_pct: 33.5, c_n: 14.8, ph: 9.0, ce_dsm: 8.9, humedad_pct: 22,
+    densidad_kgm3: 590,
+    nh4: 2544, no3: 268, nh4_no3: 9.5,
+    fe: 5465, mn: 329, zn: 144, cu: 36, b: 70,
+    cumple_clase_a: false,
+    cumple_clase_b: false,
+    alertas: ['NH4 muy alto (2544 mg/kg, 5× límite) — INMADURO', 'NH4/NO3 = 9.5 (límite <3) — fitotóxico potencial', 'pH 9.0 — alcalino', 'CE 8.9 dS/m — alta'],
+    precio_ton: null, precio_m3: null,
+    n_lab: '34469', fecha_analisis: '2026-01-13',
+  },
+  {
+    id: 'enm_003',
+    nombre: 'Estabilizado de Pollo',
+    empresa: 'Agroindustrial Leyda',
+    tipo: 'estabilizado',
+    origen: 'pollo',
+    n_pct: 3.77, p2o5_pct: 4.8, k2o_pct: 5.3, cao_pct: 5.6, mgo_pct: 1.7,
+    mo_pct: 76.0, c_n: 11.2, ph: 8.8, ce_dsm: 6.9, humedad_pct: 27,
+    densidad_kgm3: 730,
+    nh4: null, no3: null, nh4_no3: null,
+    fe: 1495, mn: 750, zn: 700, cu: 90, b: 93,
+    cumple_clase_a: false,
+    cumple_clase_b: true,
+    alertas: ['Excelente perfil nutricional (N 3.77%)', 'pH 8.8 — alto', 'Zn 700 mg/kg — vigilar acumulación con uso continuo'],
+    precio_ton: null, precio_m3: null,
+    n_lab: '33236', fecha_analisis: '2024-12-26',
+  },
+  {
+    id: 'enm_004',
+    nombre: 'Huechún',
+    empresa: 'Biosólido (DS 4/2009 MMA)',
+    tipo: 'biosolido',
+    origen: 'humano',
+    n_pct: 3.58, p2o5_pct: 5.88, k2o_pct: null,
+    cao_pct: 7.21,  // 5.15% Ca elemental × 1.4
+    mgo_pct: null,
+    ca_pct: 5.15, // forma elemental también guardada
+    mo_pct: 38.09, c_n: null, ph: 6.51, ce_dsm: 0.54, humedad_pct: 10,
+    densidad_kgm3: 800,
+    nh4: null, no3: null, nh4_no3: null,
+    fe: null, mn: null, zn: null, cu: null, b: null,
+    cumple_clase_a: true,
+    cumple_clase_b: true,
+    alertas: ['Producto registrado SAG, cumple DS 4/2009', 'CE 0.54 mS/cm — muy baja, segura', 'Aporta 8.18% extractos húmicos', 'Apto hortalizas, frutales y praderas'],
+    precio_ton: null, precio_m3: null,
+    n_lab: 'Ficha técnica',
+    fecha_analisis: '2026-01-01',
+    pH_unico: true,
+  },
+  {
+    id: 'enm_005',
+    nombre: 'Compost Weltun Mapu',
+    empresa: 'Coop. Reciclaje Weltun Mapu',
+    tipo: 'compost',
+    origen: 'vegetal',
+    n_pct: 1.05, p2o5_pct: 2.5, k2o_pct: 2.6, cao_pct: null, mgo_pct: null,
+    mo_pct: 27.0, c_n: 14.3, ph: 6.4, ce_dsm: 5.9, humedad_pct: 32,
+    densidad_kgm3: 500,
+    nh4: 308, no3: 154, nh4_no3: 2.0,
+    fe: null, mn: null, zn: null, cu: null, b: null,
+    cumple_clase_a: true,
+    cumple_clase_b: true,
+    alertas: ['Cumple NCh 2880 Clase A', 'Bien estabilizado (NH4/NO3 = 2.0)', 'pH 6.4 — bueno para suelos calcáreos', 'CE 5.9 dS/m — moderada, vigilar dosis altas'],
+    precio_ton: null, precio_m3: null,
+    n_lab: '31666', fecha_analisis: '2023-04-28',
+  },
+  {
+    id: 'enm_006',
+    nombre: 'Guano Arizona',
+    empresa: 'proveedor por confirmar',
+    tipo: 'guano',
+    origen: 'mixto',
+    // Reportado como elemento, convertido a óxido
+    n_pct: 1.17,
+    p_pct: 1.28, p2o5_pct: 2.93,  // ambos
+    k_pct: 1.52, k2o_pct: 1.83,
+    ca_pct: 8.97, cao_pct: 12.55,
+    mg_pct: 0.48, mgo_pct: 0.80,
+    mo_pct: 34.4, c_n: 16.3, ph: 8.33, ce_dsm: 9.06, humedad_pct: 40,
+    densidad_kgm3: 600,
+    nh4: 510, no3: 9.10, nh4_no3: 58.2,
+    fe: 4864, mn: 308, zn: 134, cu: 28.7, b: 39.1,
+    cumple_clase_a: false,
+    cumple_clase_b: false,
+    alertas: ['NO CUMPLE NCh 2880 (ni Clase A ni B)', 'CE 9.06 dS/m — supera límite Clase B', 'NH4/NO3 = 58.2 — muy superior al límite (<3) — INMADURO', 'Valores P y K reportados como elemento (no óxido)', 'Humedad estimada 40% (no reportada)', 'Aplicar con precaución: máx 3 ton/ha, esperar 30+ días al trasplante'],
+    precio_ton: null, precio_m3: null,
+    formato_origen: 'elemento',
+    n_lab: 'sin número',
+    fecha_analisis: '2025-01-01',
+  },
+];
+
+// Catálogo fertilizantes minerales precargado
+const MINERALES_BASE = [
+  // NITRÓGENO
+  { id:'min_n01', nombre:'Urea', formula:'CO(NH₂)₂', categoria:'N', n:46, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'acidifica', soluble:true, precio_kg:null, observ:'Más concentrado, requiere humedad para evitar volatilización. Acidifica suelo.' },
+  { id:'min_n02', nombre:'Nitrato de amonio', formula:'NH₄NO₃', categoria:'N', n:33, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'lev_acidifica', soluble:true, precio_kg:null, observ:'50% NO₃ + 50% NH₄. Equilibrio rápido + lento.' },
+  { id:'min_n03', nombre:'Sulfato de amonio', formula:'(NH₄)₂SO₄', categoria:'N', n:21, p2o5:0, k2o:0, cao:0, mgo:0, s:24, forma:'granulado', efecto_ph:'acidifica', soluble:true, precio_kg:null, observ:'Aporta también 24% S. Acidifica fuertemente.' },
+  { id:'min_n04', nombre:'Salitre sódico', formula:'NaNO₃', categoria:'N', n:16, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'alcaliniza', soluble:true, precio_kg:null, observ:'Aporta Na (cuidado con suelos salinos).' },
+  { id:'min_n05', nombre:'Salitre potásico', formula:'KNO₃', categoria:'N', n:13, p2o5:0, k2o:46, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Doble fuente: N + K. Ideal fertirriego.' },
+  // FÓSFORO
+  { id:'min_p01', nombre:'Superfosfato triple', formula:'Ca(H₂PO₄)₂', categoria:'P', n:0, p2o5:46, k2o:0, cao:12, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Aporta también 12% Ca. Insumo P más concentrado.' },
+  { id:'min_p02', nombre:'Superfosfato simple', formula:'Ca(H₂PO₄)₂+CaSO₄', categoria:'P', n:0, p2o5:21, k2o:0, cao:18, mgo:0, s:12, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Aporta 18% Ca + 12% S. Más versátil que SFT.' },
+  { id:'min_p03', nombre:'MAP (Fosfato monoamónico)', formula:'NH₄H₂PO₄', categoria:'P', n:11, p2o5:52, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, precio_kg:null, observ:'Aporta 11% N. Soluble, ideal fertirriego.' },
+  { id:'min_p04', nombre:'DAP (Fosfato diamónico)', formula:'(NH₄)₂HPO₄', categoria:'P', n:18, p2o5:46, k2o:0, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Aporta 18% N. Más N que MAP.' },
+  { id:'min_p05', nombre:'Roca fosfórica', formula:'Ca₃(PO₄)₂', categoria:'P', n:0, p2o5:30, k2o:0, cao:35, mgo:0, s:0, forma:'granulado', efecto_ph:'alcaliniza', soluble:false, precio_kg:null, observ:'Liberación lenta. Útil en suelos ácidos.' },
+  // POTASIO
+  { id:'min_k01', nombre:'Cloruro de potasio (KCl)', formula:'KCl', categoria:'K', n:0, p2o5:0, k2o:60, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Aporta Cl. NO usar en frutilla, palto, papa.' },
+  { id:'min_k02', nombre:'Sulfato de potasio', formula:'K₂SO₄', categoria:'K', n:0, p2o5:0, k2o:50, cao:0, mgo:0, s:18, forma:'granulado', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Aporta 18% S. Apto cultivos sensibles a Cl.' },
+  { id:'min_k03', nombre:'Nitrato de potasio (Salitre potásico)', formula:'KNO₃', categoria:'K', n:13, p2o5:0, k2o:46, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Doble fuente N+K. Estándar en fertirriego.' },
+  { id:'min_k04', nombre:'Sulpomag (K-Mag)', formula:'K₂SO₄·MgSO₄', categoria:'K', n:0, p2o5:0, k2o:22, cao:0, mgo:18, s:22, forma:'granulado', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Triple fuente K+Mg+S.' },
+  // CALCIO Y MAGNESIO
+  { id:'min_c01', nombre:'Cal agrícola (CaCO₃)', formula:'CaCO₃', categoria:'Ca', n:0, p2o5:0, k2o:0, cao:38, mgo:0, s:0, forma:'granulado', efecto_ph:'alcaliniza', soluble:false, precio_kg:null, observ:'Sube pH. Para suelos ácidos.' },
+  { id:'min_c02', nombre:'Cal dolomita', formula:'CaCO₃·MgCO₃', categoria:'Ca', n:0, p2o5:0, k2o:0, cao:30, mgo:20, s:0, forma:'granulado', efecto_ph:'alcaliniza', soluble:false, precio_kg:null, observ:'Sube pH y aporta Mg simultáneamente.' },
+  { id:'min_c03', nombre:'Yeso agrícola', formula:'CaSO₄·2H₂O', categoria:'Ca', n:0, p2o5:0, k2o:0, cao:32, mgo:0, s:18, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'No modifica pH. Útil para corregir Na intercambiable.' },
+  { id:'min_c04', nombre:'Sulfato de magnesio (sal de Epsom)', formula:'MgSO₄·7H₂O', categoria:'Mg', n:0, p2o5:0, k2o:0, cao:0, mgo:16, s:13, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Soluble, ideal fertirriego.' },
+  { id:'min_c05', nombre:'Nitrato de calcio', formula:'Ca(NO₃)₂·4H₂O', categoria:'Ca', n:15.5, p2o5:0, k2o:0, cao:27, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Aporta 15.5% N. Soluble, ideal fertirriego.' },
+  // MICROELEMENTOS
+  { id:'min_m01', nombre:'Sulfato de zinc', formula:'ZnSO₄·7H₂O', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:11, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Zn:23}, precio_kg:null, observ:'23% Zn. Suelo o foliar.' },
+  { id:'min_m02', nombre:'Sulfato de manganeso', formula:'MnSO₄·H₂O', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:19, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Mn:32}, precio_kg:null, observ:'32% Mn.' },
+  { id:'min_m03', nombre:'Sulfato de cobre', formula:'CuSO₄·5H₂O', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:12, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Cu:25}, precio_kg:null, observ:'25% Cu. Cuidado fitotoxicidad foliar.' },
+  { id:'min_m04', nombre:'Ácido bórico', formula:'H₃BO₃', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, micros:{B:17.5}, precio_kg:null, observ:'17.5% B. Foliar o fertirriego.' },
+  { id:'min_m05', nombre:'Bórax', formula:'Na₂B₄O₇·10H₂O', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:true, micros:{B:11}, precio_kg:null, observ:'11% B. Aplicación al suelo.' },
+  { id:'min_m06', nombre:'Quelato de hierro EDDHA', formula:'Fe-EDDHA', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Fe:6}, precio_kg:null, observ:'6% Fe. Estable hasta pH 9. Para suelos calcáreos.' },
+  { id:'min_m07', nombre:'Quelato de hierro EDTA', formula:'Fe-EDTA', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Fe:13}, precio_kg:null, observ:'13% Fe. Estable hasta pH 6.5.' },
+  // ─── MEZCLAS NPK COMERCIALES ───
+  { id:'min_x01', nombre:'Novatec Classic 12-8-16', formula:'NPK 12-8-16 +3MgO+S', categoria:'NPK', n:12, p2o5:8, k2o:16, cao:0, mgo:3, s:6, forma:'granulado', efecto_ph:'neutro', soluble:false, micros:{B:0.02}, precio_kg:null, observ:'Compo · contiene DMPP (estabilizador NH₄). Reducir dosis de N por mejor eficiencia. Hortalizas y frutales.' },
+  { id:'min_x02', nombre:'Novatec Premium 15-3-20', formula:'NPK 15-3-20 +2MgO+S', categoria:'NPK', n:15, p2o5:3, k2o:20, cao:0, mgo:2, s:5, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Compo · alto K, bajo P. Para suelos con P adecuado. Cultivos K-demandantes.' },
+  { id:'min_x03', nombre:'Yara Complex 12-11-18', formula:'NPK 12-11-18 +2.7MgO+8S', categoria:'NPK', n:12, p2o5:11, k2o:18, cao:0, mgo:2.7, s:8, forma:'granulado', efecto_ph:'neutro', soluble:false, micros:{B:0.015,Fe:0.2,Mn:0.02,Zn:0.02}, precio_kg:null, observ:'Yara · NPK balanceado con Mg, S y micros. Universal hortícola/frutícola.' },
+  { id:'min_x04', nombre:'Yara Mila Cropcare 11-11-21', formula:'NPK 11-11-21 +2.6MgO+8S', categoria:'NPK', n:11, p2o5:11, k2o:21, cao:0, mgo:2.6, s:8, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Yara · alto K. Para etapas de fructificación y cultivos K-demandantes.' },
+  { id:'min_x05', nombre:'Mezcla 20-20-20', formula:'NPK 20-20-20', categoria:'NPK', n:20, p2o5:20, k2o:20, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'NPK soluble balanceado, ideal fertirriego en establecimiento.' },
+  { id:'min_x06', nombre:'Mezcla 15-15-15', formula:'NPK 15-15-15', categoria:'NPK', n:15, p2o5:15, k2o:15, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Mezcla equilibrada estándar. Aplicación al voleo.' },
+  { id:'min_x07', nombre:'Mezcla papa 13-26-6', formula:'NPK 13-26-6', categoria:'NPK', n:13, p2o5:26, k2o:6, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Alto P. Pre-trasplante en suelos deficientes en P o cultivos P-demandantes.' },
+  { id:'min_x08', nombre:'Mezcla hortalicera 8-25-15', formula:'NPK 8-25-15', categoria:'NPK', n:8, p2o5:25, k2o:15, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Pre-trasplante hortalizas, alto P para enraizamiento.' },
+  { id:'min_x09', nombre:'Cropmaster 5-10-23', formula:'NPK 5-10-23', categoria:'NPK', n:5, p2o5:10, k2o:23, cao:0, mgo:0, s:0, forma:'granulado', efecto_ph:'neutro', soluble:false, precio_kg:null, observ:'Post-floración / fructificación. Bajo N, alto K.' },
+
+  // === FOSFORADOS ADICIONALES (CARCFERT) ===
+  { id:'min_p06', nombre:'Fosfato monopotásico (MKP)', formula:'KH₂PO₄', categoria:'P', n:0, p2o5:52, k2o:34, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:0.74, ph_1g:5.0, sol_20:230, pm:136, precio_kg:null, observ:'Soluble, alta pureza. Ideal fertirriego floración/cuaje. Bajo CE.' },
+  { id:'min_p07', nombre:'Ácido fosfórico 85%', formula:'H₃PO₄', categoria:'P', n:0, p2o5:61, k2o:0, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'acidifica', soluble:true, ce_1g:1.7, ph_1g:2.6, densidad:1.68, pm:98, precio_kg:null, observ:'Acidificante + P. Manejo cuidadoso. 26% P elemento.' },
+  { id:'min_p08', nombre:'Fosfato de urea', formula:'(NH₂)₂CO·H₃PO₄', categoria:'P', n:18, p2o5:44, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'acidifica', soluble:true, ce_1g:0.15, ph_1g:2.7, pm:158, precio_kg:null, observ:'Soluble, pH muy bajo. Útil para acidificar fertirriego.' },
+
+  // === POTÁSICOS ADICIONALES ===
+  { id:'min_k05', nombre:'Tiosulfato de potasio (KTS)', formula:'K₂S₂O₃', categoria:'K', n:0, p2o5:0, k2o:25.3, cao:0, mgo:0, s:17, forma:'liquido', efecto_ph:'neutro', soluble:true, ce_1g:1.05, ph_1g:6.2, densidad:1.47, precio_kg:null, observ:'Líquido. Aporta K + S. No mezclar con Ca.' },
+
+  // === CÁLCICOS ADICIONALES ===
+  { id:'min_c06', nombre:'Cloruro de calcio', formula:'CaCl₂·2H₂O', categoria:'Ca', n:0, p2o5:0, k2o:0, cao:38, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, ce_1g:1.2, ph_1g:6.5, densidad:2.15, sol_20:740, pm:147, precio_kg:null, observ:'Soluble. Aporta Cl. Útil para corrección rápida de Ca. NO en cultivos sensibles a Cl.' },
+
+  // === LÍNEA KSC PHYACTYL TIMAC (ficha oficial 8 productos) ===
+  { id:'min_t01', nombre:'KSC I Phyactyl Amarillo', formula:'14-40-5 + ME', categoria:'NPK', n:14, p2o5:40, k2o:5, cao:0, mgo:0, s:5.2, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:0.1,Cu:0.05,Fe:0.1,Mo:0.01,Zn:0.1}, precio_kg:null, observ:'TIMAC. Enraizamiento, prefloración y cuajado. Solubilidad maximizada en alta salinidad. SO₃ 13%.' },
+  { id:'min_t02', nombre:'KSC II Phyactyl Blanco', formula:'23-5-5 + ME', categoria:'NPK', n:23, p2o5:5, k2o:5, cao:0, mgo:0, s:11.6, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, micros:{Fe:0.1,Mn:0.05,Zn:0.1}, precio_kg:null, observ:'TIMAC. Crecimiento vegetativo. Alto N. SO₃ 29%. Quelados, bajo impacto CE.' },
+  { id:'min_t03', nombre:'KSC III Phyactyl Rojo', formula:'15-5-35 + ME', categoria:'NPK', n:15, p2o5:5, k2o:35, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:0.1,Fe:0.1,Mo:0.01}, precio_kg:null, observ:'TIMAC. Maduración y calidad. Alto K. Quelados, bajo impacto CE.' },
+  { id:'min_t04', nombre:'KSC IV Phyactyl Naranja', formula:'0-32-40 + ME', categoria:'NPK', n:0, p2o5:32, k2o:40, cao:0, mgo:0, s:4.4, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:0.1,Fe:0.1,Mo:0.1}, precio_kg:null, observ:'TIMAC. Cuajado y amarre de frutos. Alto P+K, sin N. SO₃ 11%.' },
+  { id:'min_t05', nombre:'KSC V Phyactyl Rosado', formula:'8-16-42 + ME', categoria:'NPK', n:8, p2o5:16, k2o:42, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:0.1,Fe:0.1,Mn:0.05,Zn:0.1}, precio_kg:null, observ:'TIMAC. Desarrollo, engorde y maduración. Muy alto K. Quelados, bajo impacto CE.' },
+  { id:'min_t06', nombre:'KSC VI Phyactyl Verde', formula:'14-12-14 + ME', categoria:'NPK', n:14, p2o5:12, k2o:14, cao:0, mgo:0, s:14, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, micros:{B:0.1,Cu:0.1,Fe:0.1,Mn:0.1,Zn:0.1}, precio_kg:null, observ:'TIMAC. Desarrollo, engorde y maduración. NPK balanceado. SO₃ 35%.' },
+  { id:'min_t07', nombre:'KSC VII Phyactyl Gris', formula:'15-9-0 +20CaO', categoria:'NPK', n:15, p2o5:9, k2o:0, cao:20, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'TIMAC. Engorde y calidad de fruto. Aporte alto de Ca + N + P, sin K.' },
+  { id:'min_t08', nombre:'KSC MIX Phyactyl Azul', formula:'Mix Mg+S+ME', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:15, s:11.2, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:0.5,Cu:0.5,Fe:2.5,Mn:2,Mo:0.2,Zn:1.5}, precio_kg:null, observ:'TIMAC. Corrector de carencias de microelementos. Alto Mg + S + 6 micros quelados.' },
+
+  // === LÍNEA ULTRASOL SQM ===
+  { id:'min_u01', nombre:'Ultrasol Inicial', formula:'15-30-15 +ME', categoria:'NPK', n:15, p2o5:30, k2o:15, cao:0, mgo:1, s:1, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:1.09, ph_1g:5.4, sol_20:383, n_no3:6.75, n_nh4:8.25, micros:{B:0.025,Cu:0.005,Fe:0.05,Mn:0.025,Mo:0.005,Zn:0.025}, precio_kg:null, observ:'SQM. Establecimiento. Alto P para enraizamiento. Con micros quelados.' },
+  { id:'min_u02', nombre:'Ultrasol Desarrollo', formula:'18-6-18 +ME', categoria:'NPK', n:18, p2o5:6, k2o:18, cao:0, mgo:1, s:1, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:1.34, ph_1g:5.4, sol_20:495, n_no3:8.28, n_nh4:9.72, micros:{B:0.025,Cu:0.005,Fe:0.05,Mn:0.025,Mo:0.005,Zn:0.025}, precio_kg:null, observ:'SQM. Crecimiento vegetativo. NPK balanceado N=K, bajo P.' },
+  { id:'min_u03', nombre:'Ultrasol Crecimiento', formula:'25-10-10 +ME', categoria:'NPK', n:25, p2o5:10, k2o:10, cao:0, mgo:1, s:1, forma:'soluble', efecto_ph:'acidifica', soluble:true, ce_1g:1.33, ph_1g:5.4, sol_20:554, n_no3:13, n_nh4:12, micros:{B:0.025,Cu:0.005,Fe:0.05,Mn:0.025,Mo:0.005,Zn:0.025}, precio_kg:null, observ:'SQM. Crecimiento intenso. Alto N. Etapa vegetativa.' },
+  { id:'min_u04', nombre:'Ultrasol Producción', formula:'13-6-41', categoria:'NPK', n:13, p2o5:6, k2o:41, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, ce_1g:1.25, ph_1g:5.6, sol_20:410, n_no3:11.83, n_nh4:1.17, precio_kg:null, observ:'SQM. Producción / cuaje y maduración. Muy alto K. N predominantemente NO₃.' },
+  { id:'min_u05', nombre:'Ultrasol Multipropósito', formula:'18-18-18 +ME', categoria:'NPK', n:18, p2o5:18, k2o:18, cao:0, mgo:1, s:1, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:1.18, ph_1g:5.2, sol_20:435, n_no3:9.9, n_nh4:8.1, micros:{B:0.025,Cu:0.005,Fe:0.05,Mn:0.025,Mo:0.005,Zn:0.025}, precio_kg:null, observ:'SQM. Mantención y todo cultivo. NPK balanceado con micros.' },
+  { id:'min_u06', nombre:'Ultrasol Nit ONE K', formula:'22-0-10 +S', categoria:'N', n:22, p2o5:0, k2o:10, cao:0, mgo:0, s:13, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:1.65, ph_1g:5.5, sol_20:107, n_no3:30, n_nh4:70, precio_kg:null, observ:'SQM. Fuente de N (70% NH₄ + 30% NO₃ del N total) con K + S. Nitrificación regulada.' },
+
+  // === SUPERNITRO ===
+  { id:'min_n06', nombre:'SuperNitro', formula:'25% N +S', categoria:'N', n:25, p2o5:0, k2o:0, cao:0, mgo:0, s:13, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, ce_1g:1.06, ph_1g:7.7, n_no3:8.4, n_nh4:16.6, precio_kg:null, observ:'Fuente de N con S. Mezcla NO₃/NH₄ ~33/67. Para fertirriego.' },
+
+  // === LÍNEA HARVEST MORE ===
+  { id:'min_h01', nombre:'Harvest More 30-10-10', formula:'30-10-10 +ME', categoria:'NPK', n:30, p2o5:10, k2o:10, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'lev_acidifica', soluble:true, micros:{B:0.02,Co:0.005,Cu:0.05,Fe:0.1,Mn:0.05,Mo:0.0005,Zn:0.05}, precio_kg:null, observ:'Soluble crecimiento vegetativo. Alto N. Con micros y Co.' },
+  { id:'min_h02', nombre:'Harvest More 5-5-45', formula:'5-5-45', categoria:'NPK', n:5, p2o5:5, k2o:45, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Soluble alto K. Para fructificación / maduración.' },
+  { id:'min_h03', nombre:'Harvest More 20-20-20', formula:'20-20-20', categoria:'NPK', n:20, p2o5:20, k2o:20, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Soluble NPK balanceado. Mantención y fertirriego general.' },
+
+  // === FETRILON COMBI (Compo Expert) ===
+  { id:'min_m08', nombre:'Fetrilon Combi 1', formula:'Mix micros con B alto', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:2, s:2.6, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{B:1.5,Co:0.005,Cu:0.5,Fe:4,Mn:3,Mo:0.05,Zn:4}, precio_kg:null, observ:'COMPO. Mix micros original con B 1.5%, sin K. Quelatos EDTA. Para fertirriego.' },
+  { id:'min_m09', nombre:'Fetrilon Combi 2', formula:'Mix micros con K + B', categoria:'micro', n:0, p2o5:0, k2o:5.1, cao:0, mgo:1.2, s:1.3, forma:'soluble', efecto_ph:'neutro', soluble:true, ce_1g:0.50, ph_1g:6.47, densidad:900, sol_20:300, micros:{B:1.5,Cu:0.5,Fe:4,Mn:3,Mo:0.05,Zn:4}, precio_kg:null, observ:'COMPO. Mix micros con K₂O 5.1%. Quelatos EDTA al 100%. Microgránulos hidrosolubles. Foliar y fertirriego.' },
+
+  // === ESPECIALIDADES (boro, micros específicos, bioestimulantes radiculares) ===
+  { id:'min_b01', nombre:'Bimore', formula:'B líquido', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, micros:{B:10}, precio_kg:null, observ:'⚠ Verificar composición exacta con NUTRIEN. Boro líquido foliar para floración/cuajado. Etanolamina o complejado. Dosis típica 0.5-1 L/ha.' },
+  { id:'min_z01', nombre:'Zincfull', formula:'Zn quelato EDTA', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, micros:{Zn:7}, precio_kg:null, observ:'ROVENSA. Zinc quelatado EDTA. Foliar para corregir deficiencias de Zn. Crítico en suelos alcalinos.' },
+  { id:'min_f04', nombre:'Ultraferro', formula:'Fe quelato EDDHA', categoria:'micro', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'soluble', efecto_ph:'neutro', soluble:true, micros:{Fe:6}, precio_kg:null, observ:'ROVENSA. Hierro quelatado con EDDHA (alta estabilidad pH 4-9). Para clorosis férrica en suelos alcalinos con bicarbonatos.' },
+  { id:'min_k06', nombre:'Macroquel Potasio', formula:'K complejado', categoria:'K', n:0, p2o5:0, k2o:25, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'⚠ Verificar composición exacta con proveedor. K complejado con ácidos orgánicos. Foliar de alta absorción para llenado de fruto.' },
+  { id:'min_k07', nombre:'AgroK', formula:'K-acetato/orgánico', categoria:'K', n:0, p2o5:0, k2o:30, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'COSMOCEL. ⚠ Verificar composición exacta. Potasio foliar/riego de rápida asimilación. Para llenado y maduración.' },
+
+  // === BIOESTIMULANTES RADICULARES Y ALGAS ===
+  { id:'min_o01', nombre:'Spurt', formula:'Alga roja líquida', categoria:'bioestimulante', n:0, p2o5:0, k2o:0, cao:0, mgo:0, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'⚠ Verificar marca y composición exacta. Bioestimulante a base de algas rojas. Aporta promotores de crecimiento, polisacáridos. Vía riego/foliar.' },
+  { id:'min_o02', nombre:'Humus de lombriz líquido', formula:'Extracto orgánico', categoria:'bioestimulante', n:1.5, p2o5:0.5, k2o:1.0, cao:0.5, mgo:0.2, s:0, forma:'liquido', efecto_ph:'neutro', soluble:true, precio_kg:null, observ:'Vermicompost líquido. Aporta ácidos húmicos/fúlvicos, microbiología, NPK orgánico. Vía riego para activación rizosférica. ⚠ Composición varía según proveedor.' },
+];
+
+// Rangos óptimos por cultivo (basado en INIA + literatura)
+const CULTIVOS_OPTIMO = {
+  tomate: {
+    nombre:'Tomate', icon:'🍅',
+    ph:[6.0,6.8], ce_max:2.5, mo_min:2.5,
+    n:[40,80], p:[25,50], k_disp:[180,300],
+    ca_meq:[8,15], mg_meq:[2,4], k_meq:[0.4,0.8],
+    sat_ca:[55,75], sat_mg:[12,20], sat_k:[3,7],
+    ca_mg:[3,5], mg_k:[3,6],
+    fe:[4,20], mn:[1,15], zn:[1,5], cu:[0.5,3], b:[0.6,1.2],
+    sensibilidad: { Cl:'media', Na:'media', HCO3:'alta', pH_alto:'alta' },
+    aporte_base: { N:200, P2O5:200, K2O:300 },
+    aporte_etapas: {
+      'establecimiento': { N:20, P2O5:60, K2O:30 },
+      'vegetativo':       { N:60, P2O5:80, K2O:80 },
+      'floracion':        { N:50, P2O5:30, K2O:80 },
+      'cuaje':            { N:50, P2O5:20, K2O:80 },
+      'cosecha':          { N:20, P2O5:10, K2O:30 },
+    }
+  },
+  pimiento: {
+    nombre:'Pimiento', icon:'🫑',
+    ph:[6.0,7.0], ce_max:2.0, mo_min:2.5,
+    n:[35,70], p:[25,45], k_disp:[180,280],
+    ca_meq:[8,14], mg_meq:[2,4], k_meq:[0.4,0.7],
+    sat_ca:[60,75], sat_mg:[12,18], sat_k:[3,6],
+    ca_mg:[3,5], mg_k:[3,6],
+    fe:[4,15], mn:[1,12], zn:[1,4], cu:[0.5,2.5], b:[0.5,1.0],
+    sensibilidad: { Cl:'alta', Na:'alta', HCO3:'media', pH_alto:'media' },
+    aporte_base: { N:180, P2O5:180, K2O:250 },
+    aporte_etapas: {
+      'establecimiento':{N:18,P2O5:54,K2O:25},
+      'vegetativo':     {N:54,P2O5:72,K2O:65},
+      'floracion':      {N:45,P2O5:27,K2O:65},
+      'produccion':     {N:45,P2O5:18,K2O:65},
+      'cosecha':        {N:18,P2O5:9,K2O:30},
+    }
+  },
+  pepino: {
+    nombre:'Pepino', icon:'🥒',
+    ph:[6.0,7.0], ce_max:2.0, mo_min:2.5,
+    n:[35,70], p:[20,40], k_disp:[160,260],
+    ca_meq:[6,12], mg_meq:[1.5,3.5], k_meq:[0.3,0.6],
+    sat_ca:[60,75], sat_mg:[10,18], sat_k:[3,6],
+    ca_mg:[3,5], mg_k:[3,5],
+    fe:[4,15], mn:[1,12], zn:[1,4], cu:[0.5,2.5], b:[0.4,0.8],
+    sensibilidad: { Cl:'alta', Na:'alta', HCO3:'media', pH_alto:'media' },
+    aporte_base: { N:160, P2O5:140, K2O:220 },
+    aporte_etapas: {
+      'establecimiento':{N:16,P2O5:42,K2O:22},
+      'vegetativo':     {N:48,P2O5:56,K2O:55},
+      'floracion':      {N:40,P2O5:21,K2O:55},
+      'produccion':     {N:40,P2O5:14,K2O:55},
+      'cosecha':        {N:16,P2O5:7,K2O:33},
+    }
+  },
+  sandia: {
+    nombre:'Sandía', icon:'🍉',
+    ph:[6.0,7.0], ce_max:2.0, mo_min:2.0,
+    n:[30,60], p:[20,40], k_disp:[200,350],
+    ca_meq:[6,12], mg_meq:[1.5,3.5], k_meq:[0.3,0.7],
+    sat_ca:[60,75], sat_mg:[10,18], sat_k:[3,6],
+    ca_mg:[3,5], mg_k:[3,5],
+    fe:[4,15], mn:[1,10], zn:[1,4], cu:[0.5,2.5], b:[0.5,1.0],
+    sensibilidad: { Cl:'media', Na:'media', HCO3:'media', pH_alto:'media' },
+    aporte_base: { N:140, P2O5:120, K2O:200 },
+    aporte_etapas: {
+      'establecimiento':{N:14,P2O5:36,K2O:20},
+      'vegetativo':     {N:42,P2O5:48,K2O:50},
+      'floracion':      {N:35,P2O5:18,K2O:50},
+      'cuaje':          {N:35,P2O5:12,K2O:50},
+      'cosecha':        {N:14,P2O5:6,K2O:30},
+    }
+  },
+  cebolla: {
+    nombre:'Cebolla', icon:'🧅',
+    ph:[6.0,7.0], ce_max:1.5, mo_min:2.0,
+    n:[30,60], p:[20,40], k_disp:[150,250],
+    ca_meq:[6,12], mg_meq:[1.5,3], k_meq:[0.3,0.6],
+    sat_ca:[60,75], sat_mg:[10,18], sat_k:[3,6],
+    ca_mg:[3,5], mg_k:[3,5],
+    fe:[4,15], mn:[1,10], zn:[1,4], cu:[0.5,2], b:[0.4,0.8],
+    sensibilidad: { Cl:'baja', Na:'media', HCO3:'baja', pH_alto:'baja' },
+    aporte_base: { N:120, P2O5:80, K2O:140 },
+    aporte_etapas: {
+      'establecimiento':{N:24,P2O5:32,K2O:14},
+      'crecim_foliar':  {N:48,P2O5:32,K2O:42},
+      'bulbificacion':  {N:36,P2O5:12,K2O:56},
+      'madurez':        {N:12,P2O5:4,K2O:28},
+    }
+  },
+  frutilla: {
+    nombre:'Frutilla', icon:'🍓',
+    ph:[5.5,6.5], ce_max:1.5, mo_min:3.0,
+    n:[40,70], p:[30,50], k_disp:[200,320],
+    ca_meq:[6,10], mg_meq:[1.5,3], k_meq:[0.4,0.7],
+    sat_ca:[55,70], sat_mg:[12,20], sat_k:[5,8],
+    ca_mg:[3,4], mg_k:[2,4],
+    fe:[6,20], mn:[2,15], zn:[2,6], cu:[0.5,2], b:[0.5,1.0],
+    sensibilidad: { Cl:'muy_alta', Na:'muy_alta', HCO3:'alta', pH_alto:'alta' },
+    aporte_base: { N:120, P2O5:100, K2O:200 },
+    aporte_etapas: {
+      'establecimiento':{N:24,P2O5:60,K2O:30},
+      'vegetativo':     {N:36,P2O5:30,K2O:60},
+      'floracion':      {N:24,P2O5:5,K2O:50},
+      'produccion':     {N:24,P2O5:5,K2O:40},
+      'pico_cosecha':   {N:12,P2O5:0,K2O:20},
+    }
+  },
+  limon: {
+    nombre:'Limón', icon:'🍋',
+    ph:[5.5,6.5], ce_max:1.5, mo_min:2.0,
+    n:[30,60], p:[15,30], k_disp:[150,250],
+    ca_meq:[8,15], mg_meq:[2,4], k_meq:[0.3,0.6],
+    sat_ca:[55,75], sat_mg:[12,18], sat_k:[3,5],
+    ca_mg:[3,5], mg_k:[3,5],
+    fe:[5,15], mn:[1,10], zn:[1,4], cu:[0.5,2], b:[0.5,1.0],
+    sensibilidad: { Cl:'alta', Na:'alta', HCO3:'media', pH_alto:'media' },
+    aporte_base: { N:140, P2O5:60, K2O:160 },
+    aporte_etapas: {
+      'brotacion':      {N:42,P2O5:18,K2O:32},
+      'floracion':      {N:28,P2O5:18,K2O:40},
+      'cuaje':          {N:28,P2O5:12,K2O:40},
+      'engorda_fruta':  {N:28,P2O5:6,K2O:32},
+      'cosecha':        {N:14,P2O5:6,K2O:16},
+    }
+  },
+  palto: {
+    nombre:'Palto', icon:'🥑',
+    ph:[5.5,7.0], ce_max:1.5, mo_min:2.0,
+    n:[25,55], p:[15,30], k_disp:[150,250],
+    ca_meq:[8,15], mg_meq:[2,4], k_meq:[0.3,0.6],
+    sat_ca:[60,75], sat_mg:[12,18], sat_k:[3,5],
+    ca_mg:[3,5], mg_k:[3,5],
+    fe:[5,15], mn:[1,8], zn:[1,4], cu:[0.5,2], b:[0.4,0.8],
+    sensibilidad: { Cl:'muy_alta', Na:'muy_alta', HCO3:'alta', pH_alto:'media' },
+    aporte_base: { N:120, P2O5:50, K2O:140 },
+    aporte_etapas: {
+      'pre_floracion':  {N:30,P2O5:20,K2O:25},
+      'floracion':      {N:24,P2O5:15,K2O:30},
+      'cuaje':          {N:24,P2O5:10,K2O:30},
+      'crecim_fruto':   {N:30,P2O5:5,K2O:40},
+      'madurez':        {N:12,P2O5:0,K2O:15},
+    }
+  },
+};
+
+// ═══════════════ STORAGE ═══════════════
+const Storage = {
+  KEY_ENM: 'sapsoil_enmiendas',
+  KEY_MIN: 'sapsoil_minerales',
+  KEY_AN:  'sapsoil_analisis_actual',
+  KEY_SAT: 'sapsoil_extracto_saturado',
+  KEY_VER: 'sapsoil_catalog_version',
+  CURRENT_VERSION: 4,  // incrementar cuando se agreguen productos al catálogo base
+
+  initCatalog() {
+    const ver = parseInt(localStorage.getItem(this.KEY_VER) || '0');
+    // Si la versión es vieja, mergear nuevos productos sin perder los precios y custom del usuario
+    if (ver < this.CURRENT_VERSION) {
+      this.mergeBaseCatalog();
+      localStorage.setItem(this.KEY_VER, String(this.CURRENT_VERSION));
+    }
+    if (!localStorage.getItem(this.KEY_ENM)) {
+      localStorage.setItem(this.KEY_ENM, JSON.stringify(ENMIENDAS_BASE));
+    }
+    if (!localStorage.getItem(this.KEY_MIN)) {
+      localStorage.setItem(this.KEY_MIN, JSON.stringify(MINERALES_BASE));
+    }
+  },
+  mergeBaseCatalog() {
+    // Merge: mantiene productos custom del usuario + precios, agrega nuevos productos del catálogo base
+    const existingMin = JSON.parse(localStorage.getItem(this.KEY_MIN) || '[]');
+    const existingMap = {};
+    existingMin.forEach(p => { existingMap[p.id] = p; });
+    const merged = MINERALES_BASE.map(base => {
+      // si ya existía, conservar precio del usuario
+      if (existingMap[base.id]) return { ...base, precio_kg: existingMap[base.id].precio_kg };
+      return base;
+    });
+    // agregar productos custom del usuario que no están en BASE
+    existingMin.forEach(p => {
+      if (!MINERALES_BASE.find(b => b.id === p.id)) merged.push(p);
+    });
+    localStorage.setItem(this.KEY_MIN, JSON.stringify(merged));
+
+    // mismo para enmiendas
+    const existingEnm = JSON.parse(localStorage.getItem(this.KEY_ENM) || '[]');
+    const existingEnmMap = {};
+    existingEnm.forEach(p => { existingEnmMap[p.id] = p; });
+    const mergedEnm = ENMIENDAS_BASE.map(base => {
+      if (existingEnmMap[base.id]) return { ...base, precio_ton: existingEnmMap[base.id].precio_ton, precio_m3: existingEnmMap[base.id].precio_m3 };
+      return base;
+    });
+    existingEnm.forEach(p => {
+      if (!ENMIENDAS_BASE.find(b => b.id === p.id)) mergedEnm.push(p);
+    });
+    localStorage.setItem(this.KEY_ENM, JSON.stringify(mergedEnm));
+  },
+  getEnmiendas() { return JSON.parse(localStorage.getItem(this.KEY_ENM) || '[]'); },
+  saveEnmiendas(d) { localStorage.setItem(this.KEY_ENM, JSON.stringify(d)); },
+  getMinerales() { return JSON.parse(localStorage.getItem(this.KEY_MIN) || '[]'); },
+  saveMinerales(d) { localStorage.setItem(this.KEY_MIN, JSON.stringify(d)); },
+  saveAnalisis(d) { localStorage.setItem(this.KEY_AN, JSON.stringify(d)); },
+  getAnalisis() { try { return JSON.parse(localStorage.getItem(this.KEY_AN)); } catch(e) { return null; } },
+  saveSaturado(d) { localStorage.setItem(this.KEY_SAT, JSON.stringify(d)); },
+  getSaturado() { try { return JSON.parse(localStorage.getItem(this.KEY_SAT)); } catch(e) { return null; } },
+  hasSaturado() {
+    const s = this.getSaturado();
+    if (!s) return false;
+    // ¿Hay al menos un valor cargado?
+    const hasIon = ['Ca','Mg','K','Na','HCO3','Cl','SO4','NO3'].some(k => s[k] != null && !isNaN(s[k]) && s[k] > 0);
+    return hasIon || (s.ce && s.ce > 0);
+  },
+  resetCatalog() {
+    localStorage.removeItem(this.KEY_ENM);
+    localStorage.removeItem(this.KEY_MIN);
+    localStorage.removeItem(this.KEY_VER);
+    this.initCatalog();
+  }
+};
+
+// ═══════════════ NAVEGACIÓN ═══════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === name));
+  if (name === 'recomendar') renderRecommendations();
+  if (name === 'resolver') renderResolver();
+  if (name === 'enmiendas') renderEnmiendas();
+  if (name === 'minerales') renderMinerales();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => goPage(t.dataset.page);
+});
+
+// ═══════════════ HELPERS ═══════════════
+const $ = id => document.getElementById(id);
+const v = id => parseFloat($(id).value) || 0;
+const sv = id => $(id).value || '';
+const fmt = n => n == null || isNaN(n) ? '—' : (Math.abs(n) >= 100 ? Math.round(n).toLocaleString('es') : n.toFixed(2).replace('.',','));
+const fmtMoney = n => n == null || isNaN(n) ? '—' : '$' + Math.round(n).toLocaleString('es');
+
+// ═══════════════ ANÁLISIS - cálculos ═══════════════
+function getAnalisisData() {
+  return {
+    fecha: sv('an-fecha'),
+    predio: sv('an-predio'),
+    sector: sv('an-sector'),
+    n_lab: sv('an-lab'),
+    prof_min: v('prof-min'),
+    prof_max: v('prof-max'),
+    laboratorio: sv('lab-name'),
+    ph: v('ph'), ce: v('ce'), mo: v('mo'),
+    n: v('n'), p: v('p'), k_disp: v('k-disp'),
+    ca: v('ca'), mg: v('mg'), k: v('k'), na: v('na'),
+    cic: v('cic'),
+    fe: v('fe'), mn: v('mn'), zn: v('zn'), cu: v('cu'), b: v('b'), s: v('s'),
+    arena: v('arena'), limo: v('limo'), arcilla: v('arcilla'),
+    da: v('da'), cc: v('cc'), pmp: v('pmp'),
+  };
+}
+
+function validateAnalisis() {
+  const d = getAnalisisData();
+  // Suma bases
+  const sum = d.ca + d.mg + d.k + d.na;
+  $('sum-bases').value = sum > 0 ? sum.toFixed(2) : '';
+
+  const ratioCaMg = d.mg > 0 ? d.ca/d.mg : 0;
+  const ratioMgK = d.k > 0 ? d.mg/d.k : 0;
+  const pctCIC = d.cic > 0 ? (sum/d.cic)*100 : 0;
+
+  // Update metrics
+  if (d.cic > 0 && sum > 0) {
+    $('m-cic-status').textContent = sum > d.cic * 1.05 ? '✗' : '✓';
+    $('mb-cic').className = 'm-box ' + (sum > d.cic * 1.05 ? 'alert-high' : 'ok');
+  } else { $('m-cic-status').textContent = '—'; $('mb-cic').className = 'm-box'; }
+
+  $('m-pct-cic').textContent = pctCIC > 0 ? pctCIC.toFixed(0) + '%' : '—';
+  if (pctCIC > 0) {
+    $('mb-pct').className = 'm-box ' + (pctCIC < 50 ? 'alert-low' : pctCIC > 100 ? 'alert-high' : 'ok');
+  }
+  $('m-camg').textContent = ratioCaMg > 0 ? ratioCaMg.toFixed(2) : '—';
+  if (ratioCaMg > 0) {
+    $('mb-camg').className = 'm-box ' + (ratioCaMg < 2.5 || ratioCaMg > 6 ? 'alert-low' : 'ok');
+  }
+  $('m-mgk').textContent = ratioMgK > 0 ? ratioMgK.toFixed(1) : '—';
+  if (ratioMgK > 0) {
+    $('mb-mgk').className = 'm-box ' + (ratioMgK < 2 || ratioMgK > 8 ? 'alert-low' : 'ok');
+  }
+
+  const balAlert = $('balance-alert');
+  let alerts = [];
+  if (sum > 0 && d.cic > 0 && sum > d.cic * 1.05) {
+    alerts.push('⚠️ Suma de bases (' + sum.toFixed(1) + ') supera CIC (' + d.cic + '). Verificar valores.');
+  }
+  if (ratioCaMg > 0 && ratioCaMg < 2.5) {
+    alerts.push('⚠️ Ca/Mg muy bajo (' + ratioCaMg.toFixed(1) + '). Mg en exceso relativo, puede inhibir absorción de Ca.');
+  }
+  if (ratioCaMg > 6) {
+    alerts.push('⚠️ Ca/Mg muy alto (' + ratioCaMg.toFixed(1) + '). Mg deficiente relativo.');
+  }
+  if (alerts.length) {
+    balAlert.className = 'alert-msg am-warn';
+    balAlert.innerHTML = alerts.join('<br>');
+  } else if (d.cic > 0) {
+    balAlert.className = 'alert-msg am-ok';
+    balAlert.innerHTML = '✓ Validación química coherente.';
+  } else {
+    balAlert.style.display = 'none';
+  }
+
+  // Texture validation
+  const tAlert = $('texture-alert');
+  const sumT = d.arena + d.limo + d.arcilla;
+  if (sumT > 0) {
+    if (Math.abs(sumT - 100) > 2) {
+      tAlert.className = 'alert-msg am-warn';
+      tAlert.textContent = '⚠️ Suma textura = ' + sumT + '% (debe ser 100%). Verificar valores.';
+    } else {
+      tAlert.className = 'alert-msg am-ok';
+      tAlert.textContent = '✓ Textura coherente: ' + classifyTexture(d.arena, d.limo, d.arcilla);
+    }
+  } else { tAlert.style.display = 'none'; }
+
+  Storage.saveAnalisis(d);
+}
+
+function classifyTexture(a, l, ar) {
+  if (ar >= 40) return 'Arcillosa';
+  if (ar >= 27 && a < 45) return 'Franco arcillosa';
+  if (a >= 70 && ar < 15) return 'Franco arenosa';
+  if (a >= 85) return 'Arenosa';
+  if (l >= 50 && ar < 27) return 'Franco limosa';
+  return 'Franca';
+}
+
+function loadExample() {
+  // Equipo 4 Sector 1 de Cuncumen — el caso más crítico
+  $('an-predio').value = 'Agrícola Cuncumen S.A.';
+  $('an-sector').value = 'Equipo 4 Sector 1';
+  $('an-lab').value = '264171';
+  $('lab-name').value = 'Agrolab';
+  $('an-fecha').valueAsDate = new Date();
+  $('prof-min').value = 0; $('prof-max').value = 20;
+  $('ph').value = 6.4; $('ce').value = 1.3; $('mo').value = 2.0;
+  $('n').value = 27; $('p').value = 4; $('k-disp').value = 64;
+  $('ca').value = 13.3; $('mg').value = 6.5; $('k').value = 0.16; $('na').value = 0.56;
+  $('cic').value = 29.5;
+  $('fe').value = 19.3; $('mn').value = 9.0; $('zn').value = 0.27; $('cu').value = 1.4; $('b').value = 0.08;
+  $('arena').value = 13; $('limo').value = 17; $('arcilla').value = 70;
+  $('da').value = 1.20; $('cc').value = 37.9; $('pmp').value = 24.4;
+  validateAnalisis();
+  $('tb-pred').textContent = 'Cuncumen';
+  $('tb-fecha').textContent = new Date().toLocaleDateString('es');
+}
+
+// Listeners para inputs del análisis
+document.querySelectorAll('#page-cargar input, #page-cargar select').forEach(el => {
+  el.addEventListener('input', validateAnalisis);
+});
+$('an-predio').addEventListener('input', () => { $('tb-pred').textContent = sv('an-predio') || 'Sin predio'; });
+$('an-fecha').addEventListener('input', () => { $('tb-fecha').textContent = sv('an-fecha') ? new Date(sv('an-fecha')).toLocaleDateString('es') : '—'; });
+
+// ═══════════════ MOTOR DE RECOMENDACIONES ═══════════════
+let currentCrop = 'tomate';
+
+document.querySelectorAll('#rec-crop-buttons .crop-btn').forEach(b => {
+  b.onclick = () => {
+    currentCrop = b.dataset.crop;
+    document.querySelectorAll('.crop-btn').forEach(x => x.classList.toggle('active', x.dataset.crop === currentCrop));
+    renderRecommendations();
+    // Refrescar también el extracto saturado si tiene datos cargados
+    if (typeof computeSaturado === 'function' && satValues && (satValues.Ca || satValues.Na || v('ss-ce') > 0)) {
+      computeSaturado();
+    }
+  };
+});
+
+function evalParam(value, range, opts={}) {
+  // returns: 'ok', 'low', 'high', 'critical_low', 'critical_high'
+  if (value == null || value === 0) return 'unknown';
+  const [min, max] = range;
+  if (value < min * 0.5) return 'critical_low';
+  if (value < min) return 'low';
+  if (value > max * 1.5) return 'critical_high';
+  if (value > max) return 'high';
+  return 'ok';
+}
+
+function classifyDeficit(found, optimal) {
+  // proportional gap
+  if (found <= 0) return 100;
+  const [lo, hi] = optimal;
+  if (found >= lo && found <= hi) return 0;
+  if (found < lo) return ((lo - found) / lo) * 100;
+  return ((found - hi) / hi) * 100;
+}
+
+function buildDiagnosis() {
+  const d = Storage.getAnalisis();
+  const c = CULTIVOS_OPTIMO[currentCrop];
+  if (!d || !c) return null;
+
+  const items = [];
+  // pH
+  const phEval = evalParam(d.ph, c.ph);
+  items.push({ param:'pH', valor:d.ph, optimo:c.ph, unit:'unidades', eval:phEval,
+    msg: phEval==='ok' ? 'pH dentro de rango óptimo.' :
+         phEval==='low' ? 'pH bajo. Considerar encalado con CaCO₃ o cal dolomita.' :
+         phEval==='critical_low' ? 'pH muy ácido. Encalar con prioridad antes de plantar.' :
+         phEval==='high' ? 'pH alto. Acidificar con sulfato de amonio o azufre elemental.' :
+         phEval==='critical_high' ? 'pH muy alcalino. Acidificación intensiva requerida.' : 'Sin datos.',
+    aporte: phEval==='low' || phEval==='critical_low' ? 'Cal agrícola o dolomita: 1500–3000 kg CaCO₃/ha' :
+            phEval==='high' || phEval==='critical_high' ? 'Azufre elemental: 500–1500 kg/ha (efecto progresivo)' : null
+  });
+  // CE
+  if (d.ce > 0) {
+    const ceEval = d.ce > c.ce_max * 1.5 ? 'critical_high' : d.ce > c.ce_max ? 'high' : 'ok';
+    items.push({ param:'Conductividad eléctrica', valor:d.ce, optimo:[0, c.ce_max], unit:'dS/m', eval:ceEval,
+      msg: ceEval==='ok' ? 'Salinidad sin problema.' :
+           ceEval==='high' ? 'Salinidad ligeramente alta. Lavar con riego abundante antes de trasplantar.' :
+           'Salinidad muy alta — riesgo de fitotoxicidad. Lavado intensivo necesario.',
+      aporte: ceEval !== 'ok' ? 'Lavado: 1500–2500 m³/ha de agua de buena calidad' : null
+    });
+  }
+  // M.O.
+  if (d.mo > 0) {
+    const moEval = d.mo < c.mo_min * 0.7 ? 'critical_low' : d.mo < c.mo_min ? 'low' : 'ok';
+    items.push({ param:'Materia orgánica', valor:d.mo, optimo:[c.mo_min, 5], unit:'%', eval:moEval,
+      msg: moEval==='ok' ? 'Contenido de M.O. adecuado.' :
+           moEval==='low' ? 'M.O. baja. Incorporar enmienda orgánica.' :
+           'M.O. muy baja — suelo desestructurado. Aplicación intensiva de enmiendas.',
+      aporte: moEval !== 'ok' ? 'Compost o enmienda orgánica: 30–40 m³/ha (subir M.O. ~0.5–1%)' : null
+    });
+  }
+  // Fósforo
+  if (d.p > 0) {
+    const pEval = evalParam(d.p, c.p);
+    let aporte = null;
+    if (pEval === 'critical_low') aporte = (c.aporte_base.P2O5 + 50) + ' kg P₂O₅/ha';
+    else if (pEval === 'low') aporte = c.aporte_base.P2O5 + ' kg P₂O₅/ha';
+    items.push({ param:'Fósforo (P-Olsen)', valor:d.p, optimo:c.p, unit:'mg/kg', eval:pEval,
+      msg: pEval==='ok' ? 'Disponibilidad adecuada de P.' :
+           pEval==='critical_low' ? 'P extremadamente bajo. Aplicación masiva pre-trasplante.' :
+           pEval==='low' ? 'P bajo. Aporte importante de P recomendado.' :
+           'P alto. Reducir aporte para evitar acumulación.',
+      aporte
+    });
+  }
+  // Potasio disponible
+  if (d.k_disp > 0) {
+    const kEval = evalParam(d.k_disp, c.k_disp);
+    let aporte = null;
+    if (kEval === 'critical_low') aporte = (c.aporte_base.K2O + 50) + ' kg K₂O/ha';
+    else if (kEval === 'low') aporte = c.aporte_base.K2O + ' kg K₂O/ha';
+    items.push({ param:'Potasio disponible', valor:d.k_disp, optimo:c.k_disp, unit:'mg/kg', eval:kEval,
+      msg: kEval==='ok' ? 'Disponibilidad adecuada de K.' :
+           kEval==='critical_low' ? 'K muy bajo. Riesgo de fragilidad y pobre calidad de fruto.' :
+           kEval==='low' ? 'K bajo. Aporte recomendado vía fertirriego o pre-trasplante.' :
+           'K alto. Vigilar relación con Ca y Mg.',
+      aporte
+    });
+  }
+  // Cationes intercambiables — Ca/Mg/K balance
+  if (d.cic > 0) {
+    const sum = d.ca + d.mg + d.k + d.na;
+    const sat_ca = sum > 0 ? (d.ca/d.cic)*100 : 0;
+    const sat_mg = sum > 0 ? (d.mg/d.cic)*100 : 0;
+    const sat_k  = sum > 0 ? (d.k/d.cic)*100 : 0;
+    const sat_na = sum > 0 ? (d.na/d.cic)*100 : 0;
+    // Ca/Mg ratio
+    if (d.mg > 0) {
+      const ratioCaMg = d.ca/d.mg;
+      const rEval = evalParam(ratioCaMg, c.ca_mg);
+      items.push({ param:'Relación Ca/Mg', valor:ratioCaMg, optimo:c.ca_mg, unit:'', eval:rEval,
+        msg: rEval==='ok' ? 'Balance Ca/Mg adecuado.' :
+             ratioCaMg < c.ca_mg[0] ? 'Mg en exceso relativo a Ca. Considerar yeso (CaSO₄) para subir Ca sin alterar pH.' :
+             'Mg deficiente relativo a Ca. Aportar Mg vía sulfato de magnesio o dolomita.',
+        aporte: rEval==='low' ? 'Yeso agrícola: 800–1500 kg/ha' : rEval==='high' ? 'MgSO₄·7H₂O: 80–150 kg/ha' : null
+      });
+    }
+    // Saturación Na
+    if (sat_na > 6) {
+      items.push({ param:'Saturación Na (%CIC)', valor:sat_na, optimo:[0,5], unit:'%', eval: sat_na>15?'critical_high':'high',
+        msg: sat_na > 15 ? 'Sodicidad alta — degrada estructura del suelo.' : 'Saturación Na elevada — vigilar acumulación.',
+        aporte: sat_na > 10 ? 'Yeso agrícola: 1000–2000 kg/ha + lavado' : null
+      });
+    }
+  }
+  // Microelementos
+  ['fe','mn','zn','cu','b'].forEach(el => {
+    if (d[el] > 0) {
+      const eEval = evalParam(d[el], c[el]);
+      const elName = {fe:'Hierro',mn:'Manganeso',zn:'Zinc',cu:'Cobre',b:'Boro'}[el];
+      const elSym = {fe:'Fe',mn:'Mn',zn:'Zn',cu:'Cu',b:'B'}[el];
+      let aporte = null;
+      if (eEval === 'low' || eEval === 'critical_low') {
+        const dose = { fe:'10–25 kg Fe/ha (quelato)', mn:'5–15 kg Mn/ha (sulfato)', zn:'5–15 kg Zn/ha', cu:'2–5 kg Cu/ha', b:'1–3 kg B/ha' }[el];
+        aporte = dose;
+      }
+      items.push({ param:elName + ' (' + elSym + ')', valor:d[el], optimo:c[el], unit:'mg/kg', eval:eEval,
+        msg: eEval==='ok' ? `${elName} adecuado.` :
+             eEval==='critical_low' ? `${elName} muy bajo — corregir antes de plantar.` :
+             eEval==='low' ? `${elName} bajo — aporte recomendado.` :
+             `${elName} alto — vigilar fitotoxicidad.`,
+        aporte
+      });
+    }
+  });
+
+  return items;
+}
+
+function renderRecommendations() {
+  const d = Storage.getAnalisis();
+  const sat = Storage.getSaturado();
+  const hasFertilidad = d && (d.ph || d.p || d.cic || d.k_ppm || d.ca || d.mg);
+  const hasSaturado = Storage.hasSaturado();
+
+  if (!hasFertilidad && !hasSaturado) {
+    $('rec-empty').style.display = 'block';
+    $('rec-content').style.display = 'none';
+    $('rec-empty').innerHTML = 'Cargue primero un análisis de suelo en la pestaña <strong>Cargar análisis</strong> · pueden ser datos de <strong>fertilidad estándar</strong>, <strong>extracto saturado</strong> (salinidad), o ambos.';
+    return;
+  }
+
+  $('rec-empty').style.display = 'none';
+  $('rec-content').style.display = 'block';
+
+  // Mostrar advertencia si solo hay un tipo de análisis
+  let bannerHtml = '';
+  if (!hasFertilidad && hasSaturado) {
+    bannerHtml = `<div style="background:linear-gradient(135deg,var(--blue-pale),#fff);border:1px solid #8AB5D9;border-radius:8px;padding:.65rem .85rem;margin-bottom:.7rem;font-size:.74rem;color:var(--navy);line-height:1.5">
+      <strong style="color:var(--blue);font-weight:700;display:block;margin-bottom:.2rem;font-family:'Cormorant Garamond',serif;font-size:.95rem">💧 Solo análisis de extracto saturado (salinidad) cargado</strong>
+      Las recomendaciones se basan en los iones disponibles en la solución del suelo. Para obtener un diagnóstico completo (P, M.O., CIC, fertilidad estándar), carga también un análisis de fertilidad de suelo en la pestaña <strong>Cargar análisis → Fertilidad</strong>.
+    </div>`;
+  } else if (hasFertilidad && !hasSaturado) {
+    bannerHtml = `<div style="background:linear-gradient(135deg,var(--amber-pale),#fff);border:1px solid #E8C470;border-radius:8px;padding:.65rem .85rem;margin-bottom:.7rem;font-size:.74rem;color:var(--navy);line-height:1.5">
+      <strong style="color:var(--amber);font-weight:700;display:block;margin-bottom:.2rem;font-family:'Cormorant Garamond',serif;font-size:.95rem">📊 Solo análisis de fertilidad estándar cargado</strong>
+      Para diagnosticar salinidad/sodicidad y disponibilidad real de iones, carga también un análisis de <strong>extracto saturado</strong> en la pestaña <strong>Cargar análisis → Extracto saturado</strong>.
+    </div>`;
+  }
+
+  // Insertar banner al inicio del contenido (debajo del crop selector)
+  const bannerCont = $('rec-info-banner') || (() => {
+    const div = document.createElement('div');
+    div.id = 'rec-info-banner';
+    $('rec-content').prepend(div);
+    return div;
+  })();
+  bannerCont.innerHTML = bannerHtml;
+
+  // CASO 1: solo extracto saturado sin fertilidad estándar
+  if (!hasFertilidad && hasSaturado) {
+    // Generar recomendaciones puramente desde extracto saturado
+    const items = buildDiagnosisFromSaturated();
+    renderDiagnosisItems(items);
+    return;
+  }
+
+  // CASO 2: fertilidad estándar (con o sin saturado)
+  const items = buildDiagnosis();
+  if (!items) return;
+
+  // Si también hay extracto saturado, agregar diagnóstico nutricional ion por ion
+  if (hasSaturado) {
+    const satItems = buildDiagnosisFromSaturated();
+    items.push(...satItems);
+  }
+
+  renderDiagnosisItems(items);
+}
+
+// Helper: render diagnosis items en cards
+function renderDiagnosisItems(items) {
+  const critical = items.filter(i => i.eval === 'critical_low' || i.eval === 'critical_high');
+  const warning  = items.filter(i => i.eval === 'low' || i.eval === 'high');
+  const ok       = items.filter(i => i.eval === 'ok');
+
+  $('count-critical').textContent = critical.length + (critical.length === 1 ? ' parámetro' : ' parámetros');
+  $('count-warning').textContent  = warning.length  + (warning.length === 1  ? ' parámetro' : ' parámetros');
+  $('count-ok').textContent       = ok.length       + (ok.length === 1       ? ' parámetro' : ' parámetros');
+
+  $('cards-critical').innerHTML = critical.length ? critical.map(i => renderDiagCard(i, 'critical')).join('') : '<div style="text-align:center;color:var(--muted);font-size:.78rem;font-style:italic;padding:.5rem">Sin parámetros críticos.</div>';
+  $('cards-warning').innerHTML  = warning.length  ? warning.map(i => renderDiagCard(i, 'warning')).join('')   : '<div style="text-align:center;color:var(--muted);font-size:.78rem;font-style:italic;padding:.5rem">Sin atenciones.</div>';
+  $('cards-ok').innerHTML       = ok.length       ? ok.map(i => renderDiagCard(i, 'ok')).join('')              : '<div style="text-align:center;color:var(--muted);font-size:.78rem;font-style:italic;padding:.5rem">—</div>';
+
+  // Resumen consolidado
+  const consolidated = consolidateRecommendations(items);
+  $('recs-tbody').innerHTML = consolidated.length ? consolidated.map(r => `
+    <tr><td>${r.nutriente}</td><td class="r">${r.aporte}</td><td>${r.forma}</td><td style="font-size:.7rem;color:var(--muted)">${r.momento}</td></tr>
+  `).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);font-style:italic">Sin aportes recomendados — todos los parámetros adecuados.</td></tr>';
+}
+
+// Generar diagnóstico desde extracto saturado (cuando NO hay análisis de fertilidad estándar)
+function buildDiagnosisFromSaturated() {
+  const sat = Storage.getSaturado();
+  if (!sat) return [];
+  const items = [];
+  const crop = currentCrop || 'tomate';
+
+  // RANGOS DE REFERENCIA (mmol/L) en extracto saturado para tomate (validados R. Elizondo)
+  // Adaptados de literatura: Sonneveld, Voogt para soluciones nutritivas/extracto pasta saturada
+  // Hortícolas en suelo: Ca 4-8, Mg 1.5-3, K 1-3, Na <3, NO3 5-15, SO4 1-5, HCO3 <2, Cl <3
+  const RANGOS_SAT = {
+    Ca:   {min:3, max:8, unit:'mmol/L', nombre:'Calcio (Ca²⁺)', emoji:'🥚'},
+    Mg:   {min:1.2, max:3.0, unit:'mmol/L', nombre:'Magnesio (Mg²⁺)', emoji:'🧊'},
+    K:    {min:1.0, max:3.0, unit:'mmol/L', nombre:'Potasio (K⁺)', emoji:'🍇'},
+    Na:   {min:0, max:3.0, unit:'mmol/L', nombre:'Sodio (Na⁺)', emoji:'🧂'},
+    NO3:  {min:5, max:15, unit:'mmol/L', nombre:'Nitrato (NO₃⁻)', emoji:'🌱'},
+    SO4:  {min:1.0, max:5.0, unit:'mmol/L', nombre:'Sulfato (SO₄²⁻)', emoji:'⚡'},
+    HCO3: {min:0, max:2.0, unit:'mmol/L', nombre:'Bicarbonato (HCO₃⁻)', emoji:'💧'},
+    Cl:   {min:0, max:3.0, unit:'mmol/L', nombre:'Cloruro (Cl⁻)', emoji:'🧂'}
+  };
+
+  Object.keys(RANGOS_SAT).forEach(ion => {
+    const val = sat[ion];
+    if (val == null || isNaN(val) || val === 0) return;
+    const ref = RANGOS_SAT[ion];
+    let evalState, msg, aporte;
+
+    if (val < ref.min * 0.5) {
+      evalState = 'critical_low';
+      msg = `${ref.nombre} muy bajo en la solución del suelo. La planta no encontrará suficiente.`;
+    } else if (val < ref.min) {
+      evalState = 'low';
+      msg = `${ref.nombre} bajo. Reforzar aporte vía fertirriego.`;
+    } else if (val > ref.max * 1.5) {
+      evalState = 'critical_high';
+      msg = `${ref.nombre} muy alto. Riesgo de toxicidad o desbalance iónico.`;
+    } else if (val > ref.max) {
+      evalState = 'high';
+      msg = `${ref.nombre} alto. Reducir aporte vía fertirriego.`;
+    } else {
+      evalState = 'ok';
+      msg = `${ref.nombre} en rango óptimo para ${crop}.`;
+    }
+
+    // Acciones específicas por ion
+    if (ion === 'Ca' && evalState === 'low') aporte = 'Aumentar nitrato de calcio en fertirriego (+ 0.5–1.0 mmol/L)';
+    else if (ion === 'Ca' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Reducir nitrato de calcio en fertirriego, vigilar antagonismo con Mg/K';
+    else if (ion === 'Mg' && evalState === 'low') aporte = 'Aumentar nitrato/sulfato de magnesio en fertirriego (+ 0.3–0.5 mmol/L)';
+    else if (ion === 'Mg' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Reducir Mg en fertirriego';
+    else if (ion === 'K' && evalState === 'low') aporte = 'Aumentar nitrato de potasio en fertirriego (+ 0.5 mmol/L)';
+    else if (ion === 'K' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Reducir K en fertirriego';
+    else if (ion === 'NO3' && evalState === 'low') aporte = 'Aumentar aporte de N en fertirriego (KNO₃, Ca(NO₃)₂)';
+    else if (ion === 'NO3' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Reducir N total. Riesgo de exceso vegetativo, hombro verde, microcracking.';
+    else if (ion === 'Na' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Lavado del perfil con agua de baja CE. Aplicar yeso si Na alto + sodicidad.';
+    else if (ion === 'Cl' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Sustituir KCl por K₂SO₄. Lavar perfil. Evitar fertilizantes con Cl.';
+    else if (ion === 'HCO3' && (evalState === 'high' || evalState === 'critical_high')) aporte = 'Acidificar agua de riego con HNO₃ 60% o H₃PO₄ 85% (ver módulo Calidad post-cosecha).';
+    else if (ion === 'SO4' && evalState === 'low') aporte = 'Aumentar sulfato de potasio o de magnesio.';
+
+    items.push({
+      param: `${ref.emoji} ${ref.nombre} (extracto saturado)`,
+      valor: val,
+      unit: ref.unit,
+      optimo: [ref.min, ref.max],
+      eval: evalState,
+      msg: msg,
+      aporte: aporte
+    });
+  });
+
+  return items;
+}
+
+function renderDiagCard(item, level) {
+  const icon = level === 'critical' ? '🔴' : level === 'warning' ? '🟡' : '🟢';
+  const optStr = Array.isArray(item.optimo) ? `${item.optimo[0]}–${item.optimo[1]}` : item.optimo;
+  return `<div class="diag-card ${level}">
+    <span class="diag-icon">${icon}</span>
+    <div class="diag-content">
+      <div class="diag-param">${item.param}</div>
+      <div class="diag-vals">Encontrado: <strong>${fmt(item.valor)} ${item.unit}</strong> · Óptimo: <strong>${optStr} ${item.unit}</strong></div>
+      <div class="diag-msg">${item.msg}</div>
+      ${item.aporte ? `<div class="diag-action"><strong>Aporte recomendado</strong>${item.aporte}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function consolidateRecommendations(items) {
+  // Cada rec lleva: nutriente (display), nutriente_id (ASCII para matching), aporte_kg_ha (numérico), forma, momento
+  const recs = [];
+  items.forEach(i => {
+    if (!i.aporte) return;
+    if (i.param.includes('pH')) {
+      recs.push({ nutriente:'Corrección pH', nutriente_id:'pH', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Cal/Azufre', momento:'Pre-trasplante' });
+    } else if (i.param.includes('M.O')) {
+      recs.push({ nutriente:'Materia orgánica', nutriente_id:'MO', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Enmienda orgánica', momento:'Pre-trasplante' });
+    } else if (i.param.includes('Fósforo')) {
+      recs.push({ nutriente:'P₂O₅', nutriente_id:'P2O5', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Granulado/Soluble', momento:'Pre-trasplante + fertirriego' });
+    } else if (i.param.includes('Potasio')) {
+      recs.push({ nutriente:'K₂O', nutriente_id:'K2O', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Soluble', momento:'Fraccionado, fertirriego' });
+    } else if (i.param.includes('Salinidad') || i.param.includes('Sodio') || i.param.includes('Ca/Mg')) {
+      recs.push({ nutriente:i.param, nutriente_id:'manejo', aporte:i.aporte, aporte_kg_ha:0, forma:'Manejo', momento:'Pre-temporada' });
+    } else if (i.param.includes('Zinc')) {
+      recs.push({ nutriente:'Zn', nutriente_id:'Zn', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Suelo o foliar', momento:'Pre-trasplante o foliar' });
+    } else if (i.param.includes('Boro')) {
+      recs.push({ nutriente:'B', nutriente_id:'B', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Suelo o foliar', momento:'Pre-trasplante o foliar' });
+    } else if (i.param.includes('Hierro')) {
+      recs.push({ nutriente:'Fe', nutriente_id:'Fe', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Quelato fertirriego', momento:'Fertirriego' });
+    } else if (i.param.includes('Manganeso')) {
+      recs.push({ nutriente:'Mn', nutriente_id:'Mn', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Suelo o foliar', momento:'Pre-trasplante o foliar' });
+    } else if (i.param.includes('Cobre')) {
+      recs.push({ nutriente:'Cu', nutriente_id:'Cu', aporte:i.aporte, aporte_kg_ha:parseAporte(i.aporte), forma:'Foliar', momento:'Foliar fraccionado' });
+    }
+  });
+  // Add baseline N from cultivo
+  const c = CULTIVOS_OPTIMO[currentCrop];
+  if (c && c.aporte_base.N) {
+    recs.unshift({ nutriente:'N', nutriente_id:'N', aporte: c.aporte_base.N + ' kg N/ha', aporte_kg_ha: c.aporte_base.N, forma:'Distribuido en ciclo', momento:'Fraccionado por etapa' });
+  }
+  return recs;
+}
+
+// Parsea string del aporte para extraer kg/ha (toma promedio si es rango)
+function parseAporte(str) {
+  if (!str) return 0;
+  // Busca números seguidos de "kg" — ej: "200 kg P₂O₅/ha", "1500–3000 kg CaCO₃/ha"
+  const m = str.match(/(\d+)(?:\s*[–-]\s*(\d+))?\s*kg/);
+  if (!m) return 0;
+  return m[2] ? (parseInt(m[1]) + parseInt(m[2])) / 2 : parseInt(m[1]);
+}
+
+// ═══════════════ RESOLVER (P3 - placeholder, se completa después) ═══════════════
+function renderResolver() {
+  const d = Storage.getAnalisis();
+  if (!d || !d.ph) {
+    $('resolver-empty').style.display = 'block';
+    $('resolver-content').style.display = 'none';
+    return;
+  }
+  $('resolver-empty').style.display = 'none';
+  $('resolver-content').style.display = 'block';
+
+  const items = buildDiagnosis();
+  if (!items) return;
+  const recs = consolidateRecommendations(items);
+  const sup = v('r-sup') || 1;
+  const supUnit = sv('r-sup-unit');
+  const supHa = supUnit === 'm2' ? sup / 10000 : sup;
+
+  // Build resolver cards for each nutrient need
+  const enmiendas = Storage.getEnmiendas();
+  const minerales = Storage.getMinerales();
+
+  let html = '';
+  recs.forEach((rec, idx) => {
+    // Casos sin matching de productos (correcciones de pH, manejo, M.O.)
+    if (rec.nutriente_id === 'pH' || rec.nutriente_id === 'manejo' || rec.nutriente_id === 'MO' || rec.aporte_kg_ha <= 0) {
+      // Solo mostrar el aporte sin candidatos, salvo MO que sí tiene candidatos en enmiendas
+      if (rec.nutriente_id !== 'MO') {
+        html += `<div class="need-card">
+          <div class="nc-title">${rec.nutriente}</div>
+          <div style="font-size:.85rem;color:var(--ink2);margin:.3rem 0">${rec.aporte}</div>
+          <div style="font-size:.7rem;color:var(--muted)">${rec.forma} · ${rec.momento}</div>
+        </div>`;
+        return;
+      }
+    }
+
+    const target_kg = rec.aporte_kg_ha;
+    const target_total = target_kg * supHa;
+    const nutrient = rec.nutriente_id;
+    const candidates = findProductsFor(nutrient, enmiendas, minerales);
+
+    html += `<div class="need-card">
+      <div class="nc-title">${rec.nutriente}</div>
+      <div class="nc-target">${target_kg} <small>kg ${rec.nutriente}/ha · total ${fmt(target_total)} kg para ${sup} ${supUnit}</small></div>
+      <div class="solver-options">
+        ${candidates.length === 0 ? '<div style="font-size:.74rem;color:var(--muted);font-style:italic;padding:.4rem">No hay productos en el catálogo que aporten este nutriente. Agregar fertilizantes en la pestaña Fertilizantes minerales.</div>' :
+          candidates.map(p => renderSolverOption(p, nutrient, target_kg, supHa)).join('')}
+      </div>
+    </div>`;
+  });
+
+  $('solver-cards').innerHTML = html || '<div style="text-align:center;padding:1rem;color:var(--muted)">Sin aportes a resolver.</div>';
+}
+
+function findProductsFor(nutrient, enmiendas, minerales) {
+  const all = [];
+  enmiendas.forEach(p => {
+    let pct = 0;
+    if (nutrient === 'N') pct = p.n_pct || 0;
+    else if (nutrient === 'P2O5') pct = p.p2o5_pct || 0;
+    else if (nutrient === 'K2O') pct = p.k2o_pct || 0;
+    else if (nutrient === 'CaO') pct = p.cao_pct || 0;
+    else if (nutrient === 'MgO') pct = p.mgo_pct || 0;
+    else if (nutrient === 'MO') pct = p.mo_pct || 0;
+    if (pct && pct > 0) all.push({ ...p, kind:'enmienda', pct });
+  });
+  minerales.forEach(p => {
+    let pct = 0;
+    if (nutrient === 'N') pct = p.n || 0;
+    else if (nutrient === 'P2O5') pct = p.p2o5 || 0;
+    else if (nutrient === 'K2O') pct = p.k2o || 0;
+    else if (nutrient === 'CaO') pct = p.cao || 0;
+    else if (nutrient === 'MgO') pct = p.mgo || 0;
+    else if (nutrient === 'S')   pct = p.s || 0;
+    else if (['Fe','Mn','Zn','Cu','B','Mo'].includes(nutrient)) {
+      pct = (p.micros && p.micros[nutrient]) || 0;
+    }
+    if (pct && pct > 0) all.push({ ...p, kind:'mineral', pct });
+  });
+  // Sort by concentration descending
+  all.sort((a,b) => b.pct - a.pct);
+  return all.slice(0, 8); // top 8 (más opciones para mezclas)
+}
+
+function renderSolverOption(p, nutrient, target_kg_ha, supHa) {
+  const dose_kg_ha = target_kg_ha / (p.pct / 100);
+  const dose_total_kg = dose_kg_ha * supHa;
+  const dose_ton_ha = dose_kg_ha / 1000;
+  const dose_m3_ha = p.densidad_kgm3 ? dose_kg_ha / p.densidad_kgm3 : null;
+  const cost_ha = p.precio_ton ? (dose_ton_ha * p.precio_ton) : (p.precio_kg ? (dose_kg_ha * p.precio_kg) : null);
+  const cost_total = cost_ha ? cost_ha * supHa : null;
+
+  // Aportes secundarios (otros nutrientes que aporta este producto)
+  const aportes = [];
+  if (p.kind === 'enmienda') {
+    if (p.n_pct && nutrient !== 'N') aportes.push(`${(dose_kg_ha * p.n_pct / 100).toFixed(0)} kg N`);
+    if (p.p2o5_pct && nutrient !== 'P2O5') aportes.push(`${(dose_kg_ha * p.p2o5_pct / 100).toFixed(0)} kg P₂O₅`);
+    if (p.k2o_pct && nutrient !== 'K2O') aportes.push(`${(dose_kg_ha * p.k2o_pct / 100).toFixed(0)} kg K₂O`);
+    if (p.cao_pct && nutrient !== 'CaO') aportes.push(`${(dose_kg_ha * p.cao_pct / 100).toFixed(0)} kg CaO`);
+    if (p.mgo_pct && nutrient !== 'MgO') aportes.push(`${(dose_kg_ha * p.mgo_pct / 100).toFixed(0)} kg MgO`);
+    if (p.mo_pct && nutrient !== 'MO') aportes.push(`${(dose_kg_ha * p.mo_pct / 100).toFixed(0)} kg M.O.`);
+  } else {
+    if (p.n && nutrient !== 'N') aportes.push(`${(dose_kg_ha * p.n / 100).toFixed(0)} kg N`);
+    if (p.p2o5 && nutrient !== 'P2O5') aportes.push(`${(dose_kg_ha * p.p2o5 / 100).toFixed(0)} kg P₂O₅`);
+    if (p.k2o && nutrient !== 'K2O') aportes.push(`${(dose_kg_ha * p.k2o / 100).toFixed(0)} kg K₂O`);
+    if (p.cao && nutrient !== 'CaO') aportes.push(`${(dose_kg_ha * p.cao / 100).toFixed(0)} kg CaO`);
+    if (p.mgo && nutrient !== 'MgO') aportes.push(`${(dose_kg_ha * p.mgo / 100).toFixed(0)} kg MgO`);
+    if (p.s) aportes.push(`${(dose_kg_ha * p.s / 100).toFixed(0)} kg S`);
+  }
+
+  const formattedDose = dose_kg_ha >= 1000 ? `${dose_ton_ha.toFixed(2)} ton/ha` : `${dose_kg_ha.toFixed(0)} kg/ha`;
+  const volStr = dose_m3_ha ? ` · ${dose_m3_ha.toFixed(2)} m³/ha` : '';
+
+  // alerts shortcut
+  let alertTags = '';
+  if (p.kind === 'enmienda') {
+    if (!p.cumple_clase_b && !p.cumple_clase_a) alertTags += '<span class="pc-tag red">⚠ no cumple NCh</span> ';
+    else if (p.cumple_clase_a) alertTags += '<span class="pc-tag green">Clase A</span> ';
+    else if (p.cumple_clase_b) alertTags += '<span class="pc-tag amber">Clase B</span> ';
+  }
+
+  // Display nutrient name with subscript for UI
+  const displayNutrient = { 'P2O5':'P₂O₅', 'K2O':'K₂O', 'MO':'M.O.' }[nutrient] || nutrient;
+
+  return `<div class="solver-opt">
+    <div>
+      <div class="so-name">${p.nombre} ${alertTags}</div>
+      <div class="so-sub">${p.kind === 'enmienda' ? p.empresa : p.formula} · ${p.pct.toFixed(2)}% ${displayNutrient}</div>
+    </div>
+    <div class="so-stat">
+      <div class="so-dose">${formattedDose}</div>
+      <div class="so-cost">${volStr || '—'}</div>
+      ${cost_ha ? `<div class="so-cost" style="color:var(--earth);font-weight:700;font-size:.75rem">${fmtMoney(cost_ha)}/ha</div>` : '<div class="so-cost" style="font-style:italic">sin precio</div>'}
+    </div>
+    ${aportes.length ? `<div class="so-aports"><strong>Aporta también:</strong> ${aportes.join(' · ')}</div>` : ''}
+  </div>`;
+}
+
+document.querySelectorAll('#page-resolver input, #page-resolver select').forEach(el => {
+  el.addEventListener('input', renderResolver);
+});
+
+// ═══════════════ ENMIENDAS (catálogo) ═══════════════
+function renderEnmiendas() {
+  const list = Storage.getEnmiendas();
+  const cont = $('enmiendas-list');
+  if (list.length === 0) {
+    cont.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-style:italic">Catálogo vacío. Agregue su primera enmienda.</div>';
+    return;
+  }
+  cont.innerHTML = list.map(p => renderEnmiendaCard(p)).join('');
+}
+
+function renderEnmiendaCard(p) {
+  // Tags de calidad
+  let qualityTag = '';
+  if (p.cumple_clase_a) qualityTag = '<span class="pc-tag green">Clase A</span>';
+  else if (p.cumple_clase_b) qualityTag = '<span class="pc-tag amber">Clase B</span>';
+  else qualityTag = '<span class="pc-tag red">⚠ No cumple</span>';
+
+  const tagsHtml = `${qualityTag} <span class="pc-tag teal">${p.tipo.replace('_',' ')}</span>` + (p.alertas && p.alertas.some(a=>a.includes('INMADURO'))?'<span class="pc-tag red">inmaduro</span>':'');
+
+  return `<div class="product-card" id="card-${p.id}" onclick="toggleProduct('${p.id}')">
+    <div class="pc-main">
+      <div class="pc-name">${p.nombre}</div>
+      <div class="pc-empresa">${p.empresa}</div>
+      <div class="pc-tags">${tagsHtml}</div>
+    </div>
+    <div class="pc-stat">
+      <div class="pc-stat-val">${fmt(p.n_pct)}</div>
+      <div class="pc-stat-lbl">% N</div>
+    </div>
+    <div class="pc-detail">
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.p2o5_pct)}</span><span class="dc-lbl">P₂O₅ %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.k2o_pct)}</span><span class="dc-lbl">K₂O %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.mo_pct)}</span><span class="dc-lbl">M.O. %</span></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.cao_pct)}</span><span class="dc-lbl">CaO %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.mgo_pct)}</span><span class="dc-lbl">MgO %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.c_n)}</span><span class="dc-lbl">C/N</span></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.ph)}</span><span class="dc-lbl">pH</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.ce_dsm)}</span><span class="dc-lbl">CE dS/m</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.humedad_pct)}</span><span class="dc-lbl">Humedad %</span></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.densidad_kgm3)}</span><span class="dc-lbl">Densidad kg/m³</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.nh4)}</span><span class="dc-lbl">NH₄ mg/kg</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.nh4_no3)}</span><span class="dc-lbl">NH₄/NO₃</span></div>
+      </div>
+      ${p.alertas && p.alertas.length ? `<div class="alert-list">
+        <div class="al-title">⚠️ Análisis automático</div>
+        ${p.alertas.map(a => `<div class="al-item"><span class="icon">${a.includes('NO CUMPLE')||a.includes('INMADURO')||a.includes('5×')?'🚨':a.includes('alto')||a.includes('alta')||a.includes('alcalino')?'⚠️':a.includes('Excelente')||a.includes('Cumple')||a.includes('Apto')||a.includes('registrado')?'✓':'ℹ'}</span><span>${a}</span></div>`).join('')}
+      </div>` : ''}
+      <div class="detail-row" style="margin-top:.6rem">
+        <div class="detail-cell" style="background:var(--earth-pale);border-color:#D4A574">
+          <input type="number" placeholder="$/ton" value="${p.precio_ton || ''}" onclick="event.stopPropagation()" onchange="updatePrice('${p.id}','enmienda','ton',this.value)" style="width:100%;border:none;background:transparent;text-align:center;font-family:'DM Mono',monospace;font-weight:700;color:var(--earth);font-size:.85rem;outline:none">
+          <span class="dc-lbl">Precio $/ton</span>
+        </div>
+        <div class="detail-cell" style="background:var(--earth-pale);border-color:#D4A574">
+          <input type="number" placeholder="$/m³" value="${p.precio_m3 || ''}" onclick="event.stopPropagation()" onchange="updatePrice('${p.id}','enmienda','m3',this.value)" style="width:100%;border:none;background:transparent;text-align:center;font-family:'DM Mono',monospace;font-weight:700;color:var(--earth);font-size:.85rem;outline:none">
+          <span class="dc-lbl">Precio $/m³</span>
+        </div>
+        <div class="detail-cell">
+          <span class="dc-val" style="font-size:.65rem">${p.fecha_analisis || '—'}</span>
+          <span class="dc-lbl">Fecha análisis</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleProduct(id) {
+  const el = document.getElementById('card-' + id);
+  if (el) el.classList.toggle('expanded');
+}
+
+function updatePrice(id, kind, unit, value) {
+  const list = kind === 'enmienda' ? Storage.getEnmiendas() : Storage.getMinerales();
+  const item = list.find(p => p.id === id);
+  if (item) {
+    if (kind === 'enmienda') {
+      if (unit === 'ton') item.precio_ton = parseFloat(value) || null;
+      else if (unit === 'm3') item.precio_m3 = parseFloat(value) || null;
+      Storage.saveEnmiendas(list);
+    } else {
+      item.precio_kg = parseFloat(value) || null;
+      Storage.saveMinerales(list);
+    }
+  }
+}
+
+// ═══════════════ MINERALES ═══════════════
+function renderMinerales() {
+  const list = Storage.getMinerales();
+  const cats = { 'NPK':[], 'N':[], 'P':[], 'K':[], 'Ca':[], 'Mg':[], 'micro':[], 'bioestimulante':[] };
+  list.forEach(p => { if (cats[p.categoria]) cats[p.categoria].push(p); });
+
+  const titles = { NPK:'🧬 Mezclas NPK', N:'🌱 Nitrogenados', P:'🌾 Fosforados', K:'🍇 Potásicos', Ca:'🥚 Cálcicos', Mg:'🧊 Magnésicos', micro:'⚡ Microelementos', bioestimulante:'🌿 Bioestimulantes y orgánicos' };
+  let html = '';
+  Object.entries(cats).forEach(([cat, items]) => {
+    if (items.length === 0) return;
+    html += `<div class="diag-block">
+      <div class="diag-title-bar"><h3>${titles[cat]}</h3><span class="diag-count">${items.length}</span></div>
+      ${items.map(p => renderMineralCard(p)).join('')}
+    </div>`;
+  });
+  $('minerales-categories').innerHTML = html;
+}
+
+function renderMineralCard(p) {
+  const phTag = p.efecto_ph === 'acidifica' ? '<span class="pc-tag amber">acidifica</span>' :
+                p.efecto_ph === 'lev_acidifica' ? '<span class="pc-tag amber">lev. acidifica</span>' :
+                p.efecto_ph === 'alcaliniza' ? '<span class="pc-tag teal">alcaliniza</span>' :
+                '<span class="pc-tag green">neutro</span>';
+  const solTag = p.soluble ? '<span class="pc-tag blue">soluble</span>' : '<span class="pc-tag purple">granulado</span>';
+  const formTag = `<span class="pc-tag teal">${p.forma}</span>`;
+
+  // Main nutrient display
+  let mainVal = 0, mainLbl = '';
+  if (p.n) { mainVal = p.n; mainLbl = '% N'; }
+  else if (p.p2o5) { mainVal = p.p2o5; mainLbl = '% P₂O₅'; }
+  else if (p.k2o) { mainVal = p.k2o; mainLbl = '% K₂O'; }
+  else if (p.cao) { mainVal = p.cao; mainLbl = '% CaO'; }
+  else if (p.mgo) { mainVal = p.mgo; mainLbl = '% MgO'; }
+  else if (p.micros) {
+    const k = Object.keys(p.micros)[0];
+    mainVal = p.micros[k]; mainLbl = '% ' + k;
+  }
+
+  return `<div class="product-card" id="card-${p.id}" onclick="toggleProduct('${p.id}')">
+    <div class="pc-main">
+      <div class="pc-name">${p.nombre}</div>
+      <div class="pc-empresa">${p.formula}</div>
+      <div class="pc-tags">${phTag} ${solTag} ${formTag}</div>
+    </div>
+    <div class="pc-stat">
+      <div class="pc-stat-val">${fmt(mainVal)}</div>
+      <div class="pc-stat-lbl">${mainLbl}</div>
+    </div>
+    <div class="pc-detail">
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.n)}</span><span class="dc-lbl">N %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.p2o5)}</span><span class="dc-lbl">P₂O₅ %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.k2o)}</span><span class="dc-lbl">K₂O %</span></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-cell"><span class="dc-val">${fmt(p.cao)}</span><span class="dc-lbl">CaO %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.mgo)}</span><span class="dc-lbl">MgO %</span></div>
+        <div class="detail-cell"><span class="dc-val">${fmt(p.s)}</span><span class="dc-lbl">S %</span></div>
+      </div>
+      ${p.micros ? `<div class="detail-row">
+        ${Object.entries(p.micros).map(([k,v]) => `<div class="detail-cell"><span class="dc-val">${fmt(v)}</span><span class="dc-lbl">${k} %</span></div>`).join('')}
+      </div>` : ''}
+      ${(p.ce_1g != null || p.ph_1g != null || p.sol_20 != null || p.densidad != null) ? `<div class="detail-row" style="background:linear-gradient(180deg,#F4F0E8,#FFF);border:1px solid #E5DCC8;border-radius:8px;padding:.4rem .3rem;margin-top:.4rem">
+        ${p.ce_1g != null ? `<div class="detail-cell"><span class="dc-val">${p.ce_1g}</span><span class="dc-lbl">CE 1g/L (dS/m)</span></div>` : ''}
+        ${p.ph_1g != null ? `<div class="detail-cell"><span class="dc-val">${p.ph_1g}</span><span class="dc-lbl">pH 1g/L</span></div>` : ''}
+        ${p.sol_20 != null ? `<div class="detail-cell"><span class="dc-val">${p.sol_20}</span><span class="dc-lbl">Sol. g/L 20°C</span></div>` : ''}
+        ${p.densidad != null ? `<div class="detail-cell"><span class="dc-val">${p.densidad}</span><span class="dc-lbl">Densidad ${p.densidad > 100 ? 'g/L' : 'g/cc'}</span></div>` : ''}
+      </div>` : ''}
+      ${(p.n_no3 != null || p.n_nh4 != null) ? `<div class="detail-row" style="background:linear-gradient(180deg,#EBF4F4,#FFF);border:1px solid #C5D9D9;border-radius:8px;padding:.4rem .3rem;margin-top:.4rem">
+        <div class="detail-cell"><span class="dc-val">${p.n_no3 || 0}</span><span class="dc-lbl">N-NO₃ %</span></div>
+        <div class="detail-cell"><span class="dc-val">${p.n_nh4 || 0}</span><span class="dc-lbl">N-NH₄ %</span></div>
+        <div class="detail-cell"><span class="dc-val">${((p.n_no3||0)/(p.n||1)*100).toFixed(0)}/${((p.n_nh4||0)/(p.n||1)*100).toFixed(0)}</span><span class="dc-lbl">% NO₃/NH₄</span></div>
+      </div>` : ''}
+      ${p.observ ? `<div class="alert-list">
+        <div class="al-title">📝 Notas técnicas</div>
+        <div class="al-item"><span class="icon">ℹ</span><span>${p.observ}</span></div>
+      </div>` : ''}
+      <div class="detail-row" style="margin-top:.6rem">
+        <div class="detail-cell" style="background:var(--earth-pale);border-color:#D4A574">
+          <input type="number" placeholder="$/kg" value="${p.precio_kg || ''}" onclick="event.stopPropagation()" onchange="updatePrice('${p.id}','mineral','kg',this.value)" style="width:100%;border:none;background:transparent;text-align:center;font-family:'DM Mono',monospace;font-weight:700;color:var(--earth);font-size:.85rem;outline:none">
+          <span class="dc-lbl">Precio $/kg</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════ MODALES ═══════════════
+function openAddProductModal(kind) {
+  const modal = $('modal-add');
+  $('modal-add-content').innerHTML = renderAddForm(kind);
+  modal.classList.add('show');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function renderAddForm(kind) {
+  if (kind === 'enmienda') {
+    return `<h3>Agregar enmienda orgánica</h3>
+    <p style="font-size:.78rem;color:var(--muted);margin-bottom:.7rem">Complete los datos del análisis de laboratorio. La app calculará alertas automáticamente.</p>
+    <div class="form-section">
+      <div class="input-grid cols-3">
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Nombre</span></div><input class="inp-field" id="add-nombre" type="text"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Empresa</span></div><input class="inp-field" id="add-empresa" type="text"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Tipo</span></div>
+          <select class="inp-field" id="add-tipo" style="font-family:'Karla',sans-serif;font-size:.85rem">
+            <option>compost</option><option>guano_compostado</option><option>estabilizado</option><option>biosolido</option><option>guano</option><option>humus</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <h4>Macronutrientes (% en base seca)</h4>
+      <div class="input-grid cols-3">
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">N</span></div><input class="inp-field" id="add-n" type="number" step="0.01"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">P₂O₅</span></div><input class="inp-field" id="add-p2o5" type="number" step="0.01"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">K₂O</span></div><input class="inp-field" id="add-k2o" type="number" step="0.01"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">CaO</span></div><input class="inp-field" id="add-cao" type="number" step="0.01"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">MgO</span></div><input class="inp-field" id="add-mgo" type="number" step="0.01"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">M.O.</span></div><input class="inp-field" id="add-mo" type="number" step="0.1"></div>
+      </div>
+    </div>
+    <div class="form-section">
+      <h4>¿Cómo vienen P y K en el análisis?</h4>
+      <div class="radio-group">
+        <button class="radio-btn active" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('add-formato').value='oxido'">Como óxido (P₂O₅, K₂O)</button>
+        <button class="radio-btn" onclick="this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');document.getElementById('add-formato').value='elemento'">Como elemento (P, K)</button>
+      </div>
+      <input type="hidden" id="add-formato" value="oxido">
+      <div class="note"><strong>📝 Nota</strong>Si el laboratorio reporta como elemento (P, K, Ca, Mg) en lugar de óxido (P₂O₅, K₂O, CaO, MgO), seleccione "elemento" y la app convertirá automáticamente.</div>
+    </div>
+    <div class="form-section">
+      <h4>Estado del producto</h4>
+      <div class="input-grid cols-3">
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">pH</span></div><input class="inp-field" id="add-ph" type="number" step="0.1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">CE</span></div><input class="inp-field" id="add-ce" type="number" step="0.1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Humedad</span></div><input class="inp-field" id="add-hum" type="number" step="1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">C/N</span></div><input class="inp-field" id="add-cn" type="number" step="0.1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">NH₄</span></div><input class="inp-field" id="add-nh4" type="number" step="1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Densidad</span></div><input class="inp-field" id="add-dens" type="number" step="10"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNewEnmienda()">Guardar</button>
+    </div>`;
+  } else {
+    return `<h3>Agregar fertilizante mineral</h3>
+    <div class="form-section">
+      <div class="input-grid cols-3">
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Nombre</span></div><input class="inp-field" id="add-nombre" type="text"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Fórmula</span></div><input class="inp-field" id="add-formula" type="text"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">Categoría</span></div>
+          <select class="inp-field" id="add-cat" style="font-family:'Karla',sans-serif;font-size:.85rem">
+            <option value="NPK">Mezcla NPK</option><option value="N">Nitrogenado</option><option value="P">Fosforado</option><option value="K">Potásico</option><option value="Ca">Cálcico</option><option value="Mg">Magnésico</option><option value="micro">Micro</option>
+          </select>
+        </div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">N %</span></div><input class="inp-field" id="add-n" type="number" step="0.1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">P₂O₅ %</span></div><input class="inp-field" id="add-p2o5" type="number" step="0.1"></div>
+        <div class="inp-cell"><div class="inp-lbl"><span class="inp-name">K₂O %</span></div><input class="inp-field" id="add-k2o" type="number" step="0.1"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('modal-add')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveNewMineral()">Guardar</button>
+    </div>`;
+  }
+}
+
+function saveNewEnmienda() {
+  const formato = sv('add-formato');
+  const data = {
+    id: 'enm_' + Date.now(),
+    nombre: sv('add-nombre'),
+    empresa: sv('add-empresa'),
+    tipo: sv('add-tipo'),
+    n_pct: v('add-n'),
+    mo_pct: v('add-mo'),
+    ph: v('add-ph'),
+    ce_dsm: v('add-ce'),
+    humedad_pct: v('add-hum'),
+    c_n: v('add-cn'),
+    nh4: v('add-nh4'),
+    densidad_kgm3: v('add-dens'),
+    fecha_analisis: new Date().toISOString().slice(0,10),
+    alertas: [],
+    cumple_clase_a: false,
+    cumple_clase_b: false,
+  };
+  // Conversión P/K si vienen como elemento
+  if (formato === 'elemento') {
+    data.p_pct = v('add-p2o5');
+    data.p2o5_pct = data.p_pct * CONV.P_to_P2O5;
+    data.k_pct = v('add-k2o');
+    data.k2o_pct = data.k_pct * CONV.K_to_K2O;
+    data.ca_pct = v('add-cao');
+    data.cao_pct = data.ca_pct * CONV.Ca_to_CaO;
+    data.mg_pct = v('add-mgo');
+    data.mgo_pct = data.mg_pct * CONV.Mg_to_MgO;
+    data.formato_origen = 'elemento';
+  } else {
+    data.p2o5_pct = v('add-p2o5');
+    data.k2o_pct = v('add-k2o');
+    data.cao_pct = v('add-cao');
+    data.mgo_pct = v('add-mgo');
+  }
+  // Calcular alertas automáticas
+  data.alertas = computeAlertas(data);
+  data.cumple_clase_a = checkClaseA(data);
+  data.cumple_clase_b = checkClaseB(data);
+
+  if (!data.nombre) { alert('El nombre es obligatorio'); return; }
+  const list = Storage.getEnmiendas();
+  list.unshift(data);
+  Storage.saveEnmiendas(list);
+  closeModal('modal-add');
+  renderEnmiendas();
+}
+
+function computeAlertas(p) {
+  const a = [];
+  if (p.ce_dsm > 8) a.push('CE alta (>8 dS/m) — supera límite Clase B NCh 2880');
+  else if (p.ce_dsm > 3) a.push('CE moderada (>3 dS/m) — solo Clase B');
+  if (p.nh4 > 500) a.push(`NH₄ alto (${p.nh4} mg/kg, sobre límite 500) — producto no totalmente estable`);
+  if (p.ph < 5 || p.ph > 8.5) a.push(`pH ${p.ph} fuera de rango NCh 2880 (5.0–8.5)`);
+  if (p.c_n > 30) a.push(`C/N alto (${p.c_n}) — riesgo de inmovilización de N`);
+  return a;
+}
+function checkClaseA(p) {
+  return p.ce_dsm <= 3 && p.nh4 <= 500 && p.ph >= 5 && p.ph <= 8.5 && p.mo_pct >= 20;
+}
+function checkClaseB(p) {
+  return p.ce_dsm <= 8 && p.ph >= 5 && p.ph <= 8.5 && p.mo_pct >= 20;
+}
+
+function saveNewMineral() {
+  const data = {
+    id: 'min_' + Date.now(),
+    nombre: sv('add-nombre'),
+    formula: sv('add-formula'),
+    categoria: sv('add-cat'),
+    n: v('add-n'), p2o5: v('add-p2o5'), k2o: v('add-k2o'),
+    cao: 0, mgo: 0, s: 0,
+    forma: 'granulado', efecto_ph: 'neutro', soluble: false,
+    precio_kg: null, observ: ''
+  };
+  if (!data.nombre) { alert('El nombre es obligatorio'); return; }
+  const list = Storage.getMinerales();
+  list.unshift(data);
+  Storage.saveMinerales(list);
+  closeModal('modal-add');
+  renderMinerales();
+}
+
+// ═══════════════ INIT ═══════════════
+Storage.initCatalog();
+$('an-fecha').valueAsDate = new Date();
+$('tb-fecha').textContent = new Date().toLocaleDateString('es');
+validateAnalisis();
+
+// ═══════════════ SUB-TABS (Cargar análisis) ═══════════════
+document.querySelectorAll('.subtab').forEach(t => {
+  t.onclick = () => {
+    const target = t.dataset.subtab;
+    document.querySelectorAll('.subtab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.subpage').forEach(p => p.classList.toggle('active', p.id === 'subpage-' + target));
+  };
+});
+
+// ═══════════════ EXTRACTO SATURADO ═══════════════
+const PESOS_ION = { Ca:40.08, Mg:24.31, K:39.10, Na:22.99, NO3:62.00, Cl:35.45, SO4:96.06, HCO3:61.02 };
+const CARGAS_ION = { Ca:2, Mg:2, K:1, Na:1, NO3:1, Cl:1, SO4:2, HCO3:1 };
+
+let unitCat = 'mmol';
+let unitAn  = 'mmol';
+
+// Almacena valores siempre en mmol/L internamente
+let satValues = { Ca:null, Mg:null, K:null, Na:null, HCO3:null, Cl:null, SO4:null, NO3:null };
+
+// Convierte cualquier unidad de entrada → mmol/L
+function toMmol(value, ion, fromUnit) {
+  if (value == null || isNaN(value) || value === 0) return null;
+  if (fromUnit === 'mmol') return value;
+  if (fromUnit === 'meq')  return value / CARGAS_ION[ion];
+  if (fromUnit === 'mg')   return value / PESOS_ION[ion];
+  return value;
+}
+
+// Convierte mmol/L → unidad pedida
+function fromMmol(value, ion, toUnit) {
+  if (value == null || isNaN(value) || value === 0) return '';
+  if (toUnit === 'mmol') return value;
+  if (toUnit === 'meq')  return value * CARGAS_ION[ion];
+  if (toUnit === 'mg')   return value * PESOS_ION[ion];
+  return value;
+}
+
+// Maneja cambio de unidad: convierte los valores actuales en pantalla
+function changeUnit(group, newUnit) {
+  const oldUnit = group === 'cat' ? unitCat : unitAn;
+  if (oldUnit === newUnit) return;
+
+  const inputs = document.querySelectorAll(group === 'cat' ? '.cat-input' : '.an-input');
+  inputs.forEach(inp => {
+    const ion = inp.dataset.ion;
+    const oldVal = parseFloat(inp.value);
+    if (!isNaN(oldVal) && oldVal !== 0) {
+      // convertir de unidad vieja → mmol → unidad nueva
+      const mmol = toMmol(oldVal, ion, oldUnit);
+      const newVal = fromMmol(mmol, ion, newUnit);
+      inp.value = newVal === '' ? '' : newVal.toFixed(newUnit === 'mg' ? 1 : 3).replace(/\.?0+$/, '');
+    }
+  });
+
+  // actualizar etiquetas
+  document.querySelectorAll(group === 'cat' ? '.ss-unit-cat' : '.ss-unit-an').forEach(el => el.textContent = newUnit + '/L');
+  $(group + '-conv-label').textContent = `ingreso en ${newUnit}/L · conversión automática`;
+
+  if (group === 'cat') unitCat = newUnit; else unitAn = newUnit;
+  computeSaturado();
+}
+
+// Listeners para selector de unidades
+document.querySelectorAll('.unit-selector').forEach(sel => {
+  const group = sel.dataset.group;
+  sel.querySelectorAll('.unit-btn').forEach(btn => {
+    btn.onclick = () => {
+      sel.querySelectorAll('.unit-btn').forEach(b => b.classList.toggle('active', b === btn));
+      changeUnit(group, btn.dataset.unit);
+    };
+  });
+});
+
+// Lectura de valores → siempre devuelve mmol/L internamente
+function readSatValues() {
+  const cations = ['Ca','Mg','K','Na'];
+  const anions  = ['HCO3','Cl','SO4','NO3'];
+  cations.forEach(ion => {
+    const inp = document.querySelector(`.cat-input[data-ion="${ion}"]`);
+    const raw = parseFloat(inp.value);
+    satValues[ion] = isNaN(raw) ? null : toMmol(raw, ion, unitCat);
+  });
+  anions.forEach(ion => {
+    const inp = document.querySelector(`.an-input[data-ion="${ion}"]`);
+    const raw = parseFloat(inp.value);
+    satValues[ion] = isNaN(raw) ? null : toMmol(raw, ion, unitAn);
+  });
+}
+
+function computeSaturado() {
+  readSatValues();
+  const v = satValues;
+  // sumas en meq/L
+  const cat_meq = (v.Ca||0)*2 + (v.Mg||0)*2 + (v.K||0)*1 + (v.Na||0)*1;
+  const an_meq  = (v.HCO3||0)*1 + (v.Cl||0)*1 + (v.SO4||0)*2 + (v.NO3||0)*1;
+
+  $('ss-cat-meq').textContent = cat_meq > 0 ? cat_meq.toFixed(1) : '—';
+  $('ss-an-meq').textContent  = an_meq  > 0 ? an_meq.toFixed(1)  : '—';
+
+  // Balance Cat/An
+  if (cat_meq > 0 && an_meq > 0) {
+    const bal = cat_meq / an_meq;
+    $('ss-bal').textContent = bal.toFixed(2);
+    const diff = Math.abs(1 - bal);
+    $('ss-mb-bal').className = 'm-box ' + (diff < 0.10 ? 'ok' : diff < 0.25 ? 'alert-low' : 'alert-high');
+  } else {
+    $('ss-bal').textContent = '—';
+    $('ss-mb-bal').className = 'm-box';
+  }
+
+  // RAS = Na / sqrt((Ca + Mg)/2)  con Na, Ca, Mg en meq/L
+  let ras = null;
+  if (v.Na && (v.Ca || v.Mg)) {
+    const Na_meq = v.Na * 1;
+    const Ca_meq = (v.Ca||0) * 2;
+    const Mg_meq = (v.Mg||0) * 2;
+    if (Ca_meq + Mg_meq > 0) {
+      ras = Na_meq / Math.sqrt((Ca_meq + Mg_meq) / 2);
+      $('ss-ras').textContent = ras.toFixed(2);
+      $('ss-mb-ras').className = 'm-box ' + (ras < 6 ? 'ok' : ras < 13 ? 'alert-low' : 'alert-high');
+    }
+  } else {
+    $('ss-ras').textContent = '—';
+    $('ss-mb-ras').className = 'm-box';
+  }
+
+  // Alerta de balance
+  const ba = $('ss-balance-alert');
+  if (cat_meq > 0 && an_meq > 0) {
+    const diff = Math.abs(1 - cat_meq/an_meq);
+    if (diff > 0.20) {
+      ba.className = 'alert-msg am-warn';
+      ba.textContent = '⚠️ Diferencia >20% entre cationes y aniones — verificar valores ingresados o reportes del laboratorio.';
+    } else if (diff < 0.10) {
+      ba.className = 'alert-msg am-ok';
+      ba.textContent = '✓ Balance iónico coherente. Análisis confiable.';
+    } else {
+      ba.className = 'alert-msg am-warn';
+      ba.textContent = 'Balance iónico aceptable (diferencia ~' + (diff*100).toFixed(0) + '%).';
+    }
+  } else { ba.style.display = 'none'; }
+
+  // Clasificación USDA
+  classifyUSDA(ras);
+
+  // Tolerancia del cultivo
+  showTolerancia();
+
+  // Recomendaciones
+  buildSatRecommendations(ras);
+
+  // Persistir extracto saturado y refrescar recomendaciones globales
+  Storage.saveSaturado({
+    ...satValues,
+    ce: v('ss-ce'),
+    ph: v('ss-ph')
+  });
+  // Refrescar pestaña de recomendaciones si están visibles
+  if (typeof renderRecommendations === 'function') {
+    renderRecommendations();
+  }
+}
+
+function classifyUSDA(ras) {
+  const ce = v('ss-ce');
+  const cb = $('ss-classbox');
+  if (ce <= 0 || ras == null) {
+    cb.style.display = 'none';
+    return;
+  }
+  cb.style.display = 'block';
+  const isSaline = ce > 4;
+  const isSodic = ras > 13;
+
+  let cls, desc, cssClass;
+  if (!isSaline && !isSodic) {
+    cls = 'NORMAL'; cssClass = 'normal';
+    desc = 'Suelo sin problemas de salinidad ni sodicidad. Aptitud agrícola plena para la mayoría de los cultivos.';
+  } else if (isSaline && !isSodic) {
+    cls = 'SALINO'; cssClass = 'salino';
+    desc = `CE ${ce.toFixed(1)} dS/m · sales solubles altas pero estructura del suelo conservada. Lavado con agua de buena calidad puede recuperar el suelo.`;
+  } else if (!isSaline && isSodic) {
+    cls = 'SÓDICO'; cssClass = 'sodico';
+    desc = `RAS ${ras.toFixed(1)} · exceso de sodio intercambiable. Estructura del suelo degradada (dispersión de arcillas). Requiere yeso + lavado.`;
+  } else {
+    cls = 'SALINO-SÓDICO'; cssClass = 'salino-sodico';
+    desc = `CE ${ce.toFixed(1)} dS/m + RAS ${ras.toFixed(1)} · combinación crítica. Aplicar yeso PRIMERO para reemplazar Na, luego lavar. NO lavar antes de aplicar yeso (empeora estructura).`;
+  }
+  $('ss-class').textContent = cls;
+  $('ss-class').className = 'scb-class ' + cssClass;
+  $('ss-class-desc').textContent = desc;
+}
+
+const TOLERANCIA_SAL = {
+  // CE umbral (dS/m) sobre el cual empieza pérdida de rendimiento, según Maas & Hoffman + literatura local
+  frutilla: { umbral: 1.0, cat:'muy sensible' },
+  cebolla:  { umbral: 1.2, cat:'sensible' },
+  palto:    { umbral: 1.3, cat:'muy sensible (Cl)' },
+  limon:    { umbral: 1.7, cat:'sensible (Cl)' },
+  tomate:   { umbral: 2.5, cat:'mod. sensible' },
+  pepino:   { umbral: 2.5, cat:'mod. sensible' },
+  pimiento: { umbral: 1.5, cat:'sensible' },
+  sandia:   { umbral: 2.0, cat:'mod. sensible' },
+};
+
+// Rangos óptimos de iones en EXTRACTO SATURADO por cultivo (mmol/L)
+// Basado en De Kreij, Sonneveld & Voogt, INIA Chile, Gavlak et al.
+// Estos son distintos de los cationes intercambiables — reflejan la solución que las raíces toman
+const RANGOS_EXTRACTO = {
+  tomate:   { Ca:[3,6],   Mg:[1.5,3],   K:[3,6],   Na:[0,4], NO3:[4,10], Cl:[0,4], SO4:[1,4], HCO3:[0,1]   },
+  pimiento: { Ca:[3,6],   Mg:[1.5,3],   K:[2.5,5], Na:[0,3], NO3:[4,9],  Cl:[0,3], SO4:[1,4], HCO3:[0,1]   },
+  pepino:   { Ca:[2.5,5], Mg:[1,2.5],   K:[2.5,5], Na:[0,4], NO3:[4,9],  Cl:[0,4], SO4:[1,3], HCO3:[0,1]   },
+  sandia:   { Ca:[2,5],   Mg:[1,2.5],   K:[3,6],   Na:[0,4], NO3:[3,8],  Cl:[0,4], SO4:[1,4], HCO3:[0,1]   },
+  cebolla:  { Ca:[2,4],   Mg:[1,2],     K:[2,4],   Na:[0,4], NO3:[2,6],  Cl:[0,4], SO4:[1,3], HCO3:[0,1.5] },
+  frutilla: { Ca:[2,4],   Mg:[1,2.5],   K:[2,4],   Na:[0,2], NO3:[3,7],  Cl:[0,2], SO4:[1,3], HCO3:[0,0.5] },
+  limon:    { Ca:[3,7],   Mg:[1.5,3.5], K:[1.5,4], Na:[0,3], NO3:[3,7],  Cl:[0,3], SO4:[1,4], HCO3:[0,1.5] },
+  palto:    { Ca:[3,7],   Mg:[1.5,3.5], K:[1.5,4], Na:[0,2], NO3:[3,7],  Cl:[0,2], SO4:[1,4], HCO3:[0,1.5] },
+};
+
+const ION_ICONS = { Ca:'🟢', Mg:'🔵', K:'🟣', Na:'⚪', NO3:'🟡', Cl:'🟠', SO4:'🟤', HCO3:'⚫' };
+const ION_NAMES = { Ca:'Calcio', Mg:'Magnesio', K:'Potasio', Na:'Sodio', NO3:'Nitrato', Cl:'Cloruro', SO4:'Sulfato', HCO3:'Bicarbonato' };
+const ION_DISPLAY = { Ca:'Ca²⁺', Mg:'Mg²⁺', K:'K⁺', Na:'Na⁺', NO3:'NO₃⁻', Cl:'Cl⁻', SO4:'SO₄²⁻', HCO3:'HCO₃⁻' };
+
+function showTolerancia() {
+  const ce = v('ss-ce');
+  const tb = $('ss-tol-bar');
+  if (ce <= 0) { tb.style.display = 'none'; return; }
+  tb.style.display = 'block';
+
+  const tol = TOLERANCIA_SAL[currentCrop];
+  const c = CULTIVOS_OPTIMO[currentCrop];
+  $('ss-tol-cult').textContent = c.icon + ' ' + c.nombre + ' (' + tol.cat + ')';
+  $('ss-tol-text').textContent = `Umbral: ${tol.umbral} dS/m · CE actual: ${ce.toFixed(2)} dS/m`;
+
+  // % de pérdida de rendimiento estimado: ~7% por cada dS/m sobre umbral (Maas-Hoffman)
+  const exceso = Math.max(0, ce - tol.umbral);
+  const perdida = Math.min(100, exceso * 7);
+  const pos = Math.min(100, (ce / (tol.umbral * 3)) * 100);
+  $('ss-tb-marker').style.left = pos + '%';
+  $('ss-tb-fill').style.width = '100%';
+
+  // Mensaje contextual
+  let msg = '';
+  if (perdida === 0) msg = '✓ CE bajo umbral — sin pérdida esperada';
+  else if (perdida < 10) msg = `⚠️ CE sobre umbral — pérdida estimada <10%`;
+  else if (perdida < 25) msg = `⚠️ Pérdida estimada ${perdida.toFixed(0)}% del rendimiento`;
+  else msg = `🚨 Pérdida estimada ${perdida.toFixed(0)}% — situación crítica`;
+  $('ss-tol-text').textContent = msg + ' · CE ' + ce.toFixed(2) + ' vs umbral ' + tol.umbral;
+}
+
+function buildSatRecommendations(ras) {
+  const ce = v('ss-ce');
+  const cont = $('ss-recs');
+  const v_ = satValues;
+
+  if (ce <= 0 && (!v_.Ca && !v_.Na)) {
+    cont.innerHTML = '<div style="text-align:center;padding:.8rem;color:var(--muted);font-style:italic;font-size:.78rem">Cargue datos del extracto para generar recomendaciones.</div>';
+    return;
+  }
+
+  // PARTE 1: Recomendaciones de salinidad / sodicidad / lavado
+  const saltRecs = buildSalinityRecs(ras, ce, v_);
+
+  // PARTE 2: Diagnóstico nutricional ion por ion
+  const nutritionalRecs = buildNutritionalRecs(v_, ce);
+
+  // Render con dos secciones separadas
+  let html = '';
+
+  // Sección salinidad
+  html += '<div style="margin-bottom:.6rem"><h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)">⚖️ Salinidad y sodicidad</h3></div>';
+  if (saltRecs.length === 0) {
+    html += '<div style="text-align:center;padding:.6rem;color:var(--muted);font-style:italic;font-size:.74rem">Sin alertas de salinidad.</div>';
+  } else {
+    html += saltRecs.map(r => renderSatRecCard(r)).join('');
+  }
+
+  // Sección nutricional
+  html += '<div style="margin:1.2rem 0 .6rem"><h3 style="font-family:\'Cormorant Garamond\',serif;font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)">🌱 Diagnóstico nutricional · ajustes para fertirriego</h3></div>';
+  if (nutritionalRecs.diagnosis.length === 0) {
+    html += '<div style="text-align:center;padding:.6rem;color:var(--muted);font-style:italic;font-size:.74rem">Cargue datos de iones solubles para generar recomendaciones nutricionales.</div>';
+  } else {
+    html += nutritionalRecs.diagnosis.map(r => renderSatRecCard(r)).join('');
+
+    // Resumen de ajustes a la receta
+    if (nutritionalRecs.recipe_adj.length > 0) {
+      html += `<div style="background:linear-gradient(135deg,var(--earth-pale),#fff);border:1.5px solid #D4A574;border-radius:10px;padding:.85rem 1rem;margin-top:.8rem">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--earth);font-weight:700;margin-bottom:.5rem">📋 Resumen: ajustes sugeridos a la receta de fertirriego</div>
+        <table class="recs-table">
+          <thead><tr><th>Ion</th><th>Estado en suelo</th><th>Ajuste en receta</th></tr></thead>
+          <tbody>${nutritionalRecs.recipe_adj.map(a => `<tr>
+            <td>${ION_DISPLAY[a.ion]}</td>
+            <td style="font-size:.74rem">${a.estado}</td>
+            <td style="font-weight:700;color:var(--earth);font-family:'Karla',sans-serif">${a.ajuste}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+        <div style="font-size:.7rem;color:var(--muted);margin-top:.5rem;line-height:1.45">
+          💡 La planta absorbe directamente los iones de la solución del suelo. Si en el extracto saturado un ion está alto, el aporte vía fertirriego debe reducirse para no acumular más. Si está bajo, debe aumentarse en la receta.
+        </div>
+      </div>`;
+    }
+  }
+
+  cont.innerHTML = html;
+}
+
+// Renderiza una card de recomendación
+function renderSatRecCard(r) {
+  return `<div class="diag-card ${r.level === 'ok' ? 'ok' : r.level === 'critical' ? 'critical' : 'warning'}" style="margin-bottom:.5rem">
+    <span class="diag-icon">${r.level === 'critical' ? '🔴' : r.level === 'warning' ? '🟡' : '🟢'}</span>
+    <div class="diag-content">
+      <div class="diag-param">${r.title}</div>
+      <div class="diag-msg">${r.text}</div>
+      ${r.action ? `<div class="diag-action"><strong>Acción</strong>${r.action}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// PARTE 1: Recomendaciones de salinidad/sodicidad/lavado (refactorizado)
+function buildSalinityRecs(ras, ce, v_) {
+  const recs = [];
+  const isSaline = ce > 4;
+  const isSodic = ras != null && ras > 13;
+
+  if (isSaline && !isSodic) {
+    recs.push({
+      level: 'critical',
+      title: 'Lavado de sales',
+      text: `CE ${ce.toFixed(1)} dS/m supera el umbral 4 dS/m (suelo salino). Aplicar lavado con agua de buena calidad (CE < 0.7 dS/m) hasta reducir la CE bajo el umbral del cultivo.`,
+      action: `Lámina de lavado: ~${(ce * 80).toFixed(0)} mm/ha (estimación 8 cm por cada dS/m)`
+    });
+  }
+  if (isSodic && !isSaline) {
+    recs.push({
+      level: 'critical',
+      title: 'Aplicación de yeso',
+      text: `RAS ${ras.toFixed(1)} supera el umbral 13 (suelo sódico). El sodio intercambiable degrada la estructura. Aplicar yeso para desplazar el Na de la CIC.`,
+      action: `Yeso agrícola (CaSO₄·2H₂O): 2.000–4.000 kg/ha incorporados a 20 cm`
+    });
+  }
+  if (isSaline && isSodic) {
+    recs.push({
+      level: 'critical',
+      title: 'Recuperación salino-sódica · ORDEN CRÍTICO',
+      text: `Combinación de salinidad y sodicidad. Es FUNDAMENTAL aplicar yeso PRIMERO y luego lavar. Lavar antes de aplicar yeso empeora la estructura del suelo y bloquea el lavado.`,
+      action: `1) Yeso agrícola 3.000–5.000 kg/ha incorporado · 2) Esperar 7–14 días · 3) Lavado con ${(ce * 100).toFixed(0)} mm/ha`
+    });
+  }
+  // CE específica vs cultivo
+  const tol = TOLERANCIA_SAL[currentCrop];
+  if (ce > 0 && tol && ce > tol.umbral) {
+    const exceso = ce - tol.umbral;
+    const perdida = Math.min(100, exceso * 7);
+    if (perdida > 10) {
+      recs.push({
+        level: perdida > 25 ? 'critical' : 'warning',
+        title: 'CE sobre umbral del cultivo',
+        text: `CE ${ce.toFixed(2)} dS/m supera el umbral de ${CULTIVOS_OPTIMO[currentCrop].nombre} (${tol.umbral} dS/m). Pérdida estimada ${perdida.toFixed(0)}% del rendimiento.`,
+        action: `Lavado para reducir CE + considerar cambio a cultivo más tolerante si la condición es estructural`
+      });
+    }
+  }
+  if (recs.length === 0 && ce > 0 && ce <= 4) {
+    recs.push({
+      level: 'ok',
+      title: 'Sin problemas de salinidad ni sodicidad',
+      text: `CE ${ce.toFixed(2)} dS/m y RAS ${ras != null ? ras.toFixed(1) : '—'} dentro de rangos seguros.`,
+      action: null
+    });
+  }
+  return recs;
+}
+
+// PARTE 2: Diagnóstico nutricional ion por ion + ajustes a receta
+function buildNutritionalRecs(v_, ce) {
+  const rangos = RANGOS_EXTRACTO[currentCrop];
+  if (!rangos) return { diagnosis: [], recipe_adj: [] };
+
+  const diagnosis = [];
+  const recipe_adj = [];
+
+  // Evaluar cada ion
+  ['Ca','Mg','K','NO3','SO4','HCO3','Cl','Na'].forEach(ion => {
+    const val = v_[ion];
+    if (val == null || val === 0) return;
+    const [lo, hi] = rangos[ion];
+    const cropName = CULTIVOS_OPTIMO[currentCrop].nombre;
+
+    let level, title, text, action, estado, ajuste;
+
+    if (ion === 'Cl' || ion === 'Na') {
+      // Para iones tóxicos: solo importan si están sobre el límite
+      if (val > hi) {
+        const overFactor = val / hi;
+        level = overFactor > 2 ? 'critical' : 'warning';
+        const sensibilidad = (currentCrop === 'frutilla' || currentCrop === 'palto') ? 'muy sensible' :
+                             (currentCrop === 'limon' || currentCrop === 'pimiento') ? 'sensible' : 'tolerante';
+        title = `${ION_NAMES[ion]} elevado en solución`;
+        text = `${ION_DISPLAY[ion]} ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. ${cropName} es ${sensibilidad} a ${ion === 'Cl' ? 'cloruros' : 'sodio'}. Riesgo de toxicidad foliar y reducción de absorción de otros cationes.`;
+        action = ion === 'Cl' ?
+          'Aumentar fracción de lavado al 25–30% del riego · usar K₂SO₄ en lugar de KCl en el fertirriego' :
+          'Aumentar fracción de lavado · aplicar yeso (Ca²⁺ desplaza Na⁺) · evitar Salitre sódico (NaNO₃)';
+        estado = `${val.toFixed(2)} alto (×${overFactor.toFixed(1)} sobre máx.)`;
+        ajuste = ion === 'Cl' ? 'Eliminar fuentes con Cl (KCl)' : 'Eliminar fuentes con Na (NaNO₃)';
+        diagnosis.push({ level, title, text, action });
+        recipe_adj.push({ ion, estado, ajuste });
+      }
+      return;
+    }
+
+    if (ion === 'HCO3') {
+      // Bicarbonatos: solo importan si están sobre límite
+      if (val > hi) {
+        level = val > hi * 2 ? 'critical' : 'warning';
+        title = 'Bicarbonatos elevados';
+        text = `HCO₃⁻ ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. Precipita Ca y bloquea raíces. Sube el pH del suelo a niveles que reducen disponibilidad de Fe, Mn, Zn.`;
+        action = 'Acidificar agua de riego con HNO₃ o H₃PO₄ — usar el módulo de cálculo de soluciones para determinar volumen exacto';
+        estado = `${val.toFixed(2)} alto`;
+        ajuste = 'Acidificar · sumar HNO₃ a la receta';
+        diagnosis.push({ level, title, text, action });
+        recipe_adj.push({ ion, estado, ajuste });
+      }
+      return;
+    }
+
+    // Iones nutritivos (Ca, Mg, K, NO3, SO4): evaluar bajo y alto
+    if (val < lo * 0.5) {
+      level = 'critical';
+      title = `${ION_NAMES[ion]} muy bajo en solución`;
+      text = `${ION_DISPLAY[ion]} ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. La planta no encuentra suficiente ${ION_NAMES[ion].toLowerCase()} disponible para absorber.`;
+      action = `Aumentar significativamente ${ION_DISPLAY[ion]} en la receta de fertirriego · objetivo ${lo} mmol/L mínimo`;
+      estado = `${val.toFixed(2)} muy bajo`;
+      ajuste = `Aumentar ~${(lo - val).toFixed(1)} mmol/L`;
+    } else if (val < lo) {
+      level = 'warning';
+      title = `${ION_NAMES[ion]} bajo en solución`;
+      text = `${ION_DISPLAY[ion]} ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. Niveles bajos pueden limitar absorción.`;
+      action = `Aumentar ${ION_DISPLAY[ion]} en la receta de fertirriego para llegar al rango óptimo`;
+      estado = `${val.toFixed(2)} bajo`;
+      ajuste = `Aumentar ~${((lo + hi)/2 - val).toFixed(1)} mmol/L`;
+    } else if (val > hi * 1.5) {
+      level = 'critical';
+      title = `${ION_NAMES[ion]} muy alto en solución`;
+      text = `${ION_DISPLAY[ion]} ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. Exceso ${ion === 'NO3' ? 'puede causar lixiviación, pérdida económica y contaminación de napas' : ion === 'K' ? 'desplaza absorción de Ca y Mg' : ion === 'Mg' ? 'desplaza absorción de Ca' : 'desbalancea absorción de otros cationes'}.`;
+      action = `Reducir o eliminar ${ION_DISPLAY[ion]} de la receta hasta normalizar la solución del suelo`;
+      estado = `${val.toFixed(2)} muy alto`;
+      ajuste = `Reducir ~${(val - hi).toFixed(1)} mmol/L · suspender temporalmente fuentes`;
+    } else if (val > hi) {
+      level = 'warning';
+      title = `${ION_NAMES[ion]} alto en solución`;
+      text = `${ION_DISPLAY[ion]} ${val.toFixed(2)} mmol/L · óptimo ${lo}–${hi} mmol/L. Vigilar acumulación.`;
+      action = `Reducir aporte de ${ION_DISPLAY[ion]} en la receta`;
+      estado = `${val.toFixed(2)} alto`;
+      ajuste = `Reducir ~${(val - (lo+hi)/2).toFixed(1)} mmol/L`;
+    } else {
+      // Está OK, no agregar al diagnóstico individual pero sí a la tabla con estado verde
+      return;
+    }
+
+    diagnosis.push({ level, title, text, action });
+    recipe_adj.push({ ion, estado, ajuste });
+  });
+
+  // Análisis de relaciones iónicas en solución
+  if (v_.Ca && v_.Mg && v_.Mg > 0) {
+    const ratio = v_.Ca / v_.Mg;
+    if (ratio < 1) {
+      diagnosis.push({
+        level: 'warning',
+        title: 'Mg dominante sobre Ca en solución',
+        text: `Ratio Ca/Mg en solución = ${ratio.toFixed(2)} (óptimo > 2). El Mg compite con Ca por la absorción radical. Riesgo de deficiencia de Ca aunque haya Ca disponible.`,
+        action: 'Aumentar Ca(NO₃)₂ en fertirriego · considerar yeso pre-temporada · reducir aporte de Mg si es excesivo'
+      });
+    } else if (ratio > 8) {
+      diagnosis.push({
+        level: 'warning',
+        title: 'Ca dominante sobre Mg en solución',
+        text: `Ratio Ca/Mg = ${ratio.toFixed(2)} (óptimo 2–6). Riesgo de deficiencia inducida de Mg.`,
+        action: 'Aumentar MgSO₄·7H₂O en fertirriego'
+      });
+    }
+  }
+
+  if (v_.K && v_.Ca && v_.Ca > 0) {
+    const ratio = v_.K / v_.Ca;
+    if (ratio > 1) {
+      diagnosis.push({
+        level: 'warning',
+        title: 'K dominante sobre Ca en solución',
+        text: `Ratio K/Ca = ${ratio.toFixed(2)} (óptimo < 1). El K excesivo bloquea absorción de Ca, causando BER (en tomate), corazón negro (lechuga), tip burn (frutilla).`,
+        action: 'Reducir K₂O en receta · aumentar Ca(NO₃)₂'
+      });
+    }
+  }
+
+  return { diagnosis, recipe_adj };
+}
+
+// Listeners
+document.querySelectorAll('#subpage-saturado input').forEach(el => {
+  el.addEventListener('input', computeSaturado);
+});
+
+// Selector de cultivo dentro de Extracto saturado (sincroniza con el de Recomendaciones)
+function syncCropButtons() {
+  document.querySelectorAll('.crop-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.crop === currentCrop);
+  });
+}
+document.querySelectorAll('#sat-crop-buttons .crop-btn').forEach(b => {
+  b.onclick = () => {
+    currentCrop = b.dataset.crop;
+    syncCropButtons();
+    computeSaturado();
+    renderRecommendations();  // también actualiza la otra pestaña
+  };
+});
+// Inicializar marca activa en sat
+syncCropButtons();
+
+// Restaurar extracto saturado guardado en localStorage (si existe)
+(function restoreSaturado() {
+  const saved = Storage.getSaturado();
+  if (!saved) return;
+  if (saved.ce != null) $('ss-ce').value = saved.ce;
+  if (saved.ph != null) $('ss-ph').value = saved.ph;
+  if (saved.Ca != null) $('ss-ca').value = saved.Ca;
+  if (saved.Mg != null) $('ss-mg').value = saved.Mg;
+  if (saved.K != null)  $('ss-k').value  = saved.K;
+  if (saved.Na != null) $('ss-na').value = saved.Na;
+  if (saved.HCO3 != null) $('ss-hco3').value = saved.HCO3;
+  if (saved.Cl != null) $('ss-cl').value = saved.Cl;
+  if (saved.SO4 != null) $('ss-so4').value = saved.SO4;
+  if (saved.NO3 != null) $('ss-no3').value = saved.NO3;
+  // Computar diagnóstico solo si hay datos significativos
+  const hasData = ['Ca','Mg','K','Na','HCO3','Cl','SO4','NO3'].some(k => saved[k] != null && saved[k] > 0) || (saved.ce && saved.ce > 0);
+  if (hasData) computeSaturado();
+})();
+
+function loadExampleSat() {
+  // Ejemplo basado en análisis típico chileno de extracto saturado, suelo salino moderado
+  $('ss-hs').value = 32;
+  $('ss-ph').value = 7.8;
+  $('ss-ce').value = 3.2;
+  // Cationes (mmol/L)
+  $('ss-ca').value = 8.5;
+  $('ss-mg').value = 4.2;
+  $('ss-k').value = 0.6;
+  $('ss-na').value = 6.8;
+  // Aniones (mmol/L)
+  $('ss-hco3').value = 2.5;
+  $('ss-cl').value = 6.2;
+  $('ss-so4').value = 5.8;
+  $('ss-no3').value = 0.8;
+  computeSaturado();
+}
+
+function clearSaturado() {
+  document.querySelectorAll('#subpage-saturado input').forEach(el => el.value = '');
+  // Resetear satValues internamente
+  satValues = { Ca:null, Mg:null, K:null, Na:null, HCO3:null, Cl:null, SO4:null, NO3:null };
+  // Limpiar también de localStorage
+  localStorage.removeItem(Storage.KEY_SAT);
+  computeSaturado();
+  renderRecommendations();
+}
+</script>
+</body>
+</html>

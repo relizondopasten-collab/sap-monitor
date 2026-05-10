@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sap & Soil · Plan Nutricional Tomate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --purple:#5A4A8A;--purple-pale:#F0EDFA;
+  --blue:#1E5A8C;--blue-pale:#DEEAF5;
+  --earth:#7A4F2F;--earth-pale:#F2E8DD;
+  --tomate:#C4452D;--tomate-lt:#E26A52;--tomate-pale:#FCEAE6;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;padding-bottom:70px}
+
+/* TOP BAR */
+.topbar{background:var(--navy);color:#fff;padding:.8rem 1.1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.15)}
+.tb-brand{display:flex;align-items:center;gap:.55rem}
+.tb-logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--tomate),var(--tomate-lt));display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.tb-name em{color:var(--tomate-lt);font-style:italic}
+.tb-sub{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:-.1rem}
+.tb-context{font-size:.7rem;color:rgba(255,255,255,.55);text-align:right;line-height:1.3}
+.tb-context strong{color:var(--tomate-lt);display:block;font-weight:600}
+
+/* TABS */
+.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 .5rem;display:flex;gap:.2rem;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:51px;z-index:49;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.tab{flex-shrink:0;padding:.7rem .85rem;background:none;border:none;cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:.35rem}
+.tab:hover{color:var(--tomate)}
+.tab.active{color:var(--tomate);border-bottom-color:var(--tomate)}
+.tab-icon{font-size:.95rem}
+
+/* PAGES */
+.page{display:none;padding:0 0 1rem;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:#fff;margin:.85rem;border-radius:11px;padding:1.1rem;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--line)}
+.card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+.card-num{width:30px;height:30px;background:var(--tomate);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.card-titles{flex:1}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--tomate);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.18rem;color:var(--navy);font-weight:600;line-height:1.15}
+
+/* SECTION TITLE */
+.section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tomate);margin:1rem 0 .5rem;padding-bottom:.3rem;border-bottom:1.5px solid var(--tomate-pale);display:flex;justify-content:space-between;align-items:baseline}
+.section-title:first-child{margin-top:.2rem}
+.section-title small{font-family:'Karla',sans-serif;font-weight:400;font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0}
+
+/* INPUTS */
+.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-bottom:.5rem}
+.input-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.input-grid.cols-1{grid-template-columns:1fr}
+.inp-cell{background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:.45rem .55rem;display:flex;flex-direction:column;gap:.15rem;transition:all .15s}
+.inp-cell:focus-within{border-color:var(--tomate);background:#fff}
+.inp-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.inp-fld{display:flex;align-items:baseline;gap:.3rem}
+.inp-val{flex:1;background:transparent;border:none;outline:none;font-size:.95rem;font-weight:600;color:var(--ink);font-family:'DM Mono',monospace;width:100%;min-width:0;padding:0}
+.inp-unit{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;flex-shrink:0}
+.cb-sel{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.45rem .55rem;font-size:.85rem;font-family:'Karla',sans-serif;color:var(--ink);outline:none;font-weight:500;width:100%}
+.cb-sel:focus{border-color:var(--tomate);background:#fff}
+
+/* EPOCA SELECTOR (cards) */
+.epoca-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:.5rem}
+.epoca-card{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.7rem .6rem;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:.2rem;text-align:left}
+.epoca-card:hover{border-color:var(--tomate-lt);background:#fff}
+.epoca-card.active{border-color:var(--tomate);background:var(--tomate-pale)}
+.ec-icon{font-size:1.4rem;line-height:1}
+.ec-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--navy);line-height:1.1}
+.ec-meta{font-size:.65rem;color:var(--muted);line-height:1.3}
+.ec-date{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:600;color:var(--tomate)}
+.epoca-card.active .ec-meta{color:var(--ink)}
+
+/* GANTT TIMELINE */
+.gantt-wrap{background:#fff;border-radius:10px;border:1.5px solid var(--line);padding:.7rem;overflow-x:auto}
+.gantt-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--navy);font-weight:700;margin-bottom:.4rem}
+.gantt-sub{font-size:.7rem;color:var(--muted);margin-bottom:.7rem}
+.gantt{position:relative;min-width:600px;font-family:'DM Mono',monospace;font-size:.65rem}
+.gantt-row{position:relative;height:30px;margin-bottom:6px;display:flex;align-items:center}
+.gantt-label{width:38px;font-size:.7rem;font-weight:700;color:var(--tomate);flex-shrink:0;font-family:'Karla',sans-serif}
+.gantt-track{position:relative;flex:1;height:100%;background:#FAFAFA;border-radius:3px;border:1px solid #EEE}
+.gantt-bar{position:absolute;height:18px;top:3px;border-radius:3px;display:flex;align-items:center;padding:0 4px;font-size:.6rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gantt-bar.veg{background:linear-gradient(90deg,#7CB57C,#5A9A5A);}
+.gantt-bar.flor{background:linear-gradient(90deg,#E8B450,#D4820A);}
+.gantt-bar.fruct{background:linear-gradient(90deg,var(--tomate-lt),var(--tomate));}
+.gb-days{padding-left:6px;font-weight:600;font-size:.6rem}
+
+/* Marcador puntual de antesis (evento de un día) */
+.gantt-marker-ant{position:absolute;top:-3px;bottom:-3px;width:0;z-index:3;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.gma-line{position:absolute;top:0;bottom:0;left:-1.5px;width:3px;background:#D4820A;border-radius:2px;box-shadow:0 0 0 1.5px #fff}
+.gma-lbl{position:absolute;top:-13px;font-family:'DM Mono',monospace;font-size:.55rem;font-weight:700;color:#D4820A;background:#fff;padding:1px 4px;border-radius:3px;border:1px solid #D4820A;white-space:nowrap;transform:translateX(-50%);left:0}
+.gantt-axis{display:flex;justify-content:space-between;font-size:.6rem;color:var(--muted);padding:.3rem 0 .1rem 38px;border-bottom:1px solid #EEE;margin-bottom:.4rem}
+.gantt-marker{position:absolute;top:-4px;bottom:-4px;width:1.5px;background:var(--tomate-lt);opacity:.6}
+.gantt-tick{position:absolute;font-size:.55rem;color:var(--muted);transform:translateX(-50%);bottom:-12px}
+
+/* RACIMO TABLE */
+.rac-table{width:100%;border-collapse:collapse;font-size:.78rem;background:#fff;border-radius:8px;overflow:hidden}
+.rac-table th{background:var(--tomate-pale);color:var(--navy);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:.85rem;text-align:left;padding:.5rem .55rem;border-bottom:1.5px solid var(--tomate-lt)}
+.rac-table td{padding:.5rem .55rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:.74rem}
+.rac-table td:first-child{font-family:'Karla',sans-serif;font-weight:700;color:var(--tomate)}
+.rac-table tbody tr:hover{background:var(--bg)}
+
+/* STAGE BADGES */
+.stg{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.62rem;font-weight:700;font-family:'DM Mono',monospace}
+.stg.ant{background:#FDF3E0;color:#D4820A;border:1px solid #E8B450}
+.stg.cos{background:var(--tomate-pale);color:var(--tomate);border:1px solid var(--tomate-lt)}
+.stg.cua{background:var(--green-pale);color:var(--green);border:1px solid #88B89B}
+
+/* CURVE CHART */
+.chart-wrap{background:#fff;border-radius:10px;border:1.5px solid var(--line);padding:.8rem;overflow-x:auto}
+.chart-svg{width:100%;height:auto;min-width:500px;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.5rem;justify-content:center;font-size:.7rem}
+.lg-item{display:flex;align-items:center;gap:.25rem}
+.lg-dot{width:10px;height:10px;border-radius:2px}
+
+/* RECETA CARD */
+.evento-card{background:#fff;border-left:4px solid var(--tomate);border-radius:8px;padding:.8rem .9rem;margin-bottom:.7rem;border:1px solid var(--line)}
+.evento-card.veg{border-left-color:#5A9A5A}
+.evento-card.flor{border-left-color:var(--amber)}
+.evento-card.fruct{border-left-color:var(--tomate)}
+.evento-card.maduracion{border-left-color:#7A2E1F}
+.evento-card .ev-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;gap:.4rem;flex-wrap:wrap}
+.evento-card .ev-rac{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--navy);font-weight:700;line-height:1.1}
+.evento-card .ev-fecha{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);text-align:right;line-height:1.3}
+.evento-card .ev-fecha strong{color:var(--tomate);font-weight:700;display:block}
+
+.receta-mini{display:grid;grid-template-columns:repeat(5, 1fr);gap:.3rem;margin:.5rem 0}
+.rm-cell{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.3rem .25rem;text-align:center}
+.rm-val{font-family:'DM Mono',monospace;font-size:.85rem;font-weight:700;color:var(--ink);display:block;line-height:1}
+.rm-lbl{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-top:.2rem;display:block}
+.rm-cell.n{background:#FFF8EC;border-color:#E8C470}
+.rm-cell.k{background:#F0EDFA;border-color:#C0B5E5}
+.rm-cell.ca{background:#EBF9F9;border-color:#9ED5D5}
+.rm-cell.mg{background:#DEEAF5;border-color:#8AB5D9}
+.rm-cell.p{background:var(--tomate-pale);border-color:var(--tomate-lt)}
+
+.ratios-mini{display:flex;justify-content:space-between;background:linear-gradient(135deg,var(--earth-pale),#FFF);border:1px solid #D4A574;border-radius:6px;padding:.4rem .55rem;margin:.4rem 0;font-size:.72rem;flex-wrap:wrap;gap:.4rem}
+.rt-item{display:flex;flex-direction:column;align-items:center;gap:.05rem}
+.rt-name{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.rt-val{font-family:'DM Mono',monospace;font-weight:700;color:var(--earth);font-size:.85rem}
+
+/* SAVIA REFERENCE TABLE */
+.savia-table{width:100%;border-collapse:collapse;font-size:.72rem;background:#fff}
+.savia-table th{background:#1A9E9E;color:#fff;padding:.4rem .35rem;font-weight:700;font-size:.65rem;text-align:center}
+.savia-table th.j{background:#2A6041}
+.savia-table th.v{background:#7A4F2F}
+.savia-table td{padding:.35rem .35rem;border-bottom:1px solid var(--line);text-align:center;font-family:'DM Mono',monospace;font-size:.7rem}
+.savia-table td.r{background:var(--tomate-pale);font-family:'Karla',sans-serif;font-weight:700;color:var(--tomate)}
+.savia-table td.j{background:#E6F2EC}
+.savia-table td.v{background:var(--earth-pale)}
+.savia-table tbody tr:nth-child(even) td{background:#FAFAFA}
+.savia-table tbody tr:nth-child(even) td.r{background:#F5DDD7}
+.savia-table tbody tr:nth-child(even) td.j{background:#D5E5D9}
+.savia-table tbody tr:nth-child(even) td.v{background:#E8DCC9}
+
+/* MEDICION INPUT */
+.medicion-form{background:linear-gradient(135deg,#EBF9F9,#FFF);border:1.5px solid #9ED5D5;border-radius:10px;padding:.85rem;margin:.6rem 0}
+.med-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem}
+.med-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+
+/* DIAGNOSIS CARDS */
+.diag-card{display:flex;gap:.6rem;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6rem .75rem;margin-bottom:.4rem;border-left-width:4px;border-left-style:solid}
+.diag-card.ok{border-left-color:var(--green);background:#F4F9F6}
+.diag-card.warning{border-left-color:var(--amber);background:#FEFAEC}
+.diag-card.critical{border-left-color:var(--red);background:#FCF1ED}
+.diag-icon{font-size:1.2rem;flex-shrink:0;line-height:1.2}
+.diag-content{flex:1;min-width:0}
+.diag-param{font-weight:700;color:var(--navy);margin-bottom:.15rem;font-size:.82rem}
+.diag-msg{font-size:.74rem;color:var(--ink2);line-height:1.4;margin-bottom:.25rem}
+.diag-action{font-size:.7rem;color:var(--earth);font-weight:600;background:var(--earth-pale);padding:.25rem .4rem;border-radius:4px;margin-top:.3rem}
+.diag-action strong{color:var(--earth);display:inline-block;margin-right:.3rem;font-weight:700}
+
+/* PRODUCT TABLE (recetas) */
+.fert-table{width:100%;border-collapse:collapse;font-size:.78rem;margin:.5rem 0}
+.fert-table th{background:var(--bg);font-weight:700;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:.4rem;text-align:left;border-bottom:1.5px solid var(--line)}
+.fert-table td{padding:.4rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:.72rem}
+.fert-table td:first-child{font-family:'Karla',sans-serif;font-weight:600;color:var(--ink)}
+
+/* HELP PANELS */
+.note{background:linear-gradient(135deg,var(--blue-pale),#fff);border:1px solid #8AB5D9;border-radius:8px;padding:.65rem .85rem;margin:.5rem 0;font-size:.74rem;color:var(--navy);line-height:1.5}
+.note strong{color:var(--blue);font-weight:700;display:block;margin-bottom:.2rem;font-family:'Cormorant Garamond',serif;font-size:.95rem}
+.note.warn{background:linear-gradient(135deg,var(--amber-pale),#fff);border-color:#E8C470}
+.note.warn strong{color:var(--amber)}
+
+/* BUTTONS */
+.btn{background:var(--tomate);color:#fff;border:none;padding:.55rem 1rem;border-radius:6px;font-family:'Karla',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:.4rem}
+.btn:hover{background:#A33A26}
+.btn.ghost{background:transparent;color:var(--tomate);border:1.5px solid var(--tomate)}
+.btn.ghost:hover{background:var(--tomate-pale)}
+.btn.sm{padding:.35rem .7rem;font-size:.75rem}
+.view-toggle.active{background:var(--tomate);color:#fff;border-color:var(--tomate)}
+
+/* COSTO RESUMEN */
+.costo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin:.5rem 0}
+.costo-cell{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:.6rem .7rem;text-align:center}
+.costo-cell.total{background:linear-gradient(135deg,var(--tomate-pale),#fff);border-color:var(--tomate-lt)}
+.costo-val{font-family:'DM Mono',monospace;font-weight:700;font-size:1.1rem;color:var(--tomate);display:block;line-height:1.1}
+.costo-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-top:.2rem;display:block}
+
+/* MOBILE TWEAKS */
+@media (max-width:540px){
+  .input-grid{grid-template-columns:1fr}
+  .input-grid.cols-3{grid-template-columns:repeat(2,1fr)}
+  .receta-mini{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🍅</div>
+    <div>
+      <span class="tb-sub">Sap & Soil</span>
+      <div class="tb-name">Plan <em>Nutricional</em> · Tomate</div>
+    </div>
+  </div>
+  <div class="tb-context">
+    <strong id="ctx-epoca">—</strong>
+    <span id="ctx-variedad">—</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab active" data-page="config"><span class="tab-icon">📅</span>Configuración</button>
+  <button class="tab" data-page="curvas"><span class="tab-icon">📈</span>Curvas crecimiento</button>
+  <button class="tab" data-page="receta"><span class="tab-icon">🧪</span>Plan nutricional</button>
+  <button class="tab" data-page="savia"><span class="tab-icon">🌿</span>Monitoreo savia</button>
+  <button class="tab" data-page="costos"><span class="tab-icon">💰</span>Costos</button>
+</nav>
+
+<!-- ========================================================== -->
+<!-- PAGE 1: CONFIGURACIÓN DEL CULTIVO -->
+<!-- ========================================================== -->
+<div class="page active" id="page-config">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Configuración inicial</div>
+        <h2 class="card-title">Selección de época y variedad</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📚 Metodología</strong>
+      Selecciona la época de plantación. Cada época tiene un calendario fenológico específico para la zona Quillota–Limache, con fechas reales de antesis y cosecha por racimo, basado en mediciones agronómicas (R. Elizondo, 2026).
+    </div>
+
+    <div class="section-title">Época de plantación</div>
+    <div class="epoca-grid" id="epoca-buttons"></div>
+
+    <div class="section-title" style="margin-top:1.2rem">Configuración del ciclo</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">Fecha plantación</span>
+        <input type="date" class="inp-val" id="cfg-fecha" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">N° de racimos</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="cfg-racimos" min="4" max="12" />
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Densidad (ejes/ha)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="cfg-densidad" step="100" />
+        </div>
+      </div>
+    </div>
+
+    <div class="input-grid cols-3" style="margin-top:.4rem">
+      <div class="inp-cell">
+        <span class="inp-lbl">Variedad</span>
+        <input type="text" class="inp-val" id="cfg-variedad" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Predio</span>
+        <input type="text" class="inp-val" id="cfg-predio" placeholder="ej: La Constancia" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Sector</span>
+        <input type="text" class="inp-val" id="cfg-sector" placeholder="ej: Módulo A" />
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDARIO FENOLÓGICO (Gantt) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Calendario fenológico</div>
+        <h2 class="card-title">Línea de tiempo del cultivo</h2>
+      </div>
+    </div>
+
+    <div id="calendario-info" class="note">
+      <strong>📊 Calendario calculado</strong>
+      <span id="cal-resumen">Selecciona una época para ver el calendario.</span>
+    </div>
+
+    <div class="gantt-wrap">
+      <div class="gantt-title">Antesis y cosecha por racimo</div>
+      <div class="gantt-sub">La <strong>antesis</strong> es un evento puntual (un día) — marcado con línea vertical naranja. La barra roja representa el período <strong>antesis → inicio de cosecha</strong> de cada racimo.</div>
+      <div id="gantt"></div>
+    </div>
+
+    <div class="legend" style="margin-top:.7rem">
+      <div class="lg-item"><span class="lg-dot" style="background:#5A9A5A"></span> Pre-antesis (vegetativo)</div>
+      <div class="lg-item"><span class="lg-dot" style="background:#D4820A;width:3px;margin-right:3px"></span> Antesis (día puntual)</div>
+      <div class="lg-item"><span class="lg-dot" style="background:var(--tomate)"></span> Antesis → inicio cosecha</div>
+    </div>
+
+    <div class="section-title" style="margin-top:1.2rem">Detalle por racimo</div>
+    <div style="overflow-x:auto">
+      <table class="rac-table" id="rac-table">
+        <thead>
+          <tr><th>Rac.</th><th>Antesis</th><th>Días desde<br>plantación</th><th>Inicio<br>cosecha</th><th>Días antesis<br>→ cosecha</th><th>Mitad de<br>período</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CONTEXTO CLIMATOLÓGICO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">🌡️</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Contexto climático</div>
+        <h2 class="card-title">Condiciones meteorológicas del ciclo</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📊 Fuente de datos</strong>
+      Datos climatológicos integrados de tres estaciones de la zona Quillota–Limache: <strong>DMC Liceo Agrícola Quillota</strong> (EMA oficial inaugurada nov 2024) · <strong>Agromet INIA La Cruz</strong> (Quillota, Red Agroclimática Nacional) · <strong>Instacrops Limache</strong> (Agrícola Rivarola, estaciones Davis). Coordenadas referencia: -32.88°S, -71.25°W, 130 msnm. Clima Csb mediterráneo.
+    </div>
+
+    <div id="contexto-clima"></div>
+
+    <div class="section-title" style="margin-top:1rem">Temperatura mensual durante el ciclo</div>
+    <div class="chart-wrap">
+      <svg class="chart-svg" id="chart-clima" viewBox="0 0 700 280" style="min-width:500px"></svg>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 2: CURVAS DE CRECIMIENTO -->
+<!-- ========================================================== -->
+<div class="page" id="page-curvas">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📈</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Crecimiento de fruto</div>
+        <h2 class="card-title">Curvas por época y racimo</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📐 Diámetro objetivo</strong>
+      Tamaño objetivo: 85 mm a cosecha. A mitad del período de crecimiento debe lograrse 65 mm (76% del tamaño final). Las curvas mostradas son de los Cuadros 2, 4, 6, 8, 10 del manual.
+    </div>
+
+    <!-- TOGGLE de vista -->
+    <div style="display:flex;gap:.4rem;margin:.7rem 0">
+      <button class="btn sm view-toggle active" data-view="comparar" onclick="setVistaCurvas('comparar')">📊 Comparar épocas</button>
+      <button class="btn sm view-toggle ghost" data-view="detalle" onclick="setVistaCurvas('detalle')">🔍 Detalle por racimo</button>
+    </div>
+
+    <div id="curvas-explicacion-comparar" class="note warn">
+      <strong>🔍 Comparativa entre épocas</strong>
+      Cada línea es la curva de crecimiento del <strong>primer racimo (R1)</strong> de cada época, con eje X en <strong>días desde antesis</strong>. El círculo grande final marca el día de cosecha. Nota cómo el ciclo varía: <strong>Verano</strong> ~53 días vs <strong>Primor</strong> ~81 días — esto se explica por la temperatura, ver tabla comparativa abajo.
+    </div>
+
+    <div id="curvas-explicacion-detalle" class="note warn" style="display:none">
+      <strong>🔍 Detalle por racimo</strong>
+      Curvas de todos los racimos de la época seleccionada. Los racimos con curvas idénticas se agrupan (ej: "R1–R3"). Esto refleja la realidad agronómica: en cada época hay patrones de comportamiento que comparten varios racimos consecutivos.
+    </div>
+
+    <div class="section-title">Diámetro ecuatorial (mm) por semana desde antesis</div>
+    <div class="chart-wrap">
+      <svg class="chart-svg" id="chart-mm" viewBox="0 0 700 320"></svg>
+    </div>
+
+    <div class="section-title">Tasa de crecimiento (mm/d) por semana</div>
+    <div class="chart-wrap">
+      <svg class="chart-svg" id="chart-mmd" viewBox="0 0 700 320"></svg>
+    </div>
+
+    <!-- TABLA COMPARATIVA DE ÉPOCAS -->
+    <div id="tabla-comparativa">
+      <div class="section-title" style="margin-top:1.2rem">Comparativa climática del ciclo R1</div>
+      <div class="note">
+        <strong>🌡️ Análisis de Grados-Día (GDD)</strong>
+        Datos de las estaciones <strong>DMC Liceo Agrícola Quillota</strong>, <strong>Agromet INIA La Cruz</strong> e <strong>Instacrops Limache</strong> (Agrícola Rivarola). Tbase tomate = 10°C. La suma térmica acumulada (GDD) explica los días variables antesis→cosecha entre épocas.
+      </div>
+      <div style="overflow-x:auto">
+        <table class="rac-table" id="comparativa-table">
+          <thead>
+            <tr><th>Época</th><th>Variedad</th><th>Antesis R1</th><th>Cosecha R1</th><th>Días</th><th>GDD acum.</th><th>GDD/día</th><th>T° media</th><th>Rad. diaria</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TABLA DETALLADA -->
+    <div id="tabla-detalle" style="display:none">
+      <div class="section-title">Tabla detallada por semana</div>
+      <div style="overflow-x:auto">
+        <table class="rac-table" id="curva-table">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRO DE MEDICIONES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📏</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Mediciones de campo</div>
+        <h2 class="card-title">Registro real vs esperado</h2>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <strong>📌 Mide semanalmente</strong>
+      Mide el diámetro ecuatorial del primer fruto de cada racimo cada 7 días. Compara con la curva esperada de tu época. Si la tasa está por debajo, revisar nutrición y riego.
+    </div>
+
+    <div class="medicion-form">
+      <div class="med-grid cols-3">
+        <div class="inp-cell">
+          <span class="inp-lbl">Racimo</span>
+          <select class="inp-val" id="med-rac" style="background:transparent">
+            <option value="1">R1</option><option value="2">R2</option><option value="3">R3</option>
+            <option value="4">R4</option><option value="5">R5</option><option value="6">R6</option>
+            <option value="7">R7</option><option value="8">R8</option><option value="9">R9</option>
+          </select>
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Fecha medición</span>
+          <input type="date" class="inp-val" id="med-fecha" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Diámetro (mm)</span>
+          <div class="inp-fld">
+            <input type="number" class="inp-val" id="med-mm" step="1" placeholder="65" />
+            <span class="inp-unit">mm</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn sm" style="margin-top:.5rem" onclick="agregarMedicion()">+ Agregar medición</button>
+    </div>
+
+    <div id="mediciones-list"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 3: PLAN NUTRICIONAL DINÁMICO -->
+<!-- ========================================================== -->
+<div class="page" id="page-receta">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">3</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Plan dinámico</div>
+        <h2 class="card-title">Recetas por evento fenológico</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>🧪 Estrategia</strong>
+      La receta cambia en cada evento clave (antesis o cosecha de un racimo). Esto sigue tu metodología documentada: relación N:K evoluciona de 1:1 (R1) → 1:3 (R5+) y la concentración total aumenta progresivamente.
+    </div>
+
+    <div class="section-title">Análisis de agua de riego (corrige la receta)</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">Ca agua (mmol/L)</span>
+        <input type="number" class="inp-val" id="agua-ca" step="0.1" value="3.0" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Mg agua (mmol/L)</span>
+        <input type="number" class="inp-val" id="agua-mg" step="0.1" value="1.0" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">N agua (mmol/L)</span>
+        <input type="number" class="inp-val" id="agua-n" step="0.1" value="0.5" />
+      </div>
+    </div>
+
+    <div class="note warn" style="margin-top:.7rem">
+      <strong>💡 Recetas precargadas</strong>
+      Las recetas mostradas son <strong>propuestas</strong> basadas en 8 programas reales que has aplicado en tus campos (Luis Guerra, El Tránsito, Los Arrayanes, Origen, Cisternas, El Molino, La Constancia). <strong>Deben corregirse según los análisis de lisímetro y savia.</strong>
+    </div>
+  </div>
+
+  <div id="recetas-container"></div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 4: MONITOREO DE SAVIA -->
+<!-- ========================================================== -->
+<div class="page" id="page-savia">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">4</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Análisis de savia</div>
+        <h2 class="card-title">Monitoreo con ionómetro Horiba</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📋 Metodología</strong>
+      Muestreo entre 8:00–9:30 AM. Hojas joven (3a–5a desde el ápice) y vieja. 1 muestra/10.000 m². Medir antes de 2 minutos del prensado. Calibrar cada 10 muestras. Equipo: Horiba Laquatwin (NO₃, K, Ca, Na, CE, pH).
+    </div>
+
+    <div class="section-title">Valores de referencia (ppm) por racimo</div>
+    <div style="overflow-x:auto">
+      <table class="savia-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="background:var(--tomate)">Racimo</th>
+            <th colspan="2" class="j">NO₃</th>
+            <th colspan="2" class="v" style="background:#7A4F2F">K</th>
+            <th colspan="2">Ca</th>
+            <th colspan="2" style="background:#5A4A8A">Mg</th>
+            <th rowspan="2">CE<br>mS/cm</th>
+            <th rowspan="2">pH</th>
+            <th rowspan="2">Brix</th>
+          </tr>
+          <tr>
+            <th class="j">Joven</th><th class="j">Vieja</th>
+            <th class="v" style="background:#7A4F2F">Joven</th><th class="v" style="background:#7A4F2F">Vieja</th>
+            <th>Joven</th><th>Vieja</th>
+            <th style="background:#5A4A8A">Joven</th><th style="background:#5A4A8A">Vieja</th>
+          </tr>
+        </thead>
+        <tbody id="savia-ref-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- INGRESO DE MEDICIÓN -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📥</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Registro de muestra</div>
+        <h2 class="card-title">Ingreso de medición Horiba</h2>
+      </div>
+    </div>
+
+    <div class="medicion-form">
+      <div class="input-grid cols-3">
+        <div class="inp-cell">
+          <span class="inp-lbl">Racimo en antesis</span>
+          <select class="inp-val" id="sav-rac" style="background:transparent" onchange="renderSaviaForm()">
+            <option value="1">R1</option><option value="2">R2</option><option value="3">R3</option>
+            <option value="4">R4</option><option value="5">R5</option><option value="6">R6</option>
+            <option value="7">Cosecha</option>
+          </select>
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Fecha</span>
+          <input type="date" class="inp-val" id="sav-fecha" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Predio/Sector</span>
+          <input type="text" class="inp-val" id="sav-loc" placeholder="ej: Módulo 1" />
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:.8rem">Hoja joven (3a-5a desde ápice)</div>
+      <div class="input-grid cols-3">
+        <div class="inp-cell">
+          <span class="inp-lbl">NO₃ ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-no3" placeholder="3500" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">K ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-k" placeholder="3000" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Ca ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-ca" placeholder="350" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Mg ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-mg" placeholder="425" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Na ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-na" placeholder="<90" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">CE mS/cm</span>
+          <input type="number" class="inp-val sav-input" id="sav-j-ce" step="0.1" placeholder="13.5" oninput="diagSavia()" />
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:.8rem">Hoja vieja (basal con frutos)</div>
+      <div class="input-grid cols-3">
+        <div class="inp-cell">
+          <span class="inp-lbl">NO₃ ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-v-no3" placeholder="3000" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">K ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-v-k" placeholder="2500" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Ca ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-v-ca" placeholder="800" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Mg ppm</span>
+          <input type="number" class="inp-val sav-input" id="sav-v-mg" placeholder="525" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">pH</span>
+          <input type="number" class="inp-val sav-input" id="sav-ph" step="0.1" placeholder="6.0" oninput="diagSavia()" />
+        </div>
+        <div class="inp-cell">
+          <span class="inp-lbl">Brix</span>
+          <input type="number" class="inp-val sav-input" id="sav-brix" step="0.1" placeholder="5.5" oninput="diagSavia()" />
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:1rem">Diagnóstico nutricional</div>
+    <div id="savia-diag"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 5: COSTOS -->
+<!-- ========================================================== -->
+<div class="page" id="page-costos">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">5</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Costos del programa</div>
+        <h2 class="card-title">Estimación económica del fertirriego</h2>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <strong>💰 Precios desde catálogo</strong>
+      Los costos se calculan a partir de los precios cargados en el catálogo del módulo Fertilidad de Suelo. Si no hay precio cargado, el producto se omite del cálculo. Edita los precios en el catálogo para ver el costo total.
+    </div>
+
+    <div id="costos-resumen"></div>
+
+    <div class="section-title" style="margin-top:1.2rem">Detalle por racimo</div>
+    <div id="costos-detalle"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATOS — ÉPOCAS, CALENDARIOS, CURVAS, RECETAS, SAVIA
+// ============================================================
+
+// 5 ÉPOCAS DE PLANTACIÓN — Cuadros 1, 3, 5, 7, 9 del manual Elizondo 2026
+const EPOCAS = {
+  otono: {
+    id:'otono', icon:'🍂', nombre:'Otoño', sub:'fines diciembre',
+    variedad:'Moria', fpl_default:'2024-12-30', n_racimos:7,
+    ejes_ha_default: 28000, tasa_tallo: 3.2,
+    // (n racimo, dias_plant→antesis, dias_antesis→cosecha)
+    racimos:[
+      {n:1, dap:17, dac:51},  {n:2, dap:26, dac:55},  {n:3, dap:34, dac:55},
+      {n:4, dap:42, dac:60},  {n:5, dap:50, dac:65},  {n:6, dap:58, dac:70},
+      {n:7, dap:66, dac:75}
+    ],
+    // Cuadro 2 — diámetro mm por semana desde antesis (fila por racimo)
+    curva_mm:[
+      [15,35,55,65,71,78,85,null,null,null],   // R1
+      [15,35,55,65,70,75,80,85,null,null],     // R2
+      [15,35,55,65,70,75,80,85,null,null],     // R3
+      [15,35,55,65,69,73,77,81,85,null],       // R4
+      [12,30,50,60,65,69,73,77,81,85],         // R5
+      [12,30,50,60,65,69,73,77,81,85],         // R6
+      [12,30,50,60,65,69,73,77,81,85]          // R7
+    ],
+    // Cuadro 2b — tasa mm/d por semana
+    curva_mmd:[
+      [2.1,2.9,2.9,1.4,0.9,1.0,1.0,null,null,null],
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null],
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null],
+      [2.1,2.9,2.9,1.4,0.6,0.6,0.6,0.6,0.6,null],
+      [1.7,2.6,2.9,1.4,0.7,0.6,0.6,0.6,0.6,0.6],
+      [1.7,2.6,2.9,1.4,0.7,0.6,0.6,0.6,0.6,0.6],
+      [1.7,2.6,2.9,1.4,0.7,0.6,0.6,0.6,0.6,0.6]
+    ],
+    cuadro_origen: 'Cuadros 1 y 2',
+    nota_receta: '⚠ Propuesta basada en interpolación. NO hay programa real registrado para Otoño.'
+  },
+  primor: {
+    id:'primor', icon:'🌱', nombre:'Primor', sub:'inicios junio',
+    variedad:'Alamina', fpl_default:'2024-06-10', n_racimos:6,
+    ejes_ha_default: 28000, tasa_tallo: 1.7,
+    racimos:[
+      {n:1, dap:45, dac:81},  {n:2, dap:63, dac:84},  {n:3, dap:77, dac:77},
+      {n:4, dap:91, dac:70},  {n:5, dap:98, dac:70},  {n:6, dap:105, dac:70}
+    ],
+    curva_mm:[
+      [10,25,35,45,55,65,70,74,77,80,83,85],
+      [10,25,35,45,55,65,70,74,77,80,83,85],
+      [10,28,40,52,64,68,74,77,80,83,85,null],
+      [15,30,45,55,65,70,75,78,82,85,null,null],
+      [15,30,45,55,65,70,75,78,82,85,null,null],
+      [15,30,45,55,65,70,75,78,82,85,null,null]
+    ],
+    curva_mmd:[
+      [1.4,2.1,1.4,1.4,1.4,1.4,0.7,0.6,0.4,0.4,0.4,0.3],
+      [1.4,2.1,1.4,1.4,1.4,1.4,0.7,0.6,0.4,0.4,0.4,0.3],
+      [1.4,2.6,1.7,1.7,1.7,0.6,0.9,0.4,0.4,0.4,0.3,null],
+      [2.1,2.1,2.1,1.4,1.4,0.7,0.7,0.4,0.6,0.4,null,null],
+      [2.1,2.1,2.1,1.4,1.4,0.7,0.7,0.4,0.6,0.4,null,null],
+      [2.1,2.1,2.1,1.4,1.4,0.7,0.7,0.4,0.6,0.4,null,null]
+    ],
+    cuadro_origen: 'Cuadros 3 y 4',
+    nota_receta: '✓ Receta basada en programas reales: Luis Guerra, El Tránsito, Los Arrayanes (2023).'
+  },
+  verano: {
+    id:'verano', icon:'☀️', nombre:'Verano', sub:'2ª quincena octubre',
+    variedad:'888', fpl_default:'2024-10-23', n_racimos:9,
+    ejes_ha_default: 30000, tasa_tallo: 2.7,
+    racimos:[
+      {n:1, dap:19, dac:53},  {n:2, dap:33, dac:56},  {n:3, dap:40, dac:63},
+      {n:4, dap:47, dac:64},  {n:5, dap:54, dac:63},  {n:6, dap:61, dac:72},
+      {n:7, dap:68, dac:77},  {n:8, dap:76, dac:76},  {n:9, dap:83, dac:76}
+    ],
+    curva_mm:[
+      [15,35,55,65,70,75,80,85,null,null,null],
+      [15,35,55,65,70,75,80,85,null,null,null],
+      [15,35,55,65,68,73,77,82,85,null,null],
+      [15,35,55,65,68,73,77,82,85,null,null],
+      [15,35,55,65,68,73,77,82,85,null,null],
+      [14,30,50,60,65,70,74,78,82,85,null],
+      [14,30,50,60,65,68,72,76,80,83,85],
+      [14,30,50,60,65,68,72,76,80,83,85],
+      [14,30,50,60,65,68,72,76,80,83,85]
+    ],
+    curva_mmd:[
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null,null],
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null,null],
+      [2.1,2.9,2.9,1.4,0.4,0.7,0.6,0.7,0.4,null,null],
+      [2.1,2.9,2.9,1.4,0.4,0.7,0.6,0.7,0.4,null,null],
+      [2.1,2.9,2.9,1.4,0.4,0.7,0.6,0.7,0.4,null,null],
+      [2.0,2.3,2.9,1.4,0.7,0.7,0.6,0.6,0.6,0.4,null],
+      [2.0,2.3,2.9,1.4,0.7,0.4,0.6,0.6,0.6,0.4,0.3],
+      [2.0,2.3,2.9,1.4,0.7,0.4,0.6,0.6,0.6,0.4,0.3],
+      [2.0,2.3,2.9,1.4,0.7,0.4,0.6,0.6,0.6,0.4,0.3]
+    ],
+    cuadro_origen: 'Cuadros 5 y 6',
+    nota_receta: '✓ Receta basada en programa real: La Constancia.'
+  },
+  invierno: {
+    id:'invierno', icon:'❄️', nombre:'Invierno', sub:'mediados febrero',
+    variedad:'Alamina', fpl_default:'2024-02-12', n_racimos:6,
+    ejes_ha_default: 28000, tasa_tallo: 2.4,
+    racimos:[
+      {n:1, dap:20, dac:70},  {n:2, dap:27, dac:91},  {n:3, dap:32, dac:100},
+      {n:4, dap:41, dac:121}, {n:5, dap:55, dac:124}, {n:6, dap:65, dac:124}
+    ],
+    curva_mm:[
+      [15,35,45,55,65,69,73,77,81,85,null,null,null,null,null,null,null,null],
+      [10,30,43,50,55,60,65,68,72,76,79,82,85,null,null,null,null,null],
+      [10,30,40,45,55,60,65,68,71,74,77,80,83,85,null,null,null,null],
+      [8,25,35,45,50,55,60,65,67,69,71,73,75,77,79,81,83,null],
+      [5,20,35,42,49,55,59,62,65,67,69,71,73,75,77,79,80,80],
+      [5,20,35,42,49,55,59,62,65,67,69,71,73,75,77,79,80,80]
+    ],
+    curva_mmd:[
+      [2.1,2.9,1.4,1.4,1.4,0.6,0.6,0.6,0.6,0.6,null,null,null,null,null,null,null,null],
+      [1.4,2.9,1.9,1.0,0.7,0.7,0.7,0.4,0.6,0.6,0.4,0.4,0.4,null,null,null,null,null],
+      [1.4,2.9,1.4,0.7,1.4,0.7,0.7,0.4,0.4,0.4,0.4,0.4,0.4,0.3,null,null,null,null],
+      [1.1,2.4,1.4,1.4,0.7,0.7,0.7,0.7,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,null],
+      [0.7,2.1,2.1,1.0,1.0,0.9,0.6,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.1,0.0],
+      [0.7,2.1,2.1,1.0,1.0,0.9,0.6,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.1,0.0]
+    ],
+    cuadro_origen: 'Cuadros 7 y 8',
+    nota_receta: '⚠ Propuesta basada en interpolación. NO hay programa real registrado para Invierno.'
+  },
+  trastomate: {
+    id:'trastomate', icon:'🌅', nombre:'Trastomate', sub:'quincena agosto',
+    variedad:'888', fpl_default:'2024-08-13', n_racimos:7,
+    ejes_ha_default: 28000, tasa_tallo: 2.3,
+    racimos:[
+      {n:1, dap:27, dac:70},  {n:2, dap:38, dac:55},  {n:3, dap:48, dac:55},
+      {n:4, dap:58, dac:60},  {n:5, dap:69, dac:65},  {n:6, dap:76, dac:70},
+      {n:7, dap:88, dac:75}
+    ],
+    curva_mm:[
+      [15,35,55,60,65,69,73,77,81,85],
+      [15,35,55,65,70,75,80,85,null,null],
+      [15,35,55,65,70,75,80,85,null,null],
+      [15,35,55,65,69,73,77,81,85,null],
+      [15,30,45,55,65,70,75,80,85,null],
+      [15,30,45,55,65,69,73,77,81,85],
+      [15,30,45,55,65,69,73,77,81,85]
+    ],
+    curva_mmd:[
+      [2.1,2.9,2.9,0.7,0.7,0.6,0.6,0.6,0.6,0.6],
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null],
+      [2.1,2.9,2.9,1.4,0.7,0.7,0.7,0.7,null,null],
+      [2.1,2.9,2.9,1.4,0.6,0.6,0.6,0.6,0.6,null],
+      [2.1,2.1,2.1,1.4,1.4,0.7,0.7,0.7,0.7,null],
+      [2.1,2.1,2.1,1.4,1.4,0.6,0.6,0.6,0.6,0.6],
+      [2.1,2.1,2.1,1.4,1.4,0.6,0.6,0.6,0.6,0.6]
+    ],
+    cuadro_origen: 'Cuadros 9 y 10',
+    nota_receta: '✓ Receta basada en programas reales: Los Arrayanes, Origen, Cisternas, El Molino.'
+  }
+};
+
+// ===== DATOS CLIMATOLÓGICOS QUILLOTA =====
+// Promedios climatológicos mensuales basados en estaciones:
+//   - DMC Liceo Agrícola Quillota (EMA inaugurada 28-nov-2024)
+//   - Red Agromet INIA La Cruz (Quillota)
+//   - Instacrops Limache (Agrícola Rivarola, estaciones Davis) - https://web.instacrops.com/
+// Coordenadas referencia: -32.88°S, -71.25°W · 130 msnm · clima Csb mediterráneo
+const QUILLOTA_CLIMA = {
+  1:  {mes:'Enero',   tmin:14.3, tmax:25.7, tmed:20.0, rad:27, sol:10.0},
+  2:  {mes:'Febrero', tmin:14.0, tmax:25.0, tmed:19.5, rad:24, sol:10.0},
+  3:  {mes:'Marzo',   tmin:11.9, tmax:22.5, tmed:17.2, rad:19, sol:9.0},
+  4:  {mes:'Abril',   tmin:11.0, tmax:21.5, tmed:16.3, rad:14, sol:8.7},
+  5:  {mes:'Mayo',    tmin:10.4, tmax:19.5, tmed:15.0, rad:10, sol:8.5},
+  6:  {mes:'Junio',   tmin: 8.3, tmax:16.5, tmed:12.4, rad: 8, sol:8.4},
+  7:  {mes:'Julio',   tmin: 7.2, tmax:15.6, tmed:11.4, rad: 9, sol:8.5},
+  8:  {mes:'Agosto',  tmin: 7.7, tmax:17.3, tmed:12.5, rad:12, sol:9.0},
+  9:  {mes:'Septiembre',tmin:7.5,tmax:18.5, tmed:13.0, rad:16, sol:9.5},
+  10: {mes:'Octubre', tmin: 9.0, tmax:21.0, tmed:15.0, rad:21, sol:10.0},
+  11: {mes:'Noviembre',tmin:11.5,tmax:23.2, tmed:17.4, rad:25, sol:10.0},
+  12: {mes:'Diciembre',tmin:12.5,tmax:24.5, tmed:18.5, rad:27, sol:10.0}
+  // tmed en °C, rad en MJ/m²/d, sol en horas/d
+};
+
+// Temperatura base para tomate (ºC) — modelo Grados-Día
+const T_BASE_TOMATE = 10;
+
+// Calcular GDD diario a partir de Tmed (model lineal simple)
+function gddDiario(fecha, tbase = T_BASE_TOMATE) {
+  const m = (new Date(fecha)).getMonth() + 1;
+  const t = QUILLOTA_CLIMA[m].tmed;
+  return Math.max(0, t - tbase);
+}
+
+// Calcular contexto climático entre dos fechas
+function contextoClima(fechaInicio, fechaFin) {
+  const fI = new Date(fechaInicio);
+  const fF = new Date(fechaFin);
+  const dias = Math.round((fF - fI) / (1000*60*60*24));
+  if (dias <= 0) return null;
+  let gdd = 0, rad = 0, t = 0, dCount = 0;
+  let cur = new Date(fI);
+  while (cur < fF) {
+    const m = cur.getMonth() + 1;
+    const c = QUILLOTA_CLIMA[m];
+    gdd += Math.max(0, c.tmed - T_BASE_TOMATE);
+    rad += c.rad;
+    t += c.tmed;
+    dCount++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  return {
+    dias,
+    gdd: Math.round(gdd),
+    gdd_diario: dCount > 0 ? +(gdd/dCount).toFixed(1) : 0,
+    rad_acum: Math.round(rad),
+    rad_diaria: dCount > 0 ? +(rad/dCount).toFixed(1) : 0,
+    t_media: dCount > 0 ? +(t/dCount).toFixed(1) : 0
+  };
+}
+
+// VALORES DE REFERENCIA SAVIA (PDF Metodología) — ppm
+// 7 racimos × {NO3 joven, NO3 vieja, K joven, K vieja, Ca joven, Ca vieja, Mg joven, Mg vieja, CE, pH, Brix, P, Na}
+// Última fila = Cosecha
+const SAVIA_REF = [
+  // racimo, NO3-j, NO3-v, K-j, K-v, Ca-j, Ca-v, Mg-j, Mg-v, CE, pH, Brix
+  {r:'R1',     no3_j:[3500,4000], no3_v:[3000,3500], k_j:[3000,3500], k_v:[2500,3000], ca_j:[250,500], ca_v:[600,1000], mg_j:[350,500], mg_v:[450,600],   ce:[12,15], ph:[5.5,6.5], brix:[4,6]},
+  {r:'R2',     no3_j:[3500,4000], no3_v:[3000,3500], k_j:[3200,3800], k_v:[2800,3200], ca_j:[250,500], ca_v:[600,1000], mg_j:[350,550], mg_v:[500,700],   ce:[12,15], ph:[5.5,6.5], brix:[4.5,6.5]},
+  {r:'R3',     no3_j:[3000,3500], no3_v:[2500,3000], k_j:[3500,4200], k_v:[3000,3500], ca_j:[300,600], ca_v:[800,1200], mg_j:[400,600], mg_v:[550,800],   ce:[12,15], ph:[5.5,6.5], brix:[5,7.5]},
+  {r:'R4',     no3_j:[2500,3000], no3_v:[2000,2500], k_j:[3800,4500], k_v:[3200,3800], ca_j:[300,600], ca_v:[800,1200], mg_j:[400,600], mg_v:[600,850],   ce:[12,15], ph:[5.5,6.5], brix:[5.5,8]},
+  {r:'R5',     no3_j:[2000,2500], no3_v:[1500,2000], k_j:[4000,4800], k_v:[3500,4000], ca_j:[200,400], ca_v:[600,1000], mg_j:[450,650], mg_v:[650,900],   ce:[12,15], ph:[5.5,6.5], brix:[6,8]},
+  {r:'R6',     no3_j:[1500,2000], no3_v:[1000,1500], k_j:[4200,5000], k_v:[3800,4200], ca_j:[200,400], ca_v:[600,1000], mg_j:[500,700], mg_v:[700,1000],  ce:[12,15], ph:[5.5,6.5], brix:[6.5,9]},
+  {r:'Cosecha',no3_j:[1500,2000], no3_v:[1000,1500], k_j:[4500,5500], k_v:[4000,4500], ca_j:[250,350], ca_v:[600,900],  mg_j:[550,750], mg_v:[800,1100],  ce:[12,15], ph:[5.5,6.5], brix:[7,10]}
+];
+
+// RECETAS POR ÉPOCA Y RACIMO (g/eje promedio de programas reales)
+// Estructura: { kno3, cano3, mgno3, map, k2so4, total_g_eje, m3_ha }
+const RECETAS = {
+  primor: [
+    {rac:1, kno3:0.17, cano3:0.15, mgno3:0.11, map:0.23, k2so4:0.00, total:0.67, m3:20},
+    {rac:2, kno3:0.47, cano3:0.21, mgno3:0.18, map:0.16, k2so4:0.00, total:1.02, m3:30},
+    {rac:3, kno3:0.63, cano3:0.26, mgno3:0.18, map:0.16, k2so4:0.07, total:1.29, m3:30},
+    {rac:4, kno3:0.96, cano3:0.25, mgno3:0.20, map:0.16, k2so4:0.11, total:1.67, m3:40},
+    {rac:5, kno3:1.29, cano3:0.27, mgno3:0.25, map:0.22, k2so4:0.13, total:2.15, m3:50},
+    {rac:6, kno3:1.35, cano3:0.27, mgno3:0.25, map:0.22, k2so4:0.16, total:2.24, m3:50}
+  ],
+  trastomate: [
+    {rac:1, kno3:0.26, cano3:0.27, mgno3:0.17, map:0.08, k2so4:0.00, total:0.82, m3:30},
+    {rac:2, kno3:0.33, cano3:0.30, mgno3:0.16, map:0.08, k2so4:0.04, total:0.93, m3:30},
+    {rac:3, kno3:0.56, cano3:0.36, mgno3:0.18, map:0.07, k2so4:0.07, total:1.28, m3:40},
+    {rac:4, kno3:0.85, cano3:0.24, mgno3:0.18, map:0.00, k2so4:0.15, total:1.42, m3:40},
+    {rac:5, kno3:1.44, cano3:0.16, mgno3:0.22, map:0.00, k2so4:0.18, total:1.99, m3:50},
+    {rac:6, kno3:1.47, cano3:0.09, mgno3:0.26, map:0.00, k2so4:0.31, total:2.13, m3:50},
+    {rac:7, kno3:1.63, cano3:0.07, mgno3:0.22, map:0.00, k2so4:0.27, total:2.18, m3:50}
+  ],
+  verano: [
+    {rac:1, kno3:0.20, cano3:0.20, mgno3:0.20, map:0.10, k2so4:0.00, total:0.70, m3:30},
+    {rac:2, kno3:0.30, cano3:0.30, mgno3:0.15, map:0.10, k2so4:0.00, total:0.85, m3:30},
+    {rac:3, kno3:0.53, cano3:0.40, mgno3:0.13, map:0.13, k2so4:0.00, total:1.20, m3:40},
+    {rac:4, kno3:0.80, cano3:0.20, mgno3:0.13, map:0.00, k2so4:0.13, total:1.27, m3:40},
+    {rac:5, kno3:1.50, cano3:0.07, mgno3:0.17, map:0.00, k2so4:0.17, total:1.90, m3:50},
+    {rac:6, kno3:1.33, cano3:0.07, mgno3:0.33, map:0.00, k2so4:0.33, total:2.07, m3:50},
+    {rac:7, kno3:1.67, cano3:0.07, mgno3:0.17, map:0.00, k2so4:0.17, total:2.07, m3:50},
+    {rac:8, kno3:1.75, cano3:0.07, mgno3:0.18, map:0.00, k2so4:0.18, total:2.18, m3:50},
+    {rac:9, kno3:1.80, cano3:0.07, mgno3:0.18, map:0.00, k2so4:0.18, total:2.23, m3:50}
+  ],
+  // OTOÑO E INVIERNO: propuestas basadas en interpolación de los programas reales
+  otono: [
+    {rac:1, kno3:0.20, cano3:0.18, mgno3:0.13, map:0.18, k2so4:0.00, total:0.69, m3:25},
+    {rac:2, kno3:0.40, cano3:0.25, mgno3:0.17, map:0.13, k2so4:0.00, total:0.95, m3:30},
+    {rac:3, kno3:0.60, cano3:0.30, mgno3:0.18, map:0.12, k2so4:0.05, total:1.25, m3:35},
+    {rac:4, kno3:0.90, cano3:0.25, mgno3:0.20, map:0.10, k2so4:0.10, total:1.55, m3:40},
+    {rac:5, kno3:1.30, cano3:0.20, mgno3:0.22, map:0.05, k2so4:0.13, total:1.90, m3:45},
+    {rac:6, kno3:1.50, cano3:0.15, mgno3:0.25, map:0.00, k2so4:0.20, total:2.10, m3:50},
+    {rac:7, kno3:1.65, cano3:0.10, mgno3:0.22, map:0.00, k2so4:0.25, total:2.22, m3:50}
+  ],
+  invierno: [
+    {rac:1, kno3:0.22, cano3:0.22, mgno3:0.16, map:0.12, k2so4:0.00, total:0.72, m3:25},
+    {rac:2, kno3:0.42, cano3:0.27, mgno3:0.17, map:0.13, k2so4:0.00, total:0.99, m3:30},
+    {rac:3, kno3:0.65, cano3:0.30, mgno3:0.20, map:0.12, k2so4:0.06, total:1.33, m3:35},
+    {rac:4, kno3:1.00, cano3:0.22, mgno3:0.22, map:0.08, k2so4:0.13, total:1.65, m3:40},
+    {rac:5, kno3:1.40, cano3:0.15, mgno3:0.25, map:0.00, k2so4:0.20, total:2.00, m3:45},
+    {rac:6, kno3:1.55, cano3:0.10, mgno3:0.25, map:0.00, k2so4:0.25, total:2.15, m3:50}
+  ]
+};
+
+// Composiciones de fertilizantes para cálculo (pureza %)
+const FERTS = {
+  kno3:  {nombre:'Nitrato de potasio', n:13, p2o5:0, k2o:46, cao:0, mgo:0,  s:0,  formula:'KNO₃',         min_id:'min_n05'},
+  cano3: {nombre:'Nitrato de calcio',  n:15.5,p2o5:0,k2o:0, cao:27,mgo:0,  s:0,  formula:'Ca(NO₃)₂·4H₂O', min_id:'min_c05'},
+  mgno3: {nombre:'Nitrato de magnesio',n:11, p2o5:0, k2o:0,  cao:0, mgo:16, s:0,  formula:'Mg(NO₃)₂·6H₂O', min_id:null},
+  map:   {nombre:'MAP (Fosfato monoamónico)', n:11, p2o5:52, k2o:0, cao:0, mgo:0, s:0, formula:'NH₄H₂PO₄', min_id:'min_p03'},
+  k2so4: {nombre:'Sulfato de potasio',  n:0, p2o5:0, k2o:50, cao:0, mgo:0,  s:18, formula:'K₂SO₄',        min_id:'min_k02'}
+};
+
+// Pesos para conversiones óxido↔elemento
+const FACTOR_OX = {p2o5_p:0.437, k2o_k:0.83, cao_ca:0.715, mgo_mg:0.603};
+const PM_EL = {n:14, p:31, k:39.10, ca:40.08, mg:24.31};
+
+// ============================================================
+// ESTADO Y NAVEGACIÓN
+// ============================================================
+let currentEpoca = 'verano';
+let mediciones = []; // mediciones de fruto
+let saviaMedidas = []; // mediciones de savia
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('page-' + t.dataset.page).classList.add('active');
+  };
+});
+
+// Helpers
+const $ = id => document.getElementById(id);
+const fmt = (v, d=1) => v == null || v === '' ? '—' : (typeof v === 'number' ? v.toFixed(d) : v);
+function addDays(date, days) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dd = new Date(d);
+  return dd.toLocaleDateString('es-CL', {day:'2-digit', month:'short'});
+}
+function fmtDateLong(d) {
+  if (!d) return '—';
+  const dd = new Date(d);
+  return dd.toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+// Render epoca buttons
+function renderEpocaButtons() {
+  $('epoca-buttons').innerHTML = Object.values(EPOCAS).map(e => `
+    <button class="epoca-card ${e.id===currentEpoca?'active':''}" data-epoca="${e.id}">
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <span class="ec-icon">${e.icon}</span>
+        <span class="ec-name">${e.nombre}</span>
+      </div>
+      <span class="ec-meta">${e.sub} · ${e.variedad}</span>
+      <span class="ec-date">${e.n_racimos} racimos · ${e.tasa_tallo} cm/d</span>
+    </button>
+  `).join('');
+  document.querySelectorAll('[data-epoca]').forEach(b => {
+    b.onclick = () => {
+      currentEpoca = b.dataset.epoca;
+      const e = EPOCAS[currentEpoca];
+      $('cfg-fecha').value = e.fpl_default;
+      $('cfg-racimos').value = e.n_racimos;
+      $('cfg-densidad').value = e.ejes_ha_default;
+      $('cfg-variedad').value = e.variedad;
+      renderAll();
+    };
+  });
+}
+
+// ============================================================
+// PESTAÑA 1: CALENDARIO FENOLÓGICO + GANTT
+// ============================================================
+function renderCalendario() {
+  const e = EPOCAS[currentEpoca];
+  const fpl = $('cfg-fecha').value || e.fpl_default;
+  const nrac = parseInt($('cfg-racimos').value || e.n_racimos);
+  const fechaPlant = new Date(fpl);
+
+  $('ctx-epoca').textContent = e.icon + ' ' + e.nombre;
+  $('ctx-variedad').textContent = e.variedad + ' · ' + ($('cfg-predio').value || 'Sin predio');
+
+  // Build racimo data with calculated dates
+  const racimos = e.racimos.slice(0, nrac).map(r => {
+    const fAntesis = addDays(fechaPlant, r.dap);
+    const fCosecha = addDays(fAntesis, r.dac);
+    const fMidpoint = addDays(fAntesis, Math.round(r.dac/2));
+    return {...r, fAntesis, fCosecha, fMidpoint};
+  });
+
+  // Resumen
+  if (racimos.length > 0) {
+    const fInicio = racimos[0].fAntesis;
+    const fFin = racimos[racimos.length-1].fCosecha;
+    const totalDias = Math.round((fFin - fechaPlant) / (1000*60*60*24));
+    $('cal-resumen').innerHTML = `Plantación <strong>${fmtDateLong(fechaPlant)}</strong> · primera antesis <strong>${fmtDateLong(fInicio)}</strong> · última cosecha <strong>${fmtDateLong(fFin)}</strong> · ciclo total <strong>${totalDias} días</strong>.`;
+  }
+
+  // Render tabla
+  const tbody = $('rac-table').querySelector('tbody');
+  tbody.innerHTML = racimos.map(r => `
+    <tr>
+      <td>R${r.n}</td>
+      <td>${fmtDate(r.fAntesis)}</td>
+      <td>${r.dap}</td>
+      <td>${fmtDate(r.fCosecha)}</td>
+      <td>${r.dac}</td>
+      <td>${fmtDate(r.fMidpoint)}</td>
+    </tr>
+  `).join('');
+
+  // Render Gantt
+  renderGantt(fechaPlant, racimos);
+
+  // Render contexto climático
+  renderContextoClima(fechaPlant, racimos);
+}
+
+function renderContextoClima(fechaPlant, racimos) {
+  if (racimos.length === 0) return;
+  const fInicio = fechaPlant;
+  const fFin = racimos[racimos.length - 1].fCosecha;
+  const fAntesisR1 = racimos[0].fAntesis;
+  const fCosechaR1 = racimos[0].fCosecha;
+
+  // Contexto del ciclo completo
+  const ctxCiclo = contextoClima(fInicio, fFin);
+  // Contexto solo del primer racimo (antesis a cosecha)
+  const ctxR1 = contextoClima(fAntesisR1, fCosechaR1);
+
+  if (!ctxCiclo || !ctxR1) return;
+
+  // Insight agronómico
+  let insight = '';
+  if (ctxR1.gdd_diario >= 7) {
+    insight = `🌞 Acumulación térmica alta (${ctxR1.gdd_diario} GDD/día) — el ciclo R1 será corto. Demanda hídrica y nutricional concentradas. Vigilar exceso de CE en suelo y golpe de calor.`;
+  } else if (ctxR1.gdd_diario >= 5) {
+    insight = `🌤️ Acumulación térmica moderada (${ctxR1.gdd_diario} GDD/día) — ciclo de duración media. Buen equilibrio entre crecimiento vegetativo y fructificación.`;
+  } else if (ctxR1.gdd_diario >= 3) {
+    insight = `🌥️ Acumulación térmica baja (${ctxR1.gdd_diario} GDD/día) — ciclo R1 prolongado. Reducir aportes de N en pleno frío. Vigilar enfermedades por humedad. Esperable mayor calibre.`;
+  } else {
+    insight = `❄️ Acumulación térmica muy baja (${ctxR1.gdd_diario} GDD/día) — crecimiento lento. Reducir N drásticamente. Ventilación crítica para reducir humedad relativa. Ciclo muy largo.`;
+  }
+
+  // Render cards de contexto
+  $('contexto-clima').innerHTML = `
+    <div class="costo-grid">
+      <div class="costo-cell">
+        <span class="costo-val">${ctxCiclo.dias}</span>
+        <span class="costo-lbl">Días totales del ciclo</span>
+      </div>
+      <div class="costo-cell">
+        <span class="costo-val">${ctxCiclo.t_media}°C</span>
+        <span class="costo-lbl">Temperatura media del ciclo</span>
+      </div>
+      <div class="costo-cell">
+        <span class="costo-val">${ctxCiclo.rad_diaria}</span>
+        <span class="costo-lbl">Rad. diaria MJ/m²</span>
+      </div>
+      <div class="costo-cell total">
+        <span class="costo-val">${ctxCiclo.gdd}</span>
+        <span class="costo-lbl">GDD acumulados (Tbase 10°C)</span>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:.8rem">Ciclo del primer racimo (antesis → cosecha)</div>
+    <div class="costo-grid">
+      <div class="costo-cell">
+        <span class="costo-val">${ctxR1.dias}</span>
+        <span class="costo-lbl">Días R1</span>
+      </div>
+      <div class="costo-cell">
+        <span class="costo-val">${ctxR1.gdd}</span>
+        <span class="costo-lbl">GDD acumulados R1</span>
+      </div>
+      <div class="costo-cell">
+        <span class="costo-val">${ctxR1.gdd_diario}</span>
+        <span class="costo-lbl">GDD diarios promedio</span>
+      </div>
+      <div class="costo-cell">
+        <span class="costo-val">${ctxR1.t_media}°C</span>
+        <span class="costo-lbl">T° media R1</span>
+      </div>
+    </div>
+
+    <div class="note ${ctxR1.gdd_diario < 4 ? 'warn' : ''}" style="margin-top:.8rem">
+      <strong>Lectura agronómica</strong>
+      ${insight}
+    </div>
+  `;
+
+  // Gráfico de temperatura mensual durante el ciclo
+  drawClimaChart(fInicio, fFin);
+}
+
+function drawClimaChart(fInicio, fFin) {
+  const svg = $('chart-clima');
+  const W = 700, H = 290, padL = 55, padR = 60, padT = 25, padB = 50;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  // Build series por mes que toca el ciclo
+  const meses = [];
+  let cur = new Date(fInicio);
+  cur.setDate(1);
+  const fEnd = new Date(fFin);
+  while (cur <= fEnd) {
+    const m = cur.getMonth() + 1;
+    const c = QUILLOTA_CLIMA[m];
+    meses.push({mes: c.mes.substring(0,3), tmin: c.tmin, tmax: c.tmax, tmed: c.tmed, rad: c.rad, m});
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  if (meses.length === 0) { svg.innerHTML = ''; return; }
+
+  // Y izq: temperatura (0-30°C). Y der: radiación (0-30 MJ).
+  const yMin = 0, yMax = 30;
+  const radMax = 30; // MJ/m²/día - rango real Quillota: 0-28
+  let html = `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFAFA" stroke="#E0E0E0"/>`;
+
+  // Eje Y izquierdo (Temperatura)
+  for (let i = 0; i <= 6; i++) {
+    const y = padT + plotH * (1 - i/6);
+    const v = yMin + (yMax - yMin) * i/6;
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${padL-5}" y="${y+4}" text-anchor="end" font-family="DM Mono" font-size="10" fill="#7A4F2F">${v.toFixed(0)}°</text>`;
+  }
+  html += `<text x="${padL/2-8}" y="${padT + plotH/2}" text-anchor="middle" font-family="Karla" font-size="11" font-weight="700" fill="#7A4F2F" transform="rotate(-90 ${padL/2-8} ${padT + plotH/2})">Temperatura (°C)</text>`;
+
+  // Eje Y derecho (Radiación)
+  for (let i = 0; i <= 6; i++) {
+    const y = padT + plotH * (1 - i/6);
+    const v = (radMax * i/6).toFixed(0);
+    html += `<text x="${W-padR+8}" y="${y+4}" text-anchor="start" font-family="DM Mono" font-size="10" fill="#D4820A">${v}</text>`;
+  }
+  html += `<text x="${W-padR/2+25}" y="${padT + plotH/2}" text-anchor="middle" font-family="Karla" font-size="11" font-weight="700" fill="#D4820A" transform="rotate(90 ${W-padR/2+25} ${padT + plotH/2})">Radiación (MJ/m²·d)</text>`;
+
+  // Línea de Tbase tomate (10°C) — fondo
+  const yTbase = padT + plotH * (1 - (T_BASE_TOMATE - yMin)/(yMax - yMin));
+  html += `<line x1="${padL}" y1="${yTbase}" x2="${W-padR}" y2="${yTbase}" stroke="#C4452D" stroke-width="1" stroke-dasharray="4,3" opacity="0.55"/>`;
+  html += `<text x="${padL+4}" y="${yTbase-3}" font-family="DM Mono" font-size="9" fill="#C4452D">Tbase ${T_BASE_TOMATE}°C</text>`;
+
+  // X labels
+  meses.forEach((m, i) => {
+    const x = padL + (i+0.5) / meses.length * plotW;
+    html += `<text x="${x}" y="${H-padB+18}" text-anchor="middle" font-family="DM Mono" font-size="10" font-weight="600" fill="#333">${m.mes}</text>`;
+  });
+  html += `<text x="${padL+plotW/2}" y="${H-5}" text-anchor="middle" font-family="Karla" font-size="10" fill="#333">Mes durante el ciclo</text>`;
+
+  // === SERIE 1: BARRAS DE RADIACIÓN (al fondo, eje Y derecho) ===
+  meses.forEach((m, i) => {
+    const xC = padL + (i+0.5) / meses.length * plotW;
+    const wBar = (plotW / meses.length) * 0.55;
+    const radH = plotH * (m.rad / radMax);
+    const yRad = padT + plotH - radH;
+    html += `<rect x="${xC-wBar/2}" y="${yRad}" width="${wBar}" height="${radH}" fill="#F5C842" stroke="#D4820A" stroke-width="1" opacity="0.4" rx="3"/>`;
+    html += `<text x="${xC}" y="${yRad-4}" text-anchor="middle" font-family="DM Mono" font-size="9" font-weight="600" fill="#D4820A">${m.rad}</text>`;
+  });
+
+  // === SERIE 2: BANDAS DE TEMPERATURA (Tmin-Tmax) y línea Tmed ===
+  meses.forEach((m, i) => {
+    const xC = padL + (i+0.5) / meses.length * plotW;
+    const wMini = 4;
+    const yTmax = padT + plotH * (1 - (m.tmax - yMin)/(yMax - yMin));
+    const yTmin = padT + plotH * (1 - (m.tmin - yMin)/(yMax - yMin));
+    // Banda Tmin-Tmax
+    html += `<rect x="${xC-wMini/2}" y="${yTmax}" width="${wMini}" height="${yTmin-yTmax}" fill="#5A4A8A" stroke="#5A4A8A" stroke-width="1" opacity="0.85" rx="2"/>`;
+  });
+
+  // Línea Tmed
+  let pathTmed = '';
+  meses.forEach((m, i) => {
+    const xC = padL + (i+0.5) / meses.length * plotW;
+    const yMed_ = padT + plotH * (1 - (m.tmed - yMin)/(yMax - yMin));
+    pathTmed += (pathTmed === '' ? 'M' : ' L') + `${xC.toFixed(1)},${yMed_.toFixed(1)}`;
+    html += `<circle cx="${xC}" cy="${yMed_}" r="4.5" fill="#7A4F2F" stroke="#fff" stroke-width="1.5"/>`;
+    html += `<text x="${xC}" y="${yMed_-7}" text-anchor="middle" font-family="DM Mono" font-size="9" font-weight="700" fill="#7A4F2F">${m.tmed.toFixed(1)}°</text>`;
+  });
+  html += `<path d="${pathTmed}" stroke="#7A4F2F" stroke-width="2.2" fill="none" opacity="0.85"/>`;
+
+  // Legend en la parte superior
+  html += `<g transform="translate(${padL+5}, 5)">`;
+  html += `<rect x="0" y="0" width="14" height="10" fill="#F5C842" stroke="#D4820A" opacity="0.6" rx="2"/>`;
+  html += `<text x="18" y="9" font-family="Karla" font-size="9" fill="#333">Radiación (MJ/m²·d)</text>`;
+  html += `<rect x="125" y="3" width="4" height="10" fill="#5A4A8A" rx="1"/>`;
+  html += `<text x="133" y="11" font-family="Karla" font-size="9" fill="#333">Rango Tmin–Tmax</text>`;
+  html += `<circle cx="225" cy="6" r="4" fill="#7A4F2F" stroke="#fff" stroke-width="1"/>`;
+  html += `<text x="232" y="9" font-family="Karla" font-size="9" fill="#333">Temperatura media</text>`;
+  html += `<line x1="328" y1="6" x2="348" y2="6" stroke="#C4452D" stroke-width="1" stroke-dasharray="4,3"/>`;
+  html += `<text x="352" y="9" font-family="Karla" font-size="9" fill="#333">Tbase tomate</text>`;
+  html += `</g>`;
+
+  svg.innerHTML = html;
+}
+
+function renderGantt(fechaPlant, racimos) {
+  if (racimos.length === 0) { $('gantt').innerHTML = ''; return; }
+  const fStart = fechaPlant;
+  const fEnd = racimos[racimos.length-1].fCosecha;
+  const totalDays = (fEnd - fStart) / (1000*60*60*24);
+
+  // Generate month ticks
+  const ticks = [];
+  let cur = new Date(fStart);
+  cur.setDate(1);
+  while (cur <= fEnd) {
+    if (cur >= fStart) {
+      const offset = (cur - fStart) / (1000*60*60*24);
+      const pct = offset / totalDays * 100;
+      ticks.push({pct, label: cur.toLocaleDateString('es-CL', {month:'short'})});
+    }
+    cur.setMonth(cur.getMonth() + 1);
+  }
+
+  // Build rows: cada racimo tiene
+  //  - Solo R1: barra verde "vegetativo" desde plantación hasta antesis
+  //  - Marcador puntual en la antesis (línea vertical + label de fecha)
+  //  - Barra roja desde antesis hasta inicio cosecha (= antesis + dac días)
+  //  - Marcador puntual en cosecha con fecha
+  const rowsHtml = racimos.map(r => {
+    const offsetAnt = (r.fAntesis - fStart) / (1000*60*60*24);
+    const offsetCos = (r.fCosecha - fStart) / (1000*60*60*24);
+    const leftAnt = offsetAnt / totalDays * 100;
+    const widthDesarrollo = ((offsetCos - offsetAnt) / totalDays) * 100;
+    const widthVeg = offsetAnt / totalDays * 100;
+
+    return `
+      <div class="gantt-row">
+        <span class="gantt-label">R${r.n}</span>
+        <div class="gantt-track">
+          ${r.n === 1 ? `<div class="gantt-bar veg" style="left:0;width:${widthVeg}%">vegetativo</div>` : ''}
+          <div class="gantt-marker-ant" style="left:${leftAnt}%" title="Antesis R${r.n}: ${fmtDate(r.fAntesis)}">
+            <span class="gma-line"></span>
+            <span class="gma-lbl">${fmtDate(r.fAntesis)}</span>
+          </div>
+          <div class="gantt-bar fruct" style="left:${leftAnt}%;width:${widthDesarrollo}%" title="R${r.n}: antesis ${fmtDate(r.fAntesis)} → cosecha ${fmtDate(r.fCosecha)} (${r.dac} días)">
+            <span class="gb-days">${r.dac} d → ${fmtDate(r.fCosecha)}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Build axis
+  const axisHtml = ticks.map(t => `<span style="position:absolute;left:calc(${t.pct}% + 38px);transform:translateX(-50%)">${t.label}</span>`).join('');
+
+  $('gantt').innerHTML = `
+    <div style="position:relative;height:18px;border-bottom:1px solid #DDD;margin-bottom:6px">
+      ${axisHtml}
+    </div>
+    ${rowsHtml}
+  `;
+}
+
+// ============================================================
+// PESTAÑA 2: CURVAS DE CRECIMIENTO
+// ============================================================
+let vistaCurvas = 'comparar'; // 'comparar' o 'detalle'
+
+function setVistaCurvas(v) {
+  vistaCurvas = v;
+  document.querySelectorAll('.view-toggle').forEach(b => {
+    if (b.dataset.view === v) {
+      b.classList.add('active');
+      b.classList.remove('ghost');
+    } else {
+      b.classList.remove('active');
+      b.classList.add('ghost');
+    }
+  });
+  document.getElementById('curvas-explicacion-comparar').style.display = v === 'comparar' ? '' : 'none';
+  document.getElementById('curvas-explicacion-detalle').style.display = v === 'detalle' ? '' : 'none';
+  document.getElementById('tabla-comparativa').style.display = v === 'comparar' ? '' : 'none';
+  document.getElementById('tabla-detalle').style.display = v === 'detalle' ? '' : 'none';
+  renderCurvas();
+}
+
+function renderCurvas() {
+  if (vistaCurvas === 'comparar') {
+    renderCurvasComparar();
+  } else {
+    renderCurvasDetalle();
+  }
+}
+
+function renderCurvasComparar() {
+  // Una línea por época: la curva R1 de cada época, eje X en DÍAS (no semanas)
+  // Esto permite ver claramente que Verano R1 dura 53 días y Primor R1 dura 81 días
+  const epocaList = ['otono','primor','verano','invierno','trastomate'];
+  const colors = {
+    otono:    '#D4820A',  // ámbar
+    primor:   '#5A4A8A',  // morado
+    verano:   '#C4452D',  // tomate
+    invierno: '#1E5A8C',  // azul
+    trastomate:'#2A6041'  // verde
+  };
+
+  // Build series con puntos (día, valor)
+  const seriesMM = [];
+  const seriesMMD = [];
+  let maxDias = 0;
+
+  epocaList.forEach(id => {
+    const e = EPOCAS[id];
+    const r1 = e.racimos[0];
+    const dac = r1.dac;
+    if (dac > maxDias) maxDias = dac;
+
+    const arrMM = e.curva_mm[0] || [];
+    const arrMMD = e.curva_mmd[0] || [];
+    // Puntos válidos
+    const validMM = arrMM.map((v,i) => ({sem: i+1, v})).filter(p => p.v != null);
+    const validMMD = arrMMD.map((v,i) => ({sem: i+1, v})).filter(p => p.v != null);
+
+    // Mapear cada semana al día. Última semana → día de cosecha (dac).
+    // Las anteriores: día = sem × 7
+    const ptsMM = validMM.map((p, i) => {
+      const isLast = i === validMM.length - 1;
+      return {x: isLast ? dac : p.sem * 7, y: p.v};
+    });
+    const ptsMMD = validMMD.map((p, i) => {
+      const isLast = i === validMMD.length - 1;
+      return {x: isLast ? dac : p.sem * 7, y: p.v};
+    });
+
+    seriesMM.push({label: `${e.icon} ${e.nombre} (${dac}d)`, color: colors[id], pts: ptsMM, dac});
+    seriesMMD.push({label: `${e.icon} ${e.nombre} (${dac}d)`, color: colors[id], pts: ptsMMD, dac});
+  });
+
+  // Padding del eje X
+  const xMax = Math.ceil(maxDias / 10) * 10 + 5;
+  drawChartXY('chart-mm', seriesMM, 0, xMax, 0, 90, 'Diámetro (mm)', 'Días desde antesis', 'mm');
+  drawChartXY('chart-mmd', seriesMMD, 0, xMax, 0, 3.5, 'Tasa (mm/d)', 'Días desde antesis', 'mm/d');
+
+  // Tabla comparativa con datos climáticos de cada época
+  const tbody = document.querySelector('#comparativa-table tbody');
+  tbody.innerHTML = epocaList.map(id => {
+    const e = EPOCAS[id];
+    const r1 = e.racimos[0];
+    const fechaPlant = new Date(e.fpl_default);
+    const fAnt = addDays(fechaPlant, r1.dap);
+    const fCos = addDays(fAnt, r1.dac);
+    const ctx = contextoClima(fAnt, fCos);
+    const isActive = id === currentEpoca;
+    return `<tr style="${isActive ? 'background:var(--tomate-pale);font-weight:700' : ''}">
+      <td>${e.icon} ${e.nombre}</td>
+      <td>${e.variedad}</td>
+      <td>${fmtDate(fAnt)}</td>
+      <td>${fmtDate(fCos)}</td>
+      <td>${r1.dac}</td>
+      <td>${ctx ? ctx.gdd : '—'}</td>
+      <td>${ctx ? ctx.gdd_diario : '—'}</td>
+      <td>${ctx ? ctx.t_media + '°C' : '—'}</td>
+      <td>${ctx ? ctx.rad_diaria + ' MJ' : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCurvasDetalle() {
+  const e = EPOCAS[currentEpoca];
+  const nrac = parseInt($('cfg-racimos').value || e.n_racimos);
+
+  let maxWeeks = 0;
+  for (let i = 0; i < nrac; i++) {
+    const arr = e.curva_mm[i] || [];
+    const w = arr.filter(v => v != null).length;
+    if (w > maxWeeks) maxWeeks = w;
+  }
+
+  drawChart('chart-mm', e.curva_mm.slice(0, nrac), maxWeeks, 0, 90, 'Diámetro (mm)', 'mm');
+  drawChart('chart-mmd', e.curva_mmd.slice(0, nrac), maxWeeks, 0, 3.5, 'Tasa (mm/d)', 'mm/d');
+
+  const thead = $('curva-table').querySelector('thead');
+  const tbody = $('curva-table').querySelector('tbody');
+  const weeks = Array.from({length: maxWeeks}, (_, i) => 'Sem ' + (i+1));
+  thead.innerHTML = `<tr><th>Rac</th>${weeks.map(w => `<th>${w}</th>`).join('')}</tr>`;
+  tbody.innerHTML = e.curva_mm.slice(0, nrac).map((arr, idx) => `
+    <tr>
+      <td>R${idx+1}</td>
+      ${arr.slice(0, maxWeeks).map(v => `<td>${v == null ? '' : v}</td>`).join('')}
+      ${Array(Math.max(0, maxWeeks - arr.length)).fill('<td></td>').join('')}
+    </tr>
+  `).join('');
+}
+
+// drawChartXY — gráfico con puntos (x, y) en escala continua
+// Series: [{label, color, pts: [{x,y}], dac (opcional para línea vertical)}]
+function drawChartXY(svgId, series, xMin, xMax, yMin, yMax, yLabel, xLabel, unit) {
+  const svg = $(svgId);
+  const W = 700, H = 320, padL = 50, padR = 145, padT = 20, padB = 45;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  let html = `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFAFA" stroke="#E0E0E0"/>`;
+
+  // Y gridlines + labels
+  for (let i = 0; i <= 5; i++) {
+    const y = padT + plotH * (1 - i/5);
+    const v = yMin + (yMax - yMin) * i/5;
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${padL-5}" y="${y+4}" text-anchor="end" font-family="DM Mono" font-size="10" fill="#666">${v.toFixed(unit==='mm/d'?1:0)}</text>`;
+  }
+  html += `<text x="${padL/2-5}" y="${padT + plotH/2}" text-anchor="middle" font-family="Karla" font-size="11" font-weight="700" fill="#333" transform="rotate(-90 ${padL/2-5} ${padT + plotH/2})">${yLabel}</text>`;
+
+  // X gridlines + labels (cada 10 días)
+  const xStep = xMax > 60 ? 10 : 7;
+  for (let x = xMin; x <= xMax; x += xStep) {
+    const xp = padL + (x - xMin) / (xMax - xMin) * plotW;
+    html += `<line x1="${xp}" y1="${padT}" x2="${xp}" y2="${padT+plotH}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${xp}" y="${H-padB+15}" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#666">${x}</text>`;
+  }
+  html += `<text x="${padL+plotW/2}" y="${H-5}" text-anchor="middle" font-family="Karla" font-size="10" fill="#333">${xLabel}</text>`;
+
+  // Plot each series
+  series.forEach((s, idx) => {
+    let path = '';
+    s.pts.forEach((p, i) => {
+      const x = padL + (p.x - xMin) / (xMax - xMin) * plotW;
+      const y = padT + plotH * (1 - (p.y - yMin) / (yMax - yMin));
+      path += (path === '' ? 'M' : ' L') + `${x.toFixed(1)},${y.toFixed(1)}`;
+      html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.2" fill="${s.color}" stroke="#fff" stroke-width="1"/>`;
+    });
+    html += `<path d="${path}" stroke="${s.color}" stroke-width="2.4" fill="none" opacity="0.92"/>`;
+
+    // Marker en la cosecha (último punto)
+    if (s.pts.length > 0) {
+      const last = s.pts[s.pts.length - 1];
+      const x = padL + (last.x - xMin) / (xMax - xMin) * plotW;
+      const y = padT + plotH * (1 - (last.y - yMin) / (yMax - yMin));
+      html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${s.color}" stroke="#fff" stroke-width="1.5"/>`;
+    }
+
+    // Legend
+    const legY = padT + 18 + idx * 18;
+    html += `<line x1="${W-padR+8}" y1="${legY}" x2="${W-padR+24}" y2="${legY}" stroke="${s.color}" stroke-width="2.8"/>`;
+    html += `<circle cx="${W-padR+16}" cy="${legY}" r="3" fill="${s.color}" stroke="#fff" stroke-width="1"/>`;
+    html += `<text x="${W-padR+30}" y="${legY+3}" font-family="Karla" font-size="9.5" font-weight="600" fill="#333">${s.label}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+// Mantener drawChartMulti para retrocompatibilidad (no se usa pero por seguridad)
+function drawChartMulti(svgId, series, maxWeeks, yMin, yMax, yLabel, unit) {
+  drawChartXY(svgId, series.map(s => ({
+    label: s.label, color: s.color,
+    pts: s.data.map((v,i) => v == null ? null : {x: i+1, y: v}).filter(p => p)
+  })), 0, maxWeeks+0.5, yMin, yMax, yLabel, 'Semanas desde antesis', unit);
+}
+
+function drawChart(svgId, dataArrays, maxWeeks, yMin, yMax, yLabel, unit) {
+  const svg = $(svgId);
+  const W = 700, H = 320, padL = 50, padR = 110, padT = 20, padB = 40;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const colors = ['#C4452D','#D4820A','#5A4A8A','#1E5A8C','#2A6041','#7A4F2F','#1A9E9E','#7C3F8E','#0B2B3C'];
+
+  // Detect identical curves and group them
+  const groups = [];
+  dataArrays.forEach((arr, idx) => {
+    const sig = arr.map(v => v == null ? '_' : v).join(',');
+    const existing = groups.find(g => g.sig === sig);
+    if (existing) {
+      existing.racimos.push(idx + 1);
+    } else {
+      groups.push({sig, arr, racimos:[idx + 1]});
+    }
+  });
+
+  // Axes background
+  let html = `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFAFA" stroke="#E0E0E0"/>`;
+
+  // Y gridlines + labels
+  for (let i = 0; i <= 5; i++) {
+    const y = padT + plotH * (1 - i/5);
+    const v = yMin + (yMax - yMin) * i/5;
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${padL-5}" y="${y+4}" text-anchor="end" font-family="DM Mono" font-size="10" fill="#666">${v.toFixed(unit==='mm/d'?1:0)}</text>`;
+  }
+  html += `<text x="${padL/2-5}" y="${padT + plotH/2}" text-anchor="middle" font-family="Karla" font-size="11" font-weight="700" fill="#333" transform="rotate(-90 ${padL/2-5} ${padT + plotH/2})">${yLabel}</text>`;
+
+  // X axis
+  for (let w = 1; w <= maxWeeks; w++) {
+    const x = padL + (w-0.5) / maxWeeks * plotW;
+    html += `<text x="${x}" y="${H-padB+15}" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#666">S${w}</text>`;
+  }
+  html += `<text x="${padL+plotW/2}" y="${H-5}" text-anchor="middle" font-family="Karla" font-size="10" fill="#333">Semanas desde antesis</text>`;
+
+  // Plot one line per GROUP (no duplicate overlapping)
+  groups.forEach((g, idx) => {
+    const color = colors[idx % colors.length];
+    let path = '';
+    g.arr.forEach((v, i) => {
+      if (v == null) return;
+      const x = padL + (i+0.5) / maxWeeks * plotW;
+      const y = padT + plotH * (1 - (v - yMin)/(yMax - yMin));
+      path += (path === '' ? 'M' : ' L') + `${x.toFixed(1)},${y.toFixed(1)}`;
+      html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${color}" stroke="#fff" stroke-width="1"/>`;
+    });
+    html += `<path d="${path}" stroke="${color}" stroke-width="2.2" fill="none" opacity="0.85"/>`;
+
+    // Legend with group label (e.g. "R1-R3" or "R5-R7")
+    const racLbl = g.racimos.length === 1 ? `R${g.racimos[0]}` :
+                   g.racimos.length === 2 ? `R${g.racimos[0]}, R${g.racimos[1]}` :
+                   `R${g.racimos[0]}–R${g.racimos[g.racimos.length-1]}`;
+    const legY = padT + 15 + idx * 16;
+    html += `<line x1="${W-padR+8}" y1="${legY}" x2="${W-padR+24}" y2="${legY}" stroke="${color}" stroke-width="2.8"/>`;
+    html += `<circle cx="${W-padR+16}" cy="${legY}" r="2.5" fill="${color}" stroke="#fff" stroke-width="1"/>`;
+    html += `<text x="${W-padR+30}" y="${legY+3}" font-family="Karla" font-size="9.5" font-weight="600" fill="#333">${racLbl}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+// MEDICIONES DE FRUTO
+function agregarMedicion() {
+  const rac = $('med-rac').value;
+  const fecha = $('med-fecha').value;
+  const mm = parseFloat($('med-mm').value);
+  if (!fecha || isNaN(mm)) { alert('Ingresa fecha y diámetro válidos'); return; }
+  mediciones.push({rac, fecha, mm});
+  renderMediciones();
+  $('med-mm').value = '';
+}
+
+function renderMediciones() {
+  if (mediciones.length === 0) {
+    $('mediciones-list').innerHTML = '<div style="text-align:center;padding:.6rem;color:var(--muted);font-style:italic;font-size:.74rem">Aún no hay mediciones registradas.</div>';
+    return;
+  }
+  const e = EPOCAS[currentEpoca];
+  const fpl = $('cfg-fecha').value || e.fpl_default;
+  const fechaPlant = new Date(fpl);
+
+  $('mediciones-list').innerHTML = `<table class="rac-table">
+    <thead><tr><th>Racimo</th><th>Fecha</th><th>Real (mm)</th><th>Esperado (mm)</th><th>Estado</th></tr></thead>
+    <tbody>${mediciones.map((m, i) => {
+      const racData = e.racimos[parseInt(m.rac)-1];
+      let esperado = '—', estado = '—';
+      if (racData) {
+        const fAntesis = addDays(fechaPlant, racData.dap);
+        const diffDias = Math.round((new Date(m.fecha) - fAntesis)/(1000*60*60*24));
+        const sem = Math.ceil(diffDias / 7);
+        if (sem >= 1 && sem <= e.curva_mm[parseInt(m.rac)-1].length) {
+          esperado = e.curva_mm[parseInt(m.rac)-1][sem-1];
+          if (esperado != null) {
+            const dif = ((m.mm - esperado) / esperado) * 100;
+            if (dif >= -10) estado = `<span class="stg cua">✓ OK (${dif>=0?'+':''}${dif.toFixed(0)}%)</span>`;
+            else if (dif >= -25) estado = `<span class="stg ant">⚠ bajo (${dif.toFixed(0)}%)</span>`;
+            else estado = `<span class="stg" style="background:var(--red-pale);color:var(--red);border:1px solid #E89B89">✗ crítico (${dif.toFixed(0)}%)</span>`;
+          }
+        }
+      }
+      return `<tr>
+        <td>R${m.rac}</td>
+        <td>${fmtDate(m.fecha)}</td>
+        <td>${m.mm}</td>
+        <td>${esperado}</td>
+        <td>${estado}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+// ============================================================
+// PESTAÑA 3: RECETAS NUTRICIONALES
+// ============================================================
+function renderRecetas() {
+  const e = EPOCAS[currentEpoca];
+  const nrac = parseInt($('cfg-racimos').value || e.n_racimos);
+  const ejes = parseFloat($('cfg-densidad').value || e.ejes_ha_default);
+  const recetasEpoca = (RECETAS[currentEpoca] || []).slice(0, nrac);
+  const fpl = $('cfg-fecha').value || e.fpl_default;
+  const fechaPlant = new Date(fpl);
+  const aguaCa = parseFloat($('agua-ca').value) || 0;
+  const aguaMg = parseFloat($('agua-mg').value) || 0;
+  const aguaN = parseFloat($('agua-n').value) || 0;
+
+  let html = `<div class="card"><div style="margin-bottom:.7rem;font-size:.8rem;color:var(--muted)">${e.nota_receta}</div>`;
+
+  recetasEpoca.forEach((r, idx) => {
+    const racData = e.racimos[idx];
+    const fAntesis = addDays(fechaPlant, racData.dap);
+
+    // Convertir g/eje a kg/ha y kg/m3 (= g/L)
+    const kg_ha = {
+      kno3:  r.kno3  * ejes / 1000,
+      cano3: r.cano3 * ejes / 1000,
+      mgno3: r.mgno3 * ejes / 1000,
+      map:   r.map   * ejes / 1000,
+      k2so4: r.k2so4 * ejes / 1000
+    };
+    const gL = {};
+    Object.keys(kg_ha).forEach(k => gL[k] = kg_ha[k] / r.m3);
+
+    // Calcular concentraciones en ppm (mg/L)
+    let N_ppm = (gL.kno3 * FERTS.kno3.n + gL.cano3 * FERTS.cano3.n + gL.mgno3 * FERTS.mgno3.n + gL.map * FERTS.map.n) * 10;
+    let P_ppm = gL.map * FERTS.map.p2o5 * FACTOR_OX.p2o5_p * 10;
+    let K_ppm = (gL.kno3 * FERTS.kno3.k2o + gL.k2so4 * FERTS.k2so4.k2o) * FACTOR_OX.k2o_k * 10;
+    let Ca_ppm = gL.cano3 * FERTS.cano3.cao * FACTOR_OX.cao_ca * 10;
+    let Mg_ppm = gL.mgno3 * FERTS.mgno3.mgo * FACTOR_OX.mgo_mg * 10;
+
+    // mmol/L
+    const N_mmol = N_ppm / PM_EL.n + aguaN;
+    const K_mmol = K_ppm / PM_EL.k;
+    const Ca_mmol = Ca_ppm / PM_EL.ca + aguaCa;
+    const Mg_mmol = Mg_ppm / PM_EL.mg + aguaMg;
+    const P_mmol = P_ppm / PM_EL.p;
+
+    // Recalcular ppm con agua
+    const N_total_ppm = N_ppm + aguaN * PM_EL.n;
+    const Ca_total_ppm = Ca_ppm + aguaCa * PM_EL.ca;
+    const Mg_total_ppm = Mg_ppm + aguaMg * PM_EL.mg;
+
+    // Ratio NO3:K (ppm)
+    const ratio_nk = N_total_ppm > 0 ? (K_ppm / N_total_ppm).toFixed(2) : '—';
+
+    // Cargas para CE
+    const cat_meq = Ca_mmol*2 + Mg_mmol*2 + K_mmol;
+    const an_meq = N_mmol;
+    const ce_est = ((cat_meq + an_meq) / 2) * 0.1;
+
+    // Determine fenological color
+    const fenoCls = idx === 0 ? 'veg' : idx <= 1 ? 'flor' : idx <= 3 ? 'fruct' : 'maduracion';
+    const fenoLbl = idx === 0 ? 'R1 antesis' : idx === 1 ? 'R2 antesis' : 'R' + r.rac + ' antesis';
+
+    html += `
+      <div class="evento-card ${fenoCls}">
+        <div class="ev-head">
+          <div>
+            <div class="ev-rac">${e.icon} Racimo ${r.rac} en antesis</div>
+            <div style="font-size:.7rem;color:var(--muted)">Día ${racData.dap} desde plantación · Total ${r.total.toFixed(2)} g/eje · ${r.m3} m³/ha</div>
+          </div>
+          <div class="ev-fecha">
+            ${fmtDate(fAntesis)}
+            <strong>${(r.total * ejes / 1000).toFixed(1)} kg/ha</strong>
+          </div>
+        </div>
+
+        <div class="receta-mini">
+          <div class="rm-cell n"><span class="rm-val">${N_total_ppm.toFixed(0)}</span><span class="rm-lbl">N ppm</span></div>
+          <div class="rm-cell p"><span class="rm-val">${P_ppm.toFixed(0)}</span><span class="rm-lbl">P ppm</span></div>
+          <div class="rm-cell k"><span class="rm-val">${K_ppm.toFixed(0)}</span><span class="rm-lbl">K ppm</span></div>
+          <div class="rm-cell ca"><span class="rm-val">${Ca_total_ppm.toFixed(0)}</span><span class="rm-lbl">Ca ppm</span></div>
+          <div class="rm-cell mg"><span class="rm-val">${Mg_total_ppm.toFixed(0)}</span><span class="rm-lbl">Mg ppm</span></div>
+        </div>
+
+        <div class="ratios-mini">
+          <div class="rt-item"><span class="rt-name">NO₃:K</span><span class="rt-val">1:${ratio_nk}</span></div>
+          <div class="rt-item"><span class="rt-name">N mmol</span><span class="rt-val">${N_mmol.toFixed(1)}</span></div>
+          <div class="rt-item"><span class="rt-name">K mmol</span><span class="rt-val">${K_mmol.toFixed(1)}</span></div>
+          <div class="rt-item"><span class="rt-name">Ca mmol</span><span class="rt-val">${Ca_mmol.toFixed(1)}</span></div>
+          <div class="rt-item"><span class="rt-name">CE est.</span><span class="rt-val">${ce_est.toFixed(2)}</span></div>
+        </div>
+
+        <table class="fert-table">
+          <thead><tr><th>Fertilizante</th><th>g/eje</th><th>kg/ha</th><th>g/L</th></tr></thead>
+          <tbody>
+            ${Object.keys(FERTS).map(k => r[k] > 0 ? `<tr>
+              <td>${FERTS[k].nombre}</td>
+              <td>${r[k].toFixed(2)}</td>
+              <td>${kg_ha[k].toFixed(1)}</td>
+              <td>${gL[k].toFixed(2)}</td>
+            </tr>` : '').filter(x=>x).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+
+  html += '</div>';
+  $('recetas-container').innerHTML = html;
+}
+
+// ============================================================
+// PESTAÑA 4: MONITOREO DE SAVIA
+// ============================================================
+function renderSaviaRef() {
+  $('savia-ref-body').innerHTML = SAVIA_REF.map(r => `
+    <tr>
+      <td class="r">${r.r}</td>
+      <td class="j">${r.no3_j[0]}–${r.no3_j[1]}</td>
+      <td class="v">${r.no3_v[0]}–${r.no3_v[1]}</td>
+      <td class="j">${r.k_j[0]}–${r.k_j[1]}</td>
+      <td class="v">${r.k_v[0]}–${r.k_v[1]}</td>
+      <td class="j">${r.ca_j[0]}–${r.ca_j[1]}</td>
+      <td class="v">${r.ca_v[0]}–${r.ca_v[1]}</td>
+      <td class="j">${r.mg_j[0]}–${r.mg_j[1]}</td>
+      <td class="v">${r.mg_v[0]}–${r.mg_v[1]}</td>
+      <td>${r.ce[0]}–${r.ce[1]}</td>
+      <td>${r.ph[0]}–${r.ph[1]}</td>
+      <td>${r.brix[0]}–${r.brix[1]}</td>
+    </tr>
+  `).join('');
+}
+
+function renderSaviaForm() {
+  // Update placeholders based on selected racimo
+  const idx = parseInt($('sav-rac').value) - 1;
+  const ref = SAVIA_REF[idx] || SAVIA_REF[0];
+  $('sav-j-no3').placeholder = `${ref.no3_j[0]}–${ref.no3_j[1]}`;
+  $('sav-j-k').placeholder = `${ref.k_j[0]}–${ref.k_j[1]}`;
+  $('sav-j-ca').placeholder = `${ref.ca_j[0]}–${ref.ca_j[1]}`;
+  $('sav-j-mg').placeholder = `${ref.mg_j[0]}–${ref.mg_j[1]}`;
+  $('sav-j-ce').placeholder = `${ref.ce[0]}–${ref.ce[1]}`;
+  $('sav-v-no3').placeholder = `${ref.no3_v[0]}–${ref.no3_v[1]}`;
+  $('sav-v-k').placeholder = `${ref.k_v[0]}–${ref.k_v[1]}`;
+  $('sav-v-ca').placeholder = `${ref.ca_v[0]}–${ref.ca_v[1]}`;
+  $('sav-v-mg').placeholder = `${ref.mg_v[0]}–${ref.mg_v[1]}`;
+  $('sav-ph').placeholder = `${ref.ph[0]}–${ref.ph[1]}`;
+  $('sav-brix').placeholder = `${ref.brix[0]}–${ref.brix[1]}`;
+  diagSavia();
+}
+
+function diagSavia() {
+  const idx = parseInt($('sav-rac').value) - 1;
+  const ref = SAVIA_REF[idx] || SAVIA_REF[0];
+
+  const inputs = {
+    'NO₃ joven': {val: parseFloat($('sav-j-no3').value), range: ref.no3_j, hoja:'joven', accion_bajo:'aumentar N en receta', accion_alto:'reducir N, riesgo lixiviación'},
+    'NO₃ vieja': {val: parseFloat($('sav-v-no3').value), range: ref.no3_v, hoja:'vieja', accion_bajo:'reservas bajas, aumentar N', accion_alto:'normal'},
+    'K joven':   {val: parseFloat($('sav-j-k').value), range: ref.k_j, hoja:'joven', accion_bajo:'aumentar K en receta (importante R3+)', accion_alto:'reducir K, vigilar Ca'},
+    'K vieja':   {val: parseFloat($('sav-v-k').value), range: ref.k_v, hoja:'vieja', accion_bajo:'reservas bajas K', accion_alto:'normal'},
+    'Ca joven':  {val: parseFloat($('sav-j-ca').value), range: ref.ca_j, hoja:'joven', accion_bajo:'CRÍTICO. Riesgo BER. Aumentar Ca(NO₃)₂', accion_alto:'reducir Ca'},
+    'Ca vieja':  {val: parseFloat($('sav-v-ca').value), range: ref.ca_v, hoja:'vieja', accion_bajo:'Ca acumulado bajo', accion_alto:'normal en hoja vieja'},
+    'Mg joven':  {val: parseFloat($('sav-j-mg').value), range: ref.mg_j, hoja:'joven', accion_bajo:'aumentar Mg', accion_alto:'reducir Mg'},
+    'Mg vieja':  {val: parseFloat($('sav-v-mg').value), range: ref.mg_v, hoja:'vieja', accion_bajo:'reservas bajas Mg', accion_alto:'normal'},
+    'CE': {val: parseFloat($('sav-j-ce').value), range: ref.ce, hoja:'savia', accion_bajo:'aumentar CE de fertirriego', accion_alto:'>15: aplicar SOLO AGUA 1-2 días, revisar vigor'},
+    'pH': {val: parseFloat($('sav-ph').value), range: ref.ph, hoja:'savia', accion_bajo:'savia muy ácida, revisar fertilizantes acidificantes', accion_alto:'pH alto, considerar acidificar'},
+    'Brix': {val: parseFloat($('sav-brix').value), range: ref.brix, hoja:'savia', accion_bajo:'planta sin reservas, revisar ventilación y radiación', accion_alto:'normal'}
+  };
+
+  const recs = [];
+  let countOk = 0, countWarn = 0, countCrit = 0;
+
+  Object.keys(inputs).forEach(name => {
+    const i = inputs[name];
+    if (isNaN(i.val) || i.val === 0) return;
+    const [lo, hi] = i.range;
+    const mid = (lo + hi) / 2;
+    const margen = (hi - lo) * 0.3;
+
+    if (i.val >= lo && i.val <= hi) {
+      countOk++;
+    } else if (i.val < lo - margen || i.val > hi + margen) {
+      countCrit++;
+      recs.push({
+        level:'critical',
+        title: `${name} fuera de rango (${i.val})`,
+        text: `Valor crítico. Rango óptimo R${idx+1}: ${lo}–${hi} ${name==='CE'?'mS/cm':name==='pH'?'':name==='Brix'?'°Brix':'ppm'}.`,
+        action: i.val < lo ? i.accion_bajo : i.accion_alto
+      });
+    } else {
+      countWarn++;
+      recs.push({
+        level:'warning',
+        title: `${name} levemente desviado (${i.val})`,
+        text: `Rango óptimo R${idx+1}: ${lo}–${hi}. Vigilar tendencia.`,
+        action: i.val < lo ? i.accion_bajo : i.accion_alto
+      });
+    }
+  });
+
+  // Calcular ratios si hay datos
+  const noJ = parseFloat($('sav-j-no3').value);
+  const kJ = parseFloat($('sav-j-k').value);
+  const caJ = parseFloat($('sav-j-ca').value);
+  const mgJ = parseFloat($('sav-j-mg').value);
+
+  if (kJ > 0 && caJ > 0) {
+    const kca = kJ / caJ;
+    if (kca > 18) {
+      recs.push({level:'warning', title:`Ratio K:Ca alto en hoja joven (${kca.toFixed(1)})`,
+        text:'K excesivo respecto a Ca. Riesgo de inducir deficiencia Ca (BER).',
+        action: 'Reducir K en receta y/o aumentar Ca(NO₃)₂'});
+    }
+  }
+
+  if (caJ > 0 && mgJ > 0) {
+    const camg = caJ / mgJ;
+    if (camg < 0.7) {
+      recs.push({level:'warning', title:`Ratio Ca:Mg bajo en hoja joven (${camg.toFixed(2)})`,
+        text:'Mg dominante sobre Ca, puede inducir deficiencia de Ca.',
+        action: 'Aumentar Ca(NO₃)₂ en receta y reducir Mg(NO₃)₂'});
+    }
+  }
+
+  if (recs.length === 0) {
+    if (countOk === 0) {
+      $('savia-diag').innerHTML = '<div style="text-align:center;padding:.7rem;color:var(--muted);font-style:italic;font-size:.78rem">Ingresa los valores medidos para generar el diagnóstico.</div>';
+    } else {
+      $('savia-diag').innerHTML = `<div class="diag-card ok">
+        <span class="diag-icon">✅</span>
+        <div class="diag-content">
+          <div class="diag-param">Todos los parámetros dentro de rango</div>
+          <div class="diag-msg">${countOk} parámetros en rango óptimo para R${idx+1}. Mantener manejo actual.</div>
+        </div>
+      </div>`;
+    }
+    return;
+  }
+
+  $('savia-diag').innerHTML = recs.map(r => `
+    <div class="diag-card ${r.level}">
+      <span class="diag-icon">${r.level==='critical'?'🔴':r.level==='warning'?'🟡':'🟢'}</span>
+      <div class="diag-content">
+        <div class="diag-param">${r.title}</div>
+        <div class="diag-msg">${r.text}</div>
+        ${r.action ? `<div class="diag-action"><strong>Acción</strong>${r.action}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// PESTAÑA 5: COSTOS
+// ============================================================
+function renderCostos() {
+  const e = EPOCAS[currentEpoca];
+  const nrac = parseInt($('cfg-racimos').value || e.n_racimos);
+  const ejes = parseFloat($('cfg-densidad').value || e.ejes_ha_default);
+  const recetasEpoca = (RECETAS[currentEpoca] || []).slice(0, nrac);
+
+  // Try to load prices from localStorage (set by sapsoil_fertilidad_suelo.html)
+  let catalogo = {};
+  try {
+    const raw = localStorage.getItem('sapsoil_catalog_minerales');
+    if (raw) {
+      const arr = JSON.parse(raw);
+      arr.forEach(p => { catalogo[p.id] = p; });
+    }
+  } catch(e) {}
+
+  // Get price for each fertilizer used
+  const precios = {};
+  Object.keys(FERTS).forEach(k => {
+    const f = FERTS[k];
+    const fromCat = catalogo[f.min_id];
+    precios[k] = fromCat && fromCat.precio_kg ? parseFloat(fromCat.precio_kg) : null;
+  });
+
+  // Compute total cost
+  let totalKgHa = {kno3:0,cano3:0,mgno3:0,map:0,k2so4:0};
+  let totalCosto = 0;
+  let costoPorRacimo = [];
+  let racConPrecio = false;
+
+  recetasEpoca.forEach(r => {
+    let costoRac = 0;
+    Object.keys(FERTS).forEach(k => {
+      const kg = r[k] * ejes / 1000;
+      totalKgHa[k] += kg;
+      if (precios[k] != null) {
+        const c = kg * precios[k];
+        costoRac += c;
+        racConPrecio = true;
+      }
+    });
+    totalCosto += costoRac;
+    costoPorRacimo.push({rac:r.rac, kg_total: r.total * ejes / 1000, costo: costoRac});
+  });
+
+  // Resumen
+  if (!racConPrecio) {
+    $('costos-resumen').innerHTML = `<div class="note warn">
+      <strong>📋 Sin precios cargados</strong>
+      No hay precios cargados en el catálogo de fertilizantes minerales. Para ver el costo, abre el módulo "Análisis de Fertilidad de Suelo" → pestaña "Fertilizantes minerales" y carga los precios $/kg de los productos.
+    </div>`;
+    $('costos-detalle').innerHTML = '';
+    return;
+  }
+
+  const totalKg = Object.values(totalKgHa).reduce((a,b) => a+b, 0);
+  $('costos-resumen').innerHTML = `
+    <div class="costo-grid">
+      <div class="costo-cell"><span class="costo-val">${totalKg.toFixed(0)}</span><span class="costo-lbl">kg/ha total</span></div>
+      <div class="costo-cell"><span class="costo-val">${(totalKg/nrac).toFixed(0)}</span><span class="costo-lbl">kg/ha promedio por racimo</span></div>
+      <div class="costo-cell total"><span class="costo-val">$${totalCosto.toLocaleString('es-CL', {maximumFractionDigits:0})}</span><span class="costo-lbl">Costo total/ha</span></div>
+      <div class="costo-cell"><span class="costo-val">$${(totalCosto/totalKg).toFixed(0)}</span><span class="costo-lbl">$/kg promedio</span></div>
+    </div>
+
+    <div class="section-title" style="margin-top:1rem">Resumen por fertilizante</div>
+    <table class="fert-table">
+      <thead><tr><th>Fertilizante</th><th>kg/ha total</th><th>$/kg</th><th>Costo/ha</th></tr></thead>
+      <tbody>
+        ${Object.keys(FERTS).map(k => totalKgHa[k] > 0 ? `<tr>
+          <td>${FERTS[k].nombre}</td>
+          <td>${totalKgHa[k].toFixed(1)}</td>
+          <td>${precios[k] != null ? '$' + precios[k].toLocaleString('es-CL') : '<span style="color:var(--red)">sin precio</span>'}</td>
+          <td>${precios[k] != null ? '$' + (totalKgHa[k] * precios[k]).toLocaleString('es-CL', {maximumFractionDigits:0}) : '—'}</td>
+        </tr>` : '').filter(x=>x).join('')}
+      </tbody>
+    </table>
+  `;
+
+  $('costos-detalle').innerHTML = `<table class="fert-table">
+    <thead><tr><th>Racimo</th><th>kg/ha</th><th>Costo $</th></tr></thead>
+    <tbody>
+      ${costoPorRacimo.map(c => `<tr>
+        <td>R${c.rac}</td>
+        <td>${c.kg_total.toFixed(1)}</td>
+        <td>${c.costo > 0 ? '$' + c.costo.toLocaleString('es-CL', {maximumFractionDigits:0}) : '—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderEpocaButtons();
+  renderCalendario();
+  renderCurvas();
+  renderRecetas();
+  renderSaviaRef();
+  renderSaviaForm();
+  renderMediciones();
+  renderCostos();
+}
+
+// Listeners
+['cfg-fecha','cfg-racimos','cfg-densidad','cfg-variedad','cfg-predio','cfg-sector','agua-ca','agua-mg','agua-n'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    renderCalendario();
+    renderCurvas();
+    renderRecetas();
+    renderCostos();
+  });
+});
+
+// Initialize
+(function init() {
+  const e = EPOCAS[currentEpoca];
+  $('cfg-fecha').value = e.fpl_default;
+  $('cfg-racimos').value = e.n_racimos;
+  $('cfg-densidad').value = e.ejes_ha_default;
+  $('cfg-variedad').value = e.variedad;
+  // Default fecha for mediciones to today
+  const today = new Date().toISOString().split('T')[0];
+  $('med-fecha').value = today;
+  $('sav-fecha').value = today;
+  renderAll();
+})();
+</script>
+</body>
+</html>
