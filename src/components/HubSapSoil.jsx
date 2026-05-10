@@ -1,14 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Layers, ChevronRight } from "lucide-react";
 import { MODULOS_POR_CATEGORIA } from "../lib/modules-config";
+import SelectorPredio from "./SelectorPredio";
 
 export default function HubSapSoil({ profile, onSelectModulo }) {
   const categorias = useMemo(() => Object.keys(MODULOS_POR_CATEGORIA), []);
+  const [contextoActivo, setContextoActivo] = useState(null);
 
   return (
     <div className="anim-fade-in" style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
       {/* HEADER DE LA SECCIÓN */}
-      <div style={{ marginBottom: 32 }}>
+      <div style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
           <Layers size={14} style={{ color: "var(--amber)" }} />
           <div className="label-eyebrow" style={{ color: "var(--amber)" }}>
@@ -23,6 +25,9 @@ export default function HubSapSoil({ profile, onSelectModulo }) {
           planes nutricionales, calidad post-cosecha y capacitaciones técnicas.
         </p>
       </div>
+
+      {/* SELECTOR DE PREDIO ACTIVO · contexto del campo */}
+      <SelectorPredio onContextoCambiado={setContextoActivo} />
 
       {/* GRID DE MÓDULOS POR CATEGORÍA */}
       {categorias.map(categoria => (
@@ -78,8 +83,9 @@ export default function HubSapSoil({ profile, onSelectModulo }) {
           Información
         </div>
         Los módulos abren herramientas independientes con sus propios formularios y
-        cálculos. Los datos guardados se asocian al predio y temporada activa, y
-        se pueden consultar desde la pestaña <strong>Registros</strong> de la app principal.
+        cálculos. Si seleccionaste un predio activo arriba, los módulos compatibles
+        precargan automáticamente el último análisis de agua y los últimos registros
+        de savia y lisímetro de ese predio.
       </div>
     </div>
   );
