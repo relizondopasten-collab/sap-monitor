@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HidroSuite · Riego y Nutrición Hidropónica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --purple:#5A4A8A;--purple-pale:#F0EDFA;
+  --blue:#1E5A8C;--blue-pale:#DEEAF5;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;padding-bottom:70px}
+
+/* TOP BAR */
+.topbar{background:var(--navy);color:#fff;padding:.85rem 1.2rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.15)}
+.tb-brand{display:flex;align-items:center;gap:.5rem}
+.tb-logo{width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,var(--teal-lt),#7DE8E8);display:flex;align-items:center;justify-content:center;font-size:1rem}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700}
+.tb-name em{color:#7DE8E8;font-style:italic}
+.tb-context{font-size:.7rem;color:rgba(255,255,255,.55);text-align:right;line-height:1.3}
+.tb-context strong{color:#7DE8E8;display:block;font-weight:600}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:50;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.bn-btn{flex:1;padding:.55rem .3rem;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.15rem;color:var(--muted);font-family:'Karla',sans-serif;transition:color .15s;border-top:2px solid transparent}
+.bn-btn:hover{color:var(--teal-lt)}
+.bn-btn.active{color:var(--teal);border-top-color:var(--teal)}
+.bn-icon{font-size:1.1rem;line-height:1}
+.bn-lbl{font-size:.62rem;font-weight:600;text-align:center;line-height:1.1}
+
+/* PAGES */
+.page{display:none;padding:0 0 1rem}
+.page.active{display:block}
+
+/* CARD */
+.card{background:#fff;margin:1rem .9rem;border-radius:12px;padding:1.2rem;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--line)}
+.card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+.card-num{width:30px;height:30px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.card-titles{flex:1}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--teal-lt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy);font-weight:600;line-height:1.15}
+
+/* HOME PAGE */
+.hero-home{background:linear-gradient(135deg,var(--navy) 0%,#0D3D5C 100%);color:#fff;padding:2rem 1.5rem 2.5rem;border-radius:0 0 24px 24px;position:relative;overflow:hidden}
+.hero-home::after{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(125,232,232,.15) 0%,transparent 70%)}
+.hero-home h1{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;margin-bottom:.4rem;line-height:1.1;position:relative;z-index:2}
+.hero-home h1 em{color:#7DE8E8;font-style:italic}
+.hero-home p{color:rgba(255,255,255,.65);font-size:.86rem;line-height:1.5;position:relative;z-index:2}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:1.2rem;position:relative;z-index:2}
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:.6rem .5rem;text-align:center;backdrop-filter:blur(8px)}
+.hs-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#7DE8E8;font-weight:700;display:block;line-height:1.1}
+.hs-lbl{font-size:.6rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:.2rem}
+
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:1rem .9rem}
+.qa-btn{background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:1rem .8rem;cursor:pointer;text-align:left;font-family:'Karla',sans-serif;transition:all .15s;display:flex;flex-direction:column;gap:.4rem}
+.qa-btn:hover{border-color:var(--teal-lt);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.qa-btn.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+.qa-btn.primary:hover{background:#0a5959}
+.qa-icon{font-size:1.5rem;line-height:1}
+.qa-title{font-weight:700;font-size:.86rem;color:var(--navy)}
+.qa-btn.primary .qa-title{color:#fff}
+.qa-desc{font-size:.7rem;color:var(--muted);line-height:1.35}
+.qa-btn.primary .qa-desc{color:rgba(255,255,255,.7)}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--navy);font-weight:600;margin:1.2rem .9rem .5rem;display:flex;justify-content:space-between;align-items:baseline}
+.section-title small{font-size:.7rem;color:var(--muted);font-family:'Karla',sans-serif;font-weight:500}
+
+.recent-list{margin:0 .9rem;display:flex;flex-direction:column;gap:.5rem}
+.recent-item{background:#fff;border:1px solid var(--line);border-radius:9px;padding:.7rem .85rem;display:flex;align-items:center;gap:.7rem;cursor:pointer;transition:all .15s}
+.recent-item:hover{border-color:var(--teal-lt);transform:translateX(2px)}
+.ri-date{flex-shrink:0;text-align:center;background:var(--bg);border-radius:6px;padding:.35rem .5rem;min-width:48px}
+.ri-day{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--navy);display:block;line-height:1}
+.ri-month{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:.1rem}
+.ri-content{flex:1;min-width:0}
+.ri-title{font-weight:600;font-size:.82rem;color:var(--navy);line-height:1.3;margin-bottom:.15rem}
+.ri-meta{font-size:.7rem;color:var(--muted);line-height:1.3;display:flex;gap:.6rem;flex-wrap:wrap}
+.ri-meta span{display:inline-flex;align-items:center;gap:.15rem}
+.ri-arrow{color:var(--muted);font-size:1.1rem;flex-shrink:0}
+.recent-empty{padding:1.2rem;text-align:center;color:var(--muted);font-size:.78rem;font-style:italic;background:var(--bg);border:1px dashed var(--line);border-radius:9px}
+
+/* SECTOR CONTEXT - displayed in irrigation log header */
+.context-bar{background:#fff;margin:1rem .9rem;border-radius:10px;padding:.7rem .85rem;border:1px solid var(--line);display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.cb-field{flex:1;min-width:90px;display:flex;flex-direction:column;gap:.15rem}
+.cb-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.cb-inp,.cb-sel{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:.35rem .5rem;font-size:.82rem;font-family:'Karla',sans-serif;color:var(--ink);outline:none;font-weight:500;width:100%}
+.cb-inp:focus,.cb-sel:focus{border-color:var(--teal-lt);background:#fff}
+
+/* IRRIGATION LOG */
+.irr-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.4rem}
+.irr-section-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin:.9rem 0 .4rem;padding-bottom:.25rem;border-bottom:1px solid var(--teal-pale)}
+.irr-section-title:first-child{margin-top:.2rem}
+.irr-input{background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:.5rem .55rem;display:flex;flex-direction:column;gap:.15rem}
+.irr-input.in{background:var(--teal-pale);border-color:#9ED5D5}
+.irr-input.out{background:var(--amber-pale);border-color:#E8C470}
+.irr-input.calc{background:var(--purple-pale);border-color:#C0B5E5}
+.irr-input.weather{background:var(--blue-pale);border-color:#A0C4E0}
+.irr-lbl{display:flex;justify-content:space-between;align-items:baseline;gap:.3rem}
+.irr-name{font-weight:700;font-size:.74rem;color:var(--navy)}
+.irr-role{font-size:.58rem;color:var(--muted)}
+.irr-inp{background:#fff;border:1px solid var(--line);border-radius:4px;padding:.3rem .5rem;font-size:.95rem;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);outline:none;width:100%}
+.irr-inp:focus{border-color:var(--teal)}
+.irr-inp[readonly]{background:rgba(0,0,0,.04);color:var(--purple);font-style:italic}
+.irr-unit{font-size:.58rem;color:var(--muted);text-align:right}
+
+/* SUMMARY METRICS */
+.metrics{background:var(--navy);border-radius:10px;padding:.85rem;color:#fff;margin-top:.7rem}
+.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+.m-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:.55rem .35rem;text-align:center}
+.m-box.alert-low{background:rgba(212,130,10,.2);border-color:rgba(212,130,10,.4)}
+.m-box.alert-high{background:rgba(181,54,30,.2);border-color:rgba(181,54,30,.4)}
+.m-box.ok{background:rgba(42,96,65,.2);border-color:rgba(42,96,65,.4)}
+.m-val{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:#7DE8E8;font-weight:700;display:block;line-height:1}
+.m-box.alert-low .m-val{color:#FFD89A}
+.m-box.alert-high .m-val{color:#FFB5A0}
+.m-box.ok .m-val{color:#A5E5C0}
+.m-lbl{font-size:.6rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:.2rem;line-height:1.2}
+
+.alert-msg{margin-top:.6rem;padding:.55rem .75rem;border-radius:6px;font-size:.74rem;line-height:1.45;display:none}
+.am-ok{background:rgba(42,96,65,.18);border:1px solid rgba(42,96,65,.35);color:#1F4530;display:block}
+.am-warn{background:rgba(212,130,10,.15);border:1px solid rgba(212,130,10,.35);color:#7A4810;display:block}
+.am-err{background:rgba(181,54,30,.13);border:1px solid rgba(181,54,30,.35);color:#7A2010;display:block}
+
+/* ESTIMATION CARD */
+.estim-card{background:linear-gradient(135deg,var(--blue-pale) 0%,var(--bg) 100%);border:1.5px solid #A0C4E0;border-radius:10px;padding:.85rem;margin-top:.7rem}
+.estim-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:.55rem}
+.estim-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.estim-cell{background:#fff;border-radius:6px;padding:.5rem .4rem;text-align:center;border:1px solid var(--line)}
+.estim-val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--blue);font-weight:700;display:block;line-height:1}
+.estim-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:.2rem;line-height:1.2}
+.estim-vs{margin-top:.55rem;padding:.45rem .7rem;border-radius:5px;font-size:.74rem;line-height:1.45;display:none;text-align:center}
+.evs-ok{background:rgba(42,96,65,.13);border:1px solid rgba(42,96,65,.3);color:#1F4530;display:block}
+.evs-warn{background:rgba(212,130,10,.13);border:1px solid rgba(212,130,10,.3);color:#7A4810;display:block}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:.5rem;margin-top:.9rem}
+.btn{flex:1;padding:.65rem 1rem;border-radius:7px;border:none;font-size:.82rem;font-weight:600;font-family:'Karla',sans-serif;cursor:pointer;transition:all .15s}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:#0a5959}
+.btn-secondary{background:var(--bg);color:var(--ink2);border:1px solid var(--line)}
+.btn-secondary:hover{background:#EAEFEF}
+.btn-danger{background:var(--red-pale);color:var(--red);border:1px solid #E8A090}
+.btn-danger:hover{background:#F5DCD5}
+
+/* HISTORY TABLE */
+.hist-table{width:100%;border-collapse:collapse;font-size:.75rem;margin-top:.5rem}
+.hist-table th{background:var(--navy);color:#fff;padding:.4rem .45rem;font-size:.62rem;font-weight:600;text-align:left;letter-spacing:.04em}
+.hist-table th.r{text-align:right}
+.hist-table td{padding:.4rem .45rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:.74rem}
+.hist-table td.r{text-align:right}
+.hist-table td:first-child{font-family:'Karla',sans-serif;font-weight:600;color:var(--navy);font-size:.76rem}
+.hist-table tr:nth-child(even) td{background:var(--bg)}
+.hist-table tr:hover td{background:var(--teal-pale);cursor:pointer}
+
+.savia-card{background:linear-gradient(135deg,var(--green-pale) 0%,#fff 100%);border:1.5px solid #9CD0B5;border-radius:12px;padding:1.5rem 1.2rem;margin:1rem .9rem;text-align:center}
+.savia-icon{font-size:2.5rem;margin-bottom:.7rem;display:block}
+.savia-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--green);font-weight:700;margin-bottom:.4rem}
+.savia-text{font-size:.85rem;color:var(--ink2);line-height:1.55;margin-bottom:1rem}
+.savia-link{display:inline-block;background:var(--green);color:#fff;padding:.55rem 1.4rem;border-radius:7px;text-decoration:none;font-weight:600;font-size:.83rem;margin-top:.4rem;transition:background .15s}
+.savia-link:hover{background:#1F4530}
+.integration-note{background:#fff;border:1px dashed var(--green);border-radius:8px;padding:.75rem .9rem;margin-top:1rem;font-size:.75rem;color:var(--ink2);line-height:1.55;text-align:left}
+.integration-note strong{color:var(--green);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.25rem}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:12px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:1.4rem 1.2rem}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--navy);margin-bottom:.5rem;font-weight:700}
+.modal p{font-size:.85rem;color:var(--ink2);margin-bottom:.8rem;line-height:1.55}
+.modal-actions{display:flex;gap:.5rem;margin-top:1rem}
+
+.note{background:var(--bg);border-left:3px solid var(--teal-lt);padding:.65rem .85rem;border-radius:0 5px 5px 0;font-size:.72rem;color:var(--muted);margin-top:.7rem;line-height:1.55}
+.note strong{color:var(--ink2);display:block;margin-bottom:.2rem;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em}
+
+@media (min-width:600px){
+  .irr-grid{grid-template-columns:repeat(3,1fr)}
+  .metrics-grid{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🌿</div>
+    <div class="tb-name">Hidro<em>Suite</em></div>
+  </div>
+  <div class="tb-context">
+    <strong id="tb-predio">Sin predio</strong>
+    <span id="tb-fecha">—</span>
+  </div>
+</div>
+
+<!-- ═════════════════ HOME ═════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero-home">
+    <h1>Riego y Nutrición<br><em>Hidropónica</em></h1>
+    <p>Plataforma integrada de registro, cálculo nutricional y diagnóstico foliar para cultivos hidropónicos.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hs-val" id="stat-registros">0</span><span class="hs-lbl">Registros</span></div>
+      <div class="hero-stat"><span class="hs-val" id="stat-recetas">0</span><span class="hs-lbl">Recetas</span></div>
+      <div class="hero-stat"><span class="hs-val" id="stat-dias">0</span><span class="hs-lbl">Días con datos</span></div>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <button class="qa-btn primary" onclick="goPage('riego')">
+      <span class="qa-icon">💧</span>
+      <span class="qa-title">Registro de riego</span>
+      <span class="qa-desc">Anotar el riego del día y drenaje</span>
+    </button>
+    <button class="qa-btn" onclick="goPage('nutricion')">
+      <span class="qa-icon">🧪</span>
+      <span class="qa-title">Solución nutritiva</span>
+      <span class="qa-desc">Calcular receta de fertilizantes</span>
+    </button>
+    <button class="qa-btn" onclick="goPage('savia')">
+      <span class="qa-icon">🌿</span>
+      <span class="qa-title">Análisis de savia</span>
+      <span class="qa-desc">Ver y registrar diagnósticos</span>
+    </button>
+    <button class="qa-btn" onclick="goPage('historial')">
+      <span class="qa-icon">📊</span>
+      <span class="qa-title">Historial</span>
+      <span class="qa-desc">Ver registros guardados</span>
+    </button>
+  </div>
+
+  <div class="section-title">Últimos riegos registrados <small id="recent-count">0</small></div>
+  <div class="recent-list" id="recent-list"></div>
+</div>
+
+<!-- ═════════════════ RIEGO ═════════════════ -->
+<div class="page" id="page-riego">
+  <div class="context-bar">
+    <div class="cb-field">
+      <label class="cb-lbl">Fecha</label>
+      <input type="date" id="r-fecha" class="cb-inp">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">Predio</label>
+      <input type="text" id="r-predio" class="cb-inp" placeholder="Ej: Origen">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">Sector</label>
+      <input type="text" id="r-sector" class="cb-inp" placeholder="Ej: Sector 5">
+    </div>
+    <div class="cb-field">
+      <label class="cb-lbl">Cultivo</label>
+      <select id="r-cultivo" class="cb-sel">
+        <option value="frutilla">Frutilla</option>
+        <option value="tomate">Tomate</option>
+        <option value="pimiento">Pimiento</option>
+        <option value="pepino">Pepino</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Variables climáticas del día</div>
+        <div class="card-title">Estación meteorológica</div>
+      </div>
+    </div>
+
+    <div class="irr-grid">
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">Rad. acumulada</span><span class="irr-role">interior</span></div>
+        <input class="irr-inp" id="w-rad" type="number" step="10" placeholder="J/cm²">
+        <div class="irr-unit">J/cm² del día</div>
+      </div>
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">DPV promedio</span><span class="irr-role">déficit vapor</span></div>
+        <input class="irr-inp" id="w-dpv" type="number" step="0.1" placeholder="kPa">
+        <div class="irr-unit">kPa diario</div>
+      </div>
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">T° máx interior</span></div>
+        <input class="irr-inp" id="w-tmax" type="number" step="0.5" placeholder="°C">
+        <div class="irr-unit">°C</div>
+      </div>
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">T° mín interior</span></div>
+        <input class="irr-inp" id="w-tmin" type="number" step="0.5" placeholder="°C">
+        <div class="irr-unit">°C</div>
+      </div>
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">HR promedio</span></div>
+        <input class="irr-inp" id="w-hr" type="number" step="1" placeholder="%">
+        <div class="irr-unit">%</div>
+      </div>
+      <div class="irr-input weather">
+        <div class="irr-lbl"><span class="irr-name">Nubosidad</span></div>
+        <select class="irr-inp" id="w-nub" style="font-family:'Karla',sans-serif;font-size:.85rem">
+          <option value="despejado">☀️ Despejado</option>
+          <option value="parcial">⛅ Parcial</option>
+          <option value="nublado">☁️ Nublado</option>
+          <option value="lluvia">🌧️ Lluvia</option>
+        </select>
+        <div class="irr-unit">condición</div>
+      </div>
+    </div>
+
+    <div class="estim-card">
+      <div class="estim-title">📐 Estimación de demanda hídrica del día</div>
+      <div class="estim-row">
+        <div class="estim-cell">
+          <span class="estim-val" id="e-etc">—</span>
+          <span class="estim-lbl">ETc estimada (mm/día)</span>
+        </div>
+        <div class="estim-cell">
+          <span class="estim-val" id="e-ml">—</span>
+          <span class="estim-lbl">mL/gotero (con drenaje 20%)</span>
+        </div>
+      </div>
+      <div class="estim-vs" id="estim-vs"></div>
+    </div>
+
+    <div class="note">
+      <strong>📐 Modelo de cálculo</strong>
+      ETc = Kc × Rs (J/cm²) ÷ 245 · Considera transmisión invernadero 65 % y conversión J/cm² → MJ/m² ÷ 100. El Kc se ajusta automáticamente por cultivo y etapa. Con DPV alto el modelo aumenta levemente la estimación. <strong>El cálculo es referencial</strong> — la decisión final debe basarse en el % de drenaje real medido.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Riego del día</div>
+        <div class="card-title">Aporte y drenaje</div>
+      </div>
+    </div>
+
+    <div class="irr-section-title">💧 Entrada (gotero)</div>
+    <div class="irr-grid">
+      <div class="irr-input in">
+        <div class="irr-lbl"><span class="irr-name">mL aplicados</span><span class="irr-role">por gotero</span></div>
+        <input class="irr-inp" id="ri-ml" type="number" step="1" placeholder="mL">
+        <div class="irr-unit">mL/gotero/día</div>
+      </div>
+      <div class="irr-input in">
+        <div class="irr-lbl"><span class="irr-name">CE</span><span class="irr-role">entrada</span></div>
+        <input class="irr-inp" id="ri-ce" type="number" step="0.05" placeholder="mS/cm">
+        <div class="irr-unit">mS/cm</div>
+      </div>
+      <div class="irr-input in">
+        <div class="irr-lbl"><span class="irr-name">pH</span><span class="irr-role">entrada</span></div>
+        <input class="irr-inp" id="ri-ph" type="number" step="0.1" placeholder="pH">
+        <div class="irr-unit">unidades</div>
+      </div>
+      <div class="irr-input in">
+        <div class="irr-lbl"><span class="irr-name">Nº de pulsos</span></div>
+        <input class="irr-inp" id="ri-pulsos" type="number" step="1" placeholder="riegos">
+        <div class="irr-unit">riegos/día</div>
+      </div>
+    </div>
+
+    <div class="irr-section-title">↓ Drenaje</div>
+    <div class="irr-grid">
+      <div class="irr-input out">
+        <div class="irr-lbl"><span class="irr-name">mL drenados</span><span class="irr-role">total</span></div>
+        <input class="irr-inp" id="rd-ml" type="number" step="1" placeholder="mL">
+        <div class="irr-unit">mL/gotero/día</div>
+      </div>
+      <div class="irr-input out">
+        <div class="irr-lbl"><span class="irr-name">% drenaje</span><span class="irr-role">calculado</span></div>
+        <input class="irr-inp" id="rd-pct" type="number" readonly>
+        <div class="irr-unit">% (auto)</div>
+      </div>
+      <div class="irr-input out">
+        <div class="irr-lbl"><span class="irr-name">CE</span><span class="irr-role">drenaje</span></div>
+        <input class="irr-inp" id="rd-ce" type="number" step="0.05" placeholder="mS/cm">
+        <div class="irr-unit">mS/cm</div>
+      </div>
+      <div class="irr-input out">
+        <div class="irr-lbl"><span class="irr-name">pH</span><span class="irr-role">drenaje</span></div>
+        <input class="irr-inp" id="rd-ph" type="number" step="0.1" placeholder="pH">
+        <div class="irr-unit">unidades</div>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metrics-grid">
+        <div class="m-box" id="mb-drenaje">
+          <span class="m-val" id="m-drenaje">—</span>
+          <span class="m-lbl">% Drenaje</span>
+        </div>
+        <div class="m-box" id="mb-cer">
+          <span class="m-val" id="m-cer">—</span>
+          <span class="m-lbl">CE drn / CE in</span>
+        </div>
+        <div class="m-box" id="mb-dph">
+          <span class="m-val" id="m-dph">—</span>
+          <span class="m-lbl">Δ pH</span>
+        </div>
+        <div class="m-box" id="mb-conc">
+          <span class="m-val" id="m-conc">—</span>
+          <span class="m-lbl">Concentración sustrato</span>
+        </div>
+      </div>
+      <div id="alert-msg" class="alert-msg"></div>
+    </div>
+
+    <div class="irr-section-title">🌱 Observaciones del día</div>
+    <textarea id="ri-obs" placeholder="Síntomas observados, decisiones de manejo, anomalías detectadas..." style="width:100%;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.55rem .65rem;font-size:.82rem;font-family:'Karla',sans-serif;min-height:60px;resize:vertical;outline:none"></textarea>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="clearForm()">Limpiar</button>
+      <button class="btn btn-primary" onclick="saveRecord()">💾 Guardar registro</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ NUTRICIÓN ═════════════════ -->
+<div class="page" id="page-nutricion">
+  <div class="card" style="text-align:center;padding:1.8rem 1.2rem">
+    <div style="font-size:2rem;margin-bottom:.5rem">🧪</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.35rem;color:var(--navy);margin-bottom:.5rem">Cálculo de Soluciones Iónicas</h2>
+    <p style="font-size:.85rem;color:var(--muted);line-height:1.55;margin-bottom:1rem">El dashboard completo de cálculo nutricional (verificador iónico, análisis de agua, receta de fertilizantes y configuración de estanques) se abrirá en una pestaña aparte.</p>
+    <a href="dashboard_soluciones_ionicas.html" target="_blank" class="btn btn-primary" style="display:inline-block;text-decoration:none;padding:.7rem 1.6rem">Abrir calculadora →</a>
+    <div class="note" style="margin-top:1.2rem;text-align:left">
+      <strong>📦 Nota de integración</strong>
+      En la versión final integrada (PWA), la calculadora estará embebida como una pestaña más con acceso a las recetas guardadas y posibilidad de aplicar la receta directamente al sector activo.
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════ SAVIA ═════════════════ -->
+<div class="page" id="page-savia">
+  <div class="savia-card">
+    <span class="savia-icon">🌿</span>
+    <div class="savia-title">Análisis de Savia</div>
+    <div class="savia-text">Diagnóstico nutricional foliar mediante análisis de NovaCropControl o equivalente. Conecta con la base de datos del predio para registrar y consultar resultados.</div>
+    <a href="#" class="savia-link" id="savia-link">Abrir registro de savia ↗</a>
+
+    <div class="integration-note">
+      <strong>🔗 Estado de la integración</strong>
+      Esta sección está preparada para conectarse con la app de Supabase del predio. Para activar la conexión, configurar las credenciales en el archivo de configuración. Una vez conectada, los análisis de savia aparecerán cruzados con los registros de riego y CE de los mismos días, permitiendo correlación directa entre nutrición aplicada y nutrición absorbida.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📊</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Próximamente</div>
+        <div class="card-title">Cruce savia ↔ riego</div>
+      </div>
+    </div>
+    <p style="font-size:.85rem;color:var(--ink2);line-height:1.55">Cuando los análisis de savia se sincronicen, esta vista mostrará automáticamente:</p>
+    <ul style="margin-top:.7rem;padding-left:1.2rem;font-size:.82rem;color:var(--ink2);line-height:1.7">
+      <li>Tendencia mensual de Ca, K, Mg, NO₃ en savia vs. CE de riego aplicada</li>
+      <li>Alertas cuando un ion en savia se desvía del rango óptimo del cultivo/etapa</li>
+      <li>Sugerencia automática de ajuste de receta nutricional</li>
+      <li>Histórico de fotos foliares con síntomas (clorosis, quemado, etc.)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═════════════════ HISTORIAL ═════════════════ -->
+<div class="page" id="page-historial">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📚</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Registros guardados</div>
+        <div class="card-title">Historial de riegos</div>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="hist-table" id="hist-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Sector</th>
+            <th class="r">Rs J/cm²</th>
+            <th class="r">mL in</th>
+            <th class="r">CE in</th>
+            <th class="r">CE drn</th>
+            <th class="r">% drn</th>
+          </tr>
+        </thead>
+        <tbody id="hist-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="exportCSV()">📥 Exportar CSV</button>
+      <button class="btn btn-danger" onclick="confirmClearAll()">🗑️ Borrar todo</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="bn-btn active" data-page="home" onclick="goPage('home')">
+    <span class="bn-icon">🏠</span><span class="bn-lbl">Inicio</span>
+  </button>
+  <button class="bn-btn" data-page="riego" onclick="goPage('riego')">
+    <span class="bn-icon">💧</span><span class="bn-lbl">Riego</span>
+  </button>
+  <button class="bn-btn" data-page="nutricion" onclick="goPage('nutricion')">
+    <span class="bn-icon">🧪</span><span class="bn-lbl">Nutrición</span>
+  </button>
+  <button class="bn-btn" data-page="savia" onclick="goPage('savia')">
+    <span class="bn-icon">🌿</span><span class="bn-lbl">Savia</span>
+  </button>
+  <button class="bn-btn" data-page="historial" onclick="goPage('historial')">
+    <span class="bn-icon">📊</span><span class="bn-lbl">Historial</span>
+  </button>
+</nav>
+
+<!-- MODAL CONFIRM -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Confirmar</h3>
+    <p id="modal-text"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════ STORAGE LAYER (localStorage) ═══════════════
+// Diseñado para que en el futuro se reemplace por llamadas a Supabase
+const Storage = {
+  KEY: 'hidrosuite_records',
+  getAll() {
+    try { return JSON.parse(localStorage.getItem(this.KEY)) || []; }
+    catch(e) { return []; }
+  },
+  save(rec) {
+    const all = this.getAll();
+    rec.id = Date.now();
+    all.unshift(rec);
+    localStorage.setItem(this.KEY, JSON.stringify(all));
+    return rec;
+  },
+  delete(id) {
+    const all = this.getAll().filter(r => r.id !== id);
+    localStorage.setItem(this.KEY, JSON.stringify(all));
+  },
+  clearAll() {
+    localStorage.removeItem(this.KEY);
+  }
+};
+
+// ═══════════════ NAVIGATION ═══════════════
+function goPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.page === name));
+  if (name === 'home') refreshHome();
+  if (name === 'historial') refreshHistory();
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════ FORM HELPERS ═══════════════
+const $ = id => document.getElementById(id);
+const v = id => parseFloat($(id).value) || 0;
+const sv = id => $(id).value || '';
+
+// ═══════════════ Kc TABLES (synced with calculator) ═══════════════
+const Kc_TABLE = {
+  frutilla: { default: 0.75, byMonth: null },
+  tomate:   { default: 0.85, byMonth: null },
+  pimiento: { default: 0.80, byMonth: null },
+  pepino:   { default: 0.85, byMonth: null }
+};
+
+// ═══════════════ ESTIMACIÓN ETc ═══════════════
+function calcETc() {
+  const rad = v('w-rad'); // J/cm²
+  const dpv = v('w-dpv');
+  const cultivo = sv('r-cultivo') || 'frutilla';
+  const Kc = Kc_TABLE[cultivo].default;
+
+  // Conversión J/cm² → MJ/m² (÷100) → mm equiv (÷2.45 para ETo)
+  // Ya está dentro del invernadero, no se aplica transmisión
+  if (rad <= 0) {
+    $('e-etc').textContent = '—';
+    $('e-ml').textContent = '—';
+    return;
+  }
+
+  // ETo desde radiación interior (J/cm² → mm)
+  const ETo = (rad / 100) / 2.45;
+  // Ajuste leve por DPV (factor entre 0.95 y 1.10 para DPV de 0.5 a 2.5 kPa)
+  const dpvFactor = dpv > 0 ? Math.min(1.10, Math.max(0.95, 0.85 + dpv * 0.10)) : 1.0;
+  const ETc = ETo * Kc * dpvFactor;
+
+  // Convertir a mL/gotero asumiendo 13.600 m/ha y goteros cada 15 cm = 90.667 goteros/ha
+  // ETc en mm = L/m² → para 10.000 m² = 10.000 × ETc litros → / 90.667 goteros = mL/gotero
+  // Aporte = ETc / (1 - drainage) con drenaje 20%
+  const aporteTotal_mm = ETc / 0.80;
+  const aporteTotal_L_ha = aporteTotal_mm * 10; // 1 mm/m² en 1 ha = 10.000 L
+  const mL_gotero = (aporteTotal_L_ha * 1000) / 90667;
+
+  $('e-etc').textContent = ETc.toFixed(2);
+  $('e-ml').textContent = Math.round(mL_gotero);
+
+  // Comparación con riego real
+  compareEstimVsReal(mL_gotero);
+}
+
+function compareEstimVsReal(estim_mL) {
+  const real = v('ri-ml');
+  const evs = $('estim-vs');
+  if (real <= 0) { evs.style.display = 'none'; return; }
+  const diff = ((real - estim_mL) / estim_mL) * 100;
+  if (Math.abs(diff) < 15) {
+    evs.className = 'estim-vs evs-ok';
+    evs.textContent = `✓ Aporte real (${Math.round(real)} mL) coincide con la estimación (±${Math.abs(diff).toFixed(0)}%)`;
+  } else if (diff > 0) {
+    evs.className = 'estim-vs evs-warn';
+    evs.textContent = `↑ Aporte real (${Math.round(real)} mL) supera la estimación en ${diff.toFixed(0)}%. Verificar si es justificado por % drenaje observado.`;
+  } else {
+    evs.className = 'estim-vs evs-warn';
+    evs.textContent = `↓ Aporte real (${Math.round(real)} mL) es ${Math.abs(diff).toFixed(0)}% menor que la estimación. Riesgo de subriego.`;
+  }
+}
+
+// ═══════════════ CÁLCULOS DE RIEGO ═══════════════
+function calcMetrics() {
+  const ml_in  = v('ri-ml');
+  const ml_drn = v('rd-ml');
+  const ce_in  = v('ri-ce');
+  const ce_drn = v('rd-ce');
+  const ph_in  = v('ri-ph');
+  const ph_drn = v('rd-ph');
+
+  // % drenaje
+  let pct_drn = 0;
+  if (ml_in > 0 && ml_drn >= 0) {
+    pct_drn = (ml_drn / ml_in) * 100;
+    $('rd-pct').value = pct_drn.toFixed(1);
+    $('m-drenaje').textContent = pct_drn.toFixed(0) + '%';
+    const mb = $('mb-drenaje');
+    mb.className = 'm-box ' + (pct_drn < 15 ? 'alert-low' : pct_drn > 30 ? 'alert-high' : 'ok');
+  } else {
+    $('rd-pct').value = '';
+    $('m-drenaje').textContent = '—';
+    $('mb-drenaje').className = 'm-box';
+  }
+
+  // Ratio CE drn / CE in (concentración)
+  if (ce_in > 0 && ce_drn > 0) {
+    const ratio = ce_drn / ce_in;
+    $('m-cer').textContent = ratio.toFixed(2);
+    const mb = $('mb-cer');
+    mb.className = 'm-box ' + (ratio > 1.4 ? 'alert-high' : ratio < 0.85 ? 'alert-low' : 'ok');
+
+    // Concentración del sustrato
+    let conc = '—';
+    if (ratio < 0.85) conc = 'Diluida';
+    else if (ratio < 1.15) conc = 'Estable';
+    else if (ratio < 1.40) conc = 'Concentr.';
+    else conc = 'Salinidad';
+    $('m-conc').textContent = conc;
+    $('mb-conc').className = 'm-box ' + (ratio > 1.4 ? 'alert-high' : ratio < 0.85 ? 'alert-low' : 'ok');
+  } else {
+    $('m-cer').textContent = '—';
+    $('m-conc').textContent = '—';
+    $('mb-cer').className = 'm-box';
+    $('mb-conc').className = 'm-box';
+  }
+
+  // Δ pH
+  if (ph_in > 0 && ph_drn > 0) {
+    const dph = ph_drn - ph_in;
+    $('m-dph').textContent = (dph >= 0 ? '+' : '') + dph.toFixed(1);
+    const mb = $('mb-dph');
+    mb.className = 'm-box ' + (Math.abs(dph) > 1.0 ? 'alert-high' : Math.abs(dph) > 0.5 ? 'alert-low' : 'ok');
+  } else {
+    $('m-dph').textContent = '—';
+    $('mb-dph').className = 'm-box';
+  }
+
+  // Mensajes diagnósticos
+  const am = $('alert-msg');
+  am.className = 'alert-msg';
+  am.style.display = 'none';
+
+  if (ml_in > 0 && ml_drn >= 0 && ce_in > 0 && ce_drn > 0) {
+    const ratio = ce_drn / ce_in;
+    if (pct_drn < 10) {
+      am.className = 'alert-msg am-err';
+      am.textContent = '⚠️ Drenaje insuficiente (<10%). Riesgo de acumulación de sales y estrés hídrico. Aumentar volumen del riego.';
+    } else if (pct_drn > 35) {
+      am.className = 'alert-msg am-warn';
+      am.textContent = '⚠️ Drenaje excesivo (>35%). Pérdida de fertilizante. Reducir volumen o aumentar tiempo entre pulsos.';
+    } else if (ratio > 1.5) {
+      am.className = 'alert-msg am-err';
+      am.textContent = '⚠️ Concentración salina alta en sustrato (CE drn/in = ' + ratio.toFixed(2) + '). Aumentar drenaje al 30% para lavar sales.';
+    } else if (ratio < 0.80) {
+      am.className = 'alert-msg am-warn';
+      am.textContent = '⚠️ CE de drenaje menor que entrada (ratio ' + ratio.toFixed(2) + '). El sustrato está reteniendo iones — revisar saturación CEC.';
+    } else {
+      am.className = 'alert-msg am-ok';
+      am.textContent = '✓ Indicadores de riego dentro de rango óptimo.';
+    }
+  }
+
+  // Update comparison estim vs real
+  const e_ml = parseFloat($('e-ml').textContent);
+  if (!isNaN(e_ml) && ml_in > 0) compareEstimVsReal(e_ml);
+}
+
+// Listeners
+document.querySelectorAll('#page-riego input, #page-riego select').forEach(el => {
+  el.addEventListener('input', () => {
+    calcETc();
+    calcMetrics();
+  });
+});
+
+// ═══════════════ GUARDAR REGISTRO ═══════════════
+function saveRecord() {
+  if (!sv('r-fecha')) { alert('Indica la fecha del registro'); return; }
+  if (!sv('r-sector')) { alert('Indica el sector'); return; }
+  if (v('ri-ml') <= 0) { alert('Indica los mL aplicados'); return; }
+
+  const rec = {
+    fecha: sv('r-fecha'),
+    predio: sv('r-predio'),
+    sector: sv('r-sector'),
+    cultivo: sv('r-cultivo'),
+    rad: v('w-rad'),
+    dpv: v('w-dpv'),
+    tmax: v('w-tmax'),
+    tmin: v('w-tmin'),
+    hr: v('w-hr'),
+    nub: sv('w-nub'),
+    ml_in: v('ri-ml'),
+    ce_in: v('ri-ce'),
+    ph_in: v('ri-ph'),
+    pulsos: v('ri-pulsos'),
+    ml_drn: v('rd-ml'),
+    pct_drn: parseFloat($('rd-pct').value) || 0,
+    ce_drn: v('rd-ce'),
+    ph_drn: v('rd-ph'),
+    etc_estim: parseFloat($('e-etc').textContent) || 0,
+    obs: sv('ri-obs')
+  };
+
+  Storage.save(rec);
+  alert('✓ Registro guardado');
+  clearForm();
+  refreshHome();
+}
+
+function clearForm() {
+  ['w-rad','w-dpv','w-tmax','w-tmin','w-hr',
+   'ri-ml','ri-ce','ri-ph','ri-pulsos',
+   'rd-ml','rd-pct','rd-ce','rd-ph','ri-obs'
+  ].forEach(id => $(id).value = '');
+  $('e-etc').textContent = '—';
+  $('e-ml').textContent = '—';
+  $('m-drenaje').textContent = '—';
+  $('m-cer').textContent = '—';
+  $('m-dph').textContent = '—';
+  $('m-conc').textContent = '—';
+  $('alert-msg').style.display = 'none';
+  $('estim-vs').style.display = 'none';
+  document.querySelectorAll('.m-box').forEach(b => b.className = 'm-box');
+}
+
+// ═══════════════ HOME ═══════════════
+function refreshHome() {
+  const all = Storage.getAll();
+  $('stat-registros').textContent = all.length;
+  const fechas = new Set(all.map(r => r.fecha));
+  $('stat-dias').textContent = fechas.size;
+  $('stat-recetas').textContent = '0'; // placeholder
+
+  const list = $('recent-list');
+  $('recent-count').textContent = all.length;
+
+  if (all.length === 0) {
+    list.innerHTML = '<div class="recent-empty">No hay registros aún. Comienza con tu primer registro de riego.</div>';
+    return;
+  }
+
+  list.innerHTML = all.slice(0, 6).map(r => {
+    const d = new Date(r.fecha);
+    const day = d.getDate();
+    const month = d.toLocaleDateString('es', { month: 'short' });
+    const drnInfo = r.pct_drn > 0 ? `${r.pct_drn.toFixed(0)}% drn` : '—';
+    const ratio = (r.ce_in > 0 && r.ce_drn > 0) ? (r.ce_drn / r.ce_in).toFixed(2) : '—';
+    return `<div class="recent-item" onclick="viewRecord(${r.id})">
+      <div class="ri-date">
+        <span class="ri-day">${day}</span>
+        <span class="ri-month">${month}</span>
+      </div>
+      <div class="ri-content">
+        <div class="ri-title">${r.sector || '(sin sector)'}${r.predio ? ' · ' + r.predio : ''}</div>
+        <div class="ri-meta">
+          <span>💧 ${Math.round(r.ml_in)} mL</span>
+          <span>📊 ${drnInfo}</span>
+          <span>⚖️ ratio ${ratio}</span>
+          ${r.rad > 0 ? `<span>☀️ ${r.rad} J/cm²</span>` : ''}
+        </div>
+      </div>
+      <div class="ri-arrow">›</div>
+    </div>`;
+  }).join('');
+
+  // top bar context (most recent)
+  if (all.length > 0) {
+    $('tb-predio').textContent = all[0].predio || all[0].sector || 'Sin predio';
+    $('tb-fecha').textContent = new Date(all[0].fecha).toLocaleDateString('es');
+  }
+}
+
+function viewRecord(id) {
+  const r = Storage.getAll().find(r => r.id === id);
+  if (!r) return;
+  alert(`Registro del ${r.fecha}\n\nSector: ${r.sector}\nCultivo: ${r.cultivo}\n\n💧 RIEGO\nmL aplicados: ${r.ml_in}\nCE entrada: ${r.ce_in} mS/cm\npH entrada: ${r.ph_in}\nPulsos: ${r.pulsos}\n\n↓ DRENAJE\nmL drenados: ${r.ml_drn}\n% drenaje: ${r.pct_drn.toFixed(1)}%\nCE drenaje: ${r.ce_drn} mS/cm\npH drenaje: ${r.ph_drn}\n\n☀️ CLIMA\nRadiación: ${r.rad} J/cm²\nDPV: ${r.dpv} kPa\nT° máx: ${r.tmax}°C\n\n${r.obs ? 'Obs: ' + r.obs : ''}`);
+}
+
+// ═══════════════ HISTORIAL ═══════════════
+function refreshHistory() {
+  const all = Storage.getAll();
+  const tb = $('hist-tbody');
+  if (all.length === 0) {
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:1rem">Sin registros guardados.</td></tr>';
+    return;
+  }
+  tb.innerHTML = all.map(r => `<tr onclick="viewRecord(${r.id})">
+    <td>${new Date(r.fecha).toLocaleDateString('es', { day:'2-digit', month:'2-digit' })}</td>
+    <td>${r.sector || '—'}</td>
+    <td class="r">${r.rad || '—'}</td>
+    <td class="r">${Math.round(r.ml_in)}</td>
+    <td class="r">${r.ce_in.toFixed(2)}</td>
+    <td class="r">${r.ce_drn.toFixed(2)}</td>
+    <td class="r">${r.pct_drn.toFixed(0)}%</td>
+  </tr>`).join('');
+}
+
+function exportCSV() {
+  const all = Storage.getAll();
+  if (all.length === 0) { alert('No hay registros para exportar'); return; }
+  const headers = ['fecha','predio','sector','cultivo','rad_J_cm2','dpv','tmax','tmin','hr','nubosidad','ml_in','ce_in','ph_in','pulsos','ml_drn','pct_drn','ce_drn','ph_drn','etc_estim','obs'];
+  const rows = [headers.join(',')];
+  all.forEach(r => {
+    rows.push(headers.map(h => {
+      const val = r[h] === undefined || r[h] === null ? '' : r[h];
+      return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
+    }).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hidrosuite_registros_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ═══════════════ MODAL ═══════════════
+function openModal(title, text, onConfirm) {
+  $('modal-title').textContent = title;
+  $('modal-text').textContent = text;
+  $('modal-confirm').onclick = () => { onConfirm(); closeModal(); };
+  $('modal').classList.add('show');
+}
+function closeModal() { $('modal').classList.remove('show'); }
+
+function confirmClearAll() {
+  openModal('Borrar todos los registros',
+    'Esta acción no se puede deshacer. Se eliminarán todos los registros guardados localmente.',
+    () => { Storage.clearAll(); refreshHistory(); refreshHome(); });
+}
+
+// ═══════════════ INIT ═══════════════
+$('r-fecha').valueAsDate = new Date();
+$('tb-fecha').textContent = new Date().toLocaleDateString('es');
+refreshHome();
+</script>
+</body>
+</html>

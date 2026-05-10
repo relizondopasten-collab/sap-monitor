@@ -203,3 +203,68 @@ table.data-table tr:hover td { background: rgba(94,141,78,0.04); }
 @media (max-width: 480px) {
   .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SAP & SOIL · Suite agronómica · estilos adicionales
+   Pegar al FINAL del archivo styles.css existente
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tab adicional con acento ámbar (Suite agronómica) */
+.tab-btn-amber {
+  position: relative;
+}
+
+.tab-btn-amber.active {
+  color: var(--amber) !important;
+}
+
+.tab-btn-amber.active::after {
+  background: var(--amber) !important;
+}
+
+/* Grid de módulos en el hub */
+.modulos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+/* Tarjeta de módulo · estado normal */
+.modulo-card {
+  font-family: inherit;
+}
+
+.modulo-card:hover {
+  border-color: var(--amber) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.modulo-card:active {
+  transform: translateY(0);
+}
+
+.modulo-card:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* Responsive · móvil */
+@media (max-width: 640px) {
+  .modulos-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .modulo-card {
+    min-height: 160px !important;
+    padding: 16px !important;
+  }
+}
+
+/* Iframe del módulo · ajuste responsivo */
+@media (max-width: 768px) {
+  .module-viewer-iframe {
+    height: calc(100vh - 200px) !important;
+  }
+}

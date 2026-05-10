@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sap & Soil · Calidad Post-cosecha Tomate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --purple:#5A4A8A;--purple-pale:#F0EDFA;
+  --blue:#1E5A8C;--blue-pale:#DEEAF5;
+  --earth:#7A4F2F;--earth-pale:#F2E8DD;
+  --tomate:#C4452D;--tomate-lt:#E26A52;--tomate-pale:#FCEAE6;
+  --gold:#C9A227;--gold-pale:#FAF3D9;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;padding-bottom:70px}
+
+.topbar{background:var(--navy);color:#fff;padding:.8rem 1.1rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 8px rgba(0,0,0,.15)}
+.tb-brand{display:flex;align-items:center;gap:.55rem}
+.tb-logo{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#E8C470);display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.tb-name em{color:var(--gold);font-style:italic}
+.tb-sub{font-family:'DM Mono',monospace;font-size:.6rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:-.1rem}
+.tb-context{font-size:.7rem;color:rgba(255,255,255,.55);text-align:right;line-height:1.3}
+.tb-context strong{color:var(--gold);display:block;font-weight:600}
+
+.tabs{background:#fff;border-bottom:1px solid var(--line);padding:0 .5rem;display:flex;gap:.2rem;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:51px;z-index:49;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.tab{flex-shrink:0;padding:.7rem .85rem;background:none;border:none;cursor:pointer;font-family:'Karla',sans-serif;font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:2.5px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:.35rem}
+.tab:hover{color:var(--gold)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-icon{font-size:.95rem}
+
+.page{display:none;padding:0 0 1rem;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:#fff;margin:.85rem;border-radius:11px;padding:1.1rem;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--line)}
+.card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+.card-num{width:30px;height:30px;background:var(--gold);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.card-titles{flex:1}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.18rem;color:var(--navy);font-weight:600;line-height:1.15}
+
+.section-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:1rem 0 .5rem;padding-bottom:.3rem;border-bottom:1.5px solid var(--gold-pale);display:flex;justify-content:space-between;align-items:baseline}
+.section-title:first-child{margin-top:.2rem}
+.section-title small{font-family:'Karla',sans-serif;font-weight:400;font-size:.7rem;color:var(--muted);text-transform:none;letter-spacing:0}
+
+.input-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-bottom:.5rem}
+.input-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.input-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.input-grid.cols-1{grid-template-columns:1fr}
+.inp-cell{background:var(--bg);border:1.5px solid var(--line);border-radius:6px;padding:.45rem .55rem;display:flex;flex-direction:column;gap:.15rem;transition:all .15s}
+.inp-cell:focus-within{border-color:var(--gold);background:#fff}
+.inp-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.inp-fld{display:flex;align-items:baseline;gap:.3rem}
+.inp-val{flex:1;background:transparent;border:none;outline:none;font-size:.95rem;font-weight:600;color:var(--ink);font-family:'DM Mono',monospace;width:100%;min-width:0;padding:0}
+.inp-unit{font-size:.65rem;color:var(--muted);font-family:'DM Mono',monospace;flex-shrink:0}
+
+/* DEFECTOS CHIPS */
+.defect-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem}
+.defect-card{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.7rem .65rem;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:.5rem;text-align:left}
+.defect-card:hover{border-color:var(--gold);background:#fff}
+.defect-card.active{border-color:var(--gold);background:var(--gold-pale)}
+.df-check{width:18px;height:18px;border:2px solid var(--line);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#fff;background:#fff}
+.defect-card.active .df-check{background:var(--gold);border-color:var(--gold)}
+.defect-card.active .df-check::after{content:'✓'}
+.df-content{flex:1;min-width:0}
+.df-name{font-family:'Cormorant Garamond',serif;font-size:1.02rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:.1rem}
+.df-desc{font-size:.68rem;color:var(--muted);line-height:1.3}
+
+/* RIESGO MATRIX */
+.matrix-table{width:100%;border-collapse:collapse;font-size:.75rem;background:#fff;border-radius:8px;overflow:hidden}
+.matrix-table th{background:var(--navy);color:#fff;padding:.5rem .35rem;font-weight:700;font-size:.7rem;text-align:center;font-family:'Cormorant Garamond',serif}
+.matrix-table th:first-child{text-align:left;padding-left:.7rem}
+.matrix-table td{padding:.5rem .35rem;border-bottom:1px solid var(--line);text-align:center;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:600}
+.matrix-table td:first-child{text-align:left;padding-left:.7rem;font-family:'Karla',sans-serif;font-weight:600;color:var(--ink)}
+.matrix-table tbody tr:nth-child(even) td{background:#FAFAFA}
+.risk-cell{display:inline-block;padding:3px 8px;border-radius:14px;font-size:.65rem;font-weight:700}
+.risk-cell.bajo{background:var(--green-pale);color:var(--green);border:1px solid #88B89B}
+.risk-cell.med{background:var(--gold-pale);color:#9C7C1F;border:1px solid #E8C470}
+.risk-cell.alto{background:var(--red-pale);color:var(--red);border:1px solid #E89B89}
+
+/* DIAG CARDS */
+.diag-card{display:flex;gap:.6rem;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.7rem .85rem;margin-bottom:.4rem;border-left-width:4px;border-left-style:solid}
+.diag-card.ok{border-left-color:var(--green);background:#F4F9F6}
+.diag-card.warning{border-left-color:var(--gold);background:#FEFAEC}
+.diag-card.critical{border-left-color:var(--red);background:#FCF1ED}
+.diag-icon{font-size:1.3rem;flex-shrink:0;line-height:1.2}
+.diag-content{flex:1;min-width:0}
+.diag-param{font-weight:700;color:var(--navy);margin-bottom:.15rem;font-size:.85rem;font-family:'Cormorant Garamond',serif;font-size:1rem}
+.diag-msg{font-size:.76rem;color:var(--ink2);line-height:1.45;margin-bottom:.25rem}
+.diag-action{font-size:.72rem;color:var(--earth);font-weight:600;background:var(--earth-pale);padding:.3rem .45rem;border-radius:4px;margin-top:.35rem}
+.diag-action strong{color:var(--earth);display:inline-block;margin-right:.3rem;font-weight:700}
+
+/* TRIFECTA WARNING */
+.trifecta-alert{background:linear-gradient(135deg,#FCF1ED,#FFF);border:2px solid var(--red);border-radius:10px;padding:.85rem 1rem;margin:.8rem 0}
+.trifecta-title{display:flex;align-items:center;gap:.5rem;font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--red);margin-bottom:.5rem}
+.trifecta-list{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.5rem}
+.trif-item{background:#fff;border:1.5px solid var(--red);border-radius:6px;padding:.5rem .55rem;text-align:center}
+.trif-val{font-family:'DM Mono',monospace;font-weight:700;font-size:.95rem;color:var(--red);display:block}
+.trif-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-top:.2rem;display:block}
+
+/* HELP PANELS */
+.note{background:linear-gradient(135deg,var(--blue-pale),#fff);border:1px solid #8AB5D9;border-radius:8px;padding:.65rem .85rem;margin:.5rem 0;font-size:.75rem;color:var(--navy);line-height:1.5}
+.note strong{color:var(--blue);font-weight:700;display:block;margin-bottom:.2rem;font-family:'Cormorant Garamond',serif;font-size:.95rem}
+.note.warn{background:linear-gradient(135deg,var(--gold-pale),#fff);border-color:#E8C470}
+.note.warn strong{color:#9C7C1F}
+.note.danger{background:linear-gradient(135deg,var(--red-pale),#fff);border-color:#E89B89}
+.note.danger strong{color:var(--red)}
+.note.success{background:linear-gradient(135deg,var(--green-pale),#fff);border-color:#88B89B}
+.note.success strong{color:var(--green)}
+
+/* COSTO CELLS / KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin:.5rem 0}
+.kpi-cell{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:.6rem .7rem;text-align:center}
+.kpi-cell.total{background:linear-gradient(135deg,var(--gold-pale),#fff);border-color:var(--gold)}
+.kpi-cell.danger{background:linear-gradient(135deg,var(--red-pale),#fff);border-color:#E89B89}
+.kpi-cell.success{background:linear-gradient(135deg,var(--green-pale),#fff);border-color:#88B89B}
+.kpi-val{font-family:'DM Mono',monospace;font-weight:700;font-size:1.05rem;color:var(--navy);display:block;line-height:1.1}
+.kpi-cell.total .kpi-val{color:var(--gold)}
+.kpi-cell.danger .kpi-val{color:var(--red)}
+.kpi-cell.success .kpi-val{color:var(--green)}
+.kpi-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-top:.2rem;display:block}
+
+/* BUTTONS */
+.btn{background:var(--gold);color:#fff;border:none;padding:.55rem 1rem;border-radius:6px;font-family:'Karla',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:.4rem}
+.btn:hover{background:#A98517}
+.btn.ghost{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn.ghost:hover{background:var(--gold-pale)}
+.btn.sm{padding:.35rem .7rem;font-size:.75rem}
+.btn.tomate{background:var(--tomate)}
+.btn.tomate:hover{background:#A33A26}
+
+/* MINERALIZACIÓN CHART */
+.chart-wrap{background:#fff;border-radius:10px;border:1.5px solid var(--line);padding:.8rem;overflow-x:auto}
+.chart-svg{width:100%;height:auto;min-width:500px;display:block}
+
+/* ENMIENDA SELECTOR */
+.enm-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.5rem;margin-bottom:.7rem}
+.enm-card{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:.7rem .6rem;cursor:pointer;transition:all .15s}
+.enm-card:hover{border-color:var(--gold);background:#fff}
+.enm-card.active{border-color:var(--gold);background:var(--gold-pale)}
+.enm-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:.2rem}
+.enm-cn{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--earth);font-weight:700}
+.enm-rate{font-size:.62rem;color:var(--muted);margin-top:.2rem}
+
+/* FOLIAR PROGRAM */
+.foliar-stage{background:#fff;border:1px solid var(--line);border-radius:10px;padding:.85rem 1rem;margin-bottom:.7rem;border-left:4px solid var(--gold)}
+.foliar-stage.veg{border-left-color:#5A9A5A}
+.foliar-stage.cuaje{border-left-color:var(--gold)}
+.foliar-stage.engorda{border-left-color:var(--tomate)}
+.foliar-stage.precosecha{border-left-color:var(--earth)}
+.foliar-stage.alerta{border-left-color:var(--red);background:#FFF8F5}
+.fs-head{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.fs-icon{font-size:1.3rem}
+.fs-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--navy);line-height:1.1}
+.fs-period{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted);margin-left:auto}
+.fs-products{display:flex;flex-direction:column;gap:.4rem;margin-top:.4rem}
+.prod-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem .55rem;background:var(--bg);border-radius:6px;font-size:.78rem;flex-wrap:wrap;gap:.3rem}
+.prod-name{font-weight:600;color:var(--ink);flex:1;min-width:0}
+.prod-name small{color:var(--muted);font-weight:400;font-size:.7rem;display:block;margin-top:1px}
+.prod-dose{font-family:'DM Mono',monospace;font-weight:700;color:var(--gold);font-size:.78rem}
+.prod-frec{font-size:.65rem;color:var(--muted)}
+
+/* PREDICCIÓN */
+.pred-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.5rem}
+.pred-card{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:.85rem;border-left:4px solid var(--gold)}
+.pred-card.alto{border-left-color:var(--red)}
+.pred-card.med{border-left-color:var(--gold)}
+.pred-card.bajo{border-left-color:var(--green)}
+.pred-defect{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:.3rem}
+.pred-status{font-family:'DM Mono',monospace;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:inline-block;padding:2px 8px;border-radius:12px;margin-bottom:.4rem}
+.pred-card.alto .pred-status{background:var(--red-pale);color:var(--red)}
+.pred-card.med .pred-status{background:var(--gold-pale);color:#9C7C1F}
+.pred-card.bajo .pred-status{background:var(--green-pale);color:var(--green)}
+.pred-msg{font-size:.74rem;color:var(--ink2);line-height:1.4}
+
+/* TABLA REGISTRO */
+.reg-table{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:.5rem}
+.reg-table th{background:var(--gold-pale);color:var(--navy);padding:.4rem .5rem;font-weight:700;font-size:.7rem;text-align:left;border-bottom:2px solid var(--gold)}
+.reg-table td{padding:.4rem .5rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:.72rem}
+.reg-table td:first-child{font-family:'Karla',sans-serif;font-weight:600}
+
+/* NO DATA */
+.no-data{text-align:center;padding:1.5rem;color:var(--muted);font-style:italic;font-size:.78rem;background:#FAFAFA;border-radius:8px;border:1px dashed var(--line)}
+
+/* MOBILE */
+@media (max-width:540px){
+  .input-grid{grid-template-columns:1fr}
+  .input-grid.cols-3,.input-grid.cols-4{grid-template-columns:repeat(2,1fr)}
+  .trifecta-list{grid-template-columns:1fr}
+  .matrix-table{font-size:.7rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🍅</div>
+    <div>
+      <span class="tb-sub">Sap & Soil</span>
+      <div class="tb-name">Calidad <em>Post-cosecha</em> · Tomate</div>
+    </div>
+  </div>
+  <div class="tb-context">
+    <strong id="ctx-epoca">—</strong>
+    <span id="ctx-vida">Vida útil objetivo: <strong id="ctx-vida-val" style="display:inline">14</strong> días</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab active" data-page="config"><span class="tab-icon">🎯</span>Configuración</button>
+  <button class="tab" data-page="riesgo"><span class="tab-icon">⚠️</span>Riesgo por época</button>
+  <button class="tab" data-page="diag"><span class="tab-icon">🌱</span>Diagnóstico pre-temporada</button>
+  <button class="tab" data-page="enmienda"><span class="tab-icon">🚿</span>Enmiendas y N</button>
+  <button class="tab" data-page="agua"><span class="tab-icon">💧</span>Acidificación</button>
+  <button class="tab" data-page="foliar"><span class="tab-icon">🌿</span>Plan foliar</button>
+  <button class="tab" data-page="pred"><span class="tab-icon">🔬</span>Predicción y registro</button>
+</nav>
+
+<!-- ========================================================== -->
+<!-- PAGE 1: CONFIGURACIÓN -->
+<!-- ========================================================== -->
+<div class="page active" id="page-config">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Configuración inicial</div>
+        <h2 class="card-title">Objetivos de calidad y mercado</h2>
+      </div>
+    </div>
+
+    <div class="note success">
+      <strong>📚 Fundamento metodológico</strong>
+      Módulo enfocado en defectos relevantes para los campos de la zona Quillota–Limache: goldspeck (oxalatos de calcio), microcracking, hombro verde, blotchy ripening, gold-blotch, gray wall y frutos huecos. <strong>BER no se gestiona aquí</strong> ya que está controlado en tu manejo. Vida útil objetivo: <strong>12-14 días firmes en anaquel</strong>.
+    </div>
+
+    <div id="cfg-conexion-status" class="note">
+      <strong>🔗 Conexión con módulos</strong>
+      Lee época, fechas y análisis desde los módulos Plan Nutricional y Fertilidad de Suelo. <span id="cfg-status-msg">Verificando...</span>
+    </div>
+
+    <div class="section-title">Configuración del cultivo</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">Época (auto)</span>
+        <select class="inp-val" id="cfg-epoca" style="background:transparent;font-size:.85rem">
+          <option value="otono">🍂 Otoño</option>
+          <option value="primor">🌱 Primor</option>
+          <option value="verano">☀️ Verano</option>
+          <option value="invierno">❄️ Invierno</option>
+          <option value="trastomate" selected>🌅 Trastomate</option>
+        </select>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Variedad</span>
+        <input type="text" class="inp-val" id="cfg-variedad" value="888" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Predio</span>
+        <input type="text" class="inp-val" id="cfg-predio" placeholder="ej: Los Arrayanes" />
+      </div>
+    </div>
+
+    <div class="section-title">Objetivos de calidad</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">Vida útil objetivo (días)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="cfg-vida" value="14" min="7" max="21" />
+          <span class="inp-unit">días</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Firmeza objetivo (kg/cm²)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="cfg-firmeza" value="3.8" step="0.1" />
+          <span class="inp-unit">kg/cm²</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">°Brix objetivo</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="cfg-brix" value="5.0" step="0.1" />
+          <span class="inp-unit">°Brix</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Defectos a manejar (selecciona los relevantes)</div>
+    <div class="defect-grid" id="defectos-grid"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 2: RIESGO POR ÉPOCA -->
+<!-- ========================================================== -->
+<div class="page" id="page-riesgo">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">⚠️</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Mapa de riesgo</div>
+        <h2 class="card-title">Defectos por época de plantación</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📊 Lógica del mapa de riesgo</strong>
+      Cada celda evalúa la probabilidad del defecto según condiciones climáticas durante el período crítico (cuaje + engorda) de cada época. Datos: estaciones DMC Liceo Agrícola Quillota, Agromet INIA La Cruz e Instacrops Limache.
+    </div>
+
+    <div style="overflow-x:auto;margin-top:.5rem">
+      <table class="matrix-table" id="riesgo-matrix">
+        <thead>
+          <tr>
+            <th>Defecto</th>
+            <th>🍂 Otoño<br><small style="opacity:.7;font-weight:400">Moria · 30-Dec</small></th>
+            <th>🌱 Primor<br><small style="opacity:.7;font-weight:400">Alamina · 10-Jun</small></th>
+            <th>☀️ Verano<br><small style="opacity:.7;font-weight:400">888 · 23-Oct</small></th>
+            <th>❄️ Invierno<br><small style="opacity:.7;font-weight:400">Alamina · 12-Feb</small></th>
+            <th>🌅 Trastomate<br><small style="opacity:.7;font-weight:400">888 · 13-Aug</small></th>
+          </tr>
+        </thead>
+        <tbody id="riesgo-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="section-title" style="margin-top:1.2rem">Análisis detallado de tu época</div>
+    <div id="riesgo-detallado"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 3: DIAGNÓSTICO PRE-TEMPORADA -->
+<!-- ========================================================== -->
+<div class="page" id="page-diag">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">🌱</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Diagnóstico pre-temporada</div>
+        <h2 class="card-title">Balance de N y trifecta de riesgo</h2>
+      </div>
+    </div>
+
+    <div class="note warn">
+      <strong>⚡ Detección automática de la "trifecta goldspeck"</strong>
+      Cuando convergen <strong>NH₄ alto en enmienda</strong> + <strong>pH suelo &gt; 7</strong> + <strong>bicarbonatos altos en agua</strong>, se crea un ambiente ideal para depósitos de oxalato de calcio en la cutícula del fruto. El módulo detecta esta combinación automáticamente.
+    </div>
+
+    <div class="section-title">Datos de suelo (de tu análisis)</div>
+    <div class="input-grid cols-4">
+      <div class="inp-cell">
+        <span class="inp-lbl">pH suelo</span>
+        <input type="number" class="inp-val diag-input" id="diag-ph" step="0.1" value="7.2" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">N residual (kg/ha)</span>
+        <input type="number" class="inp-val diag-input" id="diag-n-suelo" step="1" value="40" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">C/N suelo</span>
+        <input type="number" class="inp-val diag-input" id="diag-cn-suelo" step="0.5" value="11" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">K disponible (ppm)</span>
+        <input type="number" class="inp-val diag-input" id="diag-k" step="10" value="350" />
+      </div>
+    </div>
+
+    <div class="section-title">Datos de agua de riego</div>
+    <div class="input-grid cols-4">
+      <div class="inp-cell">
+        <span class="inp-lbl">pH agua</span>
+        <input type="number" class="inp-val diag-input" id="diag-ph-agua" step="0.1" value="7.6" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">HCO₃ (mmol/L)</span>
+        <input type="number" class="inp-val diag-input" id="diag-hco3" step="0.1" value="2.5" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">NO₃ agua (mmol/L)</span>
+        <input type="number" class="inp-val diag-input" id="diag-no3-agua" step="0.1" value="0.5" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">CE agua (dS/m)</span>
+        <input type="number" class="inp-val diag-input" id="diag-ce-agua" step="0.1" value="0.8" />
+      </div>
+    </div>
+
+    <div class="section-title">Plan de fertirriego (proyección)</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">N fertirriego (kg/ha total)</span>
+        <input type="number" class="inp-val diag-input" id="diag-n-ferti" step="10" value="450" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Demanda cultivo (kg N/ha)</span>
+        <input type="number" class="inp-val diag-input" id="diag-n-demanda" step="10" value="450" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Eficiencia esperada (%)</span>
+        <input type="number" class="inp-val diag-input" id="diag-efic-n" step="5" value="50" />
+      </div>
+    </div>
+
+    <div id="diag-trifecta"></div>
+    <div id="diag-results"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 4: ENMIENDAS Y MINERALIZACIÓN -->
+<!-- ========================================================== -->
+<div class="page" id="page-enmienda">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">🚿</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Manejo de enmiendas</div>
+        <h2 class="card-title">Curvas de mineralización de N</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>🌾 Por qué importa</strong>
+      Las enmiendas con <strong>C/N &lt; 10</strong> liberan N rápidamente (40% en 30 días). Si esa liberación coincide con el período de engorda (R3-R5), el exceso de N inhibe síntesis de licopeno (hombro verde) y favorece goldspeck/microcracking. La aplicación correcta exige <strong>desfasar la liberación</strong> hacia momentos no críticos.
+    </div>
+
+    <div class="section-title">Selecciona la enmienda planificada</div>
+    <div class="enm-selector" id="enm-selector"></div>
+
+    <div class="input-grid cols-3" style="margin-top:.7rem">
+      <div class="inp-cell">
+        <span class="inp-lbl">Dosis aplicar (t/ha)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="enm-dosis" step="0.5" value="5" oninput="renderMineralizacion()" />
+          <span class="inp-unit">t/ha</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Días antes de plantación</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="enm-dias-prev" step="5" value="30" oninput="renderMineralizacion()" />
+          <span class="inp-unit">días</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">N total enmienda (% MS)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="enm-n-pct" step="0.1" value="3.5" oninput="renderMineralizacion()" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="enm-resumen"></div>
+
+    <div class="section-title" style="margin-top:1rem">Curva de liberación de N en el tiempo</div>
+    <div class="chart-wrap">
+      <svg class="chart-svg" id="chart-mineralizacion" viewBox="0 0 700 320"></svg>
+    </div>
+
+    <div class="section-title" style="margin-top:1rem">Recomendaciones específicas</div>
+    <div id="enm-recomendaciones"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 5: ACIDIFICACIÓN -->
+<!-- ========================================================== -->
+<div class="page" id="page-agua">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">💧</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Manejo de bicarbonatos</div>
+        <h2 class="card-title">Acidificación del agua de riego</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>🧪 Por qué acidificar</strong>
+      Bicarbonatos altos elevan el pH del bulbo de riego, reducen disponibilidad de Fe, Mn, Zn, P y favorecen <strong>acumulación de Ca soluble</strong> (factor en goldspeck). La acidificación neutraliza HCO₃⁻ y aporta N (HNO₃) o P (H₃PO₄) según el ácido elegido. Objetivo pH riego: <strong>5.5–6.0</strong>.
+    </div>
+
+    <div class="section-title">Datos del agua</div>
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">HCO₃ actual (mmol/L)</span>
+        <input type="number" class="inp-val agua-input" id="agua-hco3" step="0.1" value="2.5" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">pH actual</span>
+        <input type="number" class="inp-val agua-input" id="agua-ph" step="0.1" value="7.6" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">HCO₃ objetivo (mmol/L)</span>
+        <input type="number" class="inp-val agua-input" id="agua-hco3-obj" step="0.1" value="0.5" />
+      </div>
+    </div>
+
+    <div class="input-grid cols-3" style="margin-top:.4rem">
+      <div class="inp-cell">
+        <span class="inp-lbl">P en suelo (ppm)</span>
+        <input type="number" class="inp-val agua-input" id="agua-p-suelo" step="1" value="20" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Volumen riego (m³/ha/día)</span>
+        <input type="number" class="inp-val agua-input" id="agua-vol" step="1" value="40" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Días totales ciclo</span>
+        <input type="number" class="inp-val agua-input" id="agua-dias" step="10" value="180" />
+      </div>
+    </div>
+
+    <div id="agua-resultados"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 6: PLAN FOLIAR -->
+<!-- ========================================================== -->
+<div class="page" id="page-foliar">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">🌿</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Plan foliar dinámico</div>
+        <h2 class="card-title">Programa por etapa fenológica</h2>
+      </div>
+    </div>
+
+    <div class="note success">
+      <strong>🎯 Plan adaptado a calidad para 12-14 días</strong>
+      Programa foliar que combina los productos validados (Sett, Lokomotive, Fullmag, Megafol, Betasilica Activ, etc.) en el momento óptimo para cada función: cuaje robusto, engorda con K alto, llenado uniforme y firmeza pre-cosecha. Las dosis y frecuencias se ajustan según el riesgo detectado en tu época.
+    </div>
+
+    <div id="foliar-alertas"></div>
+
+    <div class="section-title">Programa por etapa</div>
+    <div id="foliar-program"></div>
+
+    <div class="section-title" style="margin-top:1rem">Vía riego (bioestimulantes y enraizantes)</div>
+    <div id="foliar-via-riego"></div>
+
+    <div class="section-title" style="margin-top:1rem">Cálculo de costo del programa foliar</div>
+    <div id="foliar-costos"></div>
+  </div>
+</div>
+
+<!-- ========================================================== -->
+<!-- PAGE 7: PREDICCIÓN Y REGISTRO -->
+<!-- ========================================================== -->
+<div class="page" id="page-pred">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">🔬</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Predicción de calidad</div>
+        <h2 class="card-title">Diagnóstico final integrado</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>🧠 Lógica de predicción</strong>
+      Combina <strong>riesgo climático de la época</strong> + <strong>diagnóstico pre-temporada</strong> (trifecta, exceso N, bicarbonatos) + <strong>plan foliar programado</strong> para predecir la probabilidad de cada defecto y la vida útil estimada. Banderas rojas indican intervenciones requeridas.
+    </div>
+
+    <div class="section-title">Predicción de defectos</div>
+    <div id="pred-defectos" class="pred-grid"></div>
+
+    <div class="section-title" style="margin-top:1rem">Vida útil estimada y KPIs</div>
+    <div id="pred-kpis"></div>
+
+    <div class="section-title" style="margin-top:1rem">Recomendaciones críticas</div>
+    <div id="pred-acciones"></div>
+  </div>
+
+  <!-- REGISTRO POST-COSECHA -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">📋</div>
+      <div class="card-titles">
+        <div class="card-eyebrow">Registro de bodega</div>
+        <h2 class="card-title">Calidad real medida post-cosecha</h2>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📊 Histórico para aprender</strong>
+      Registra resultados reales de cada cosecha para ir mejorando el modelo de predicción. Los datos se guardan localmente y permiten comparar manejo aplicado vs resultado obtenido en próximas temporadas.
+    </div>
+
+    <div class="input-grid cols-3">
+      <div class="inp-cell">
+        <span class="inp-lbl">Fecha cosecha</span>
+        <input type="date" class="inp-val" id="reg-fecha" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Racimo</span>
+        <select class="inp-val" id="reg-racimo" style="background:transparent">
+          <option value="1">R1</option><option value="2">R2</option><option value="3">R3</option>
+          <option value="4">R4</option><option value="5">R5</option><option value="6">R6</option>
+          <option value="7">R7</option><option value="8">R8</option><option value="9">R9</option>
+        </select>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Vida útil real (días)</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-vida" step="1" placeholder="14" />
+          <span class="inp-unit">días</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-grid cols-3" style="margin-top:.4rem">
+      <div class="inp-cell">
+        <span class="inp-lbl">Firmeza (kg/cm²)</span>
+        <input type="number" class="inp-val" id="reg-firmeza" step="0.1" placeholder="3.8" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">°Brix</span>
+        <input type="number" class="inp-val" id="reg-brix" step="0.1" placeholder="5.0" />
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Peso medio (g)</span>
+        <input type="number" class="inp-val" id="reg-peso" step="5" placeholder="200" />
+      </div>
+    </div>
+
+    <div class="section-title">Defectos observados (% del lote)</div>
+    <div class="input-grid cols-4">
+      <div class="inp-cell">
+        <span class="inp-lbl">Goldspeck</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-gs" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Microcracking</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-mc" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Hombro verde</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-hv" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Blotchy</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-bl" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Gold-blotch</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-gb" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Gray wall</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-gw" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Frutos huecos</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-fh" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+      <div class="inp-cell">
+        <span class="inp-lbl">Cracking</span>
+        <div class="inp-fld">
+          <input type="number" class="inp-val" id="reg-d-cr" step="0.5" placeholder="0" />
+          <span class="inp-unit">%</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" style="margin-top:.7rem" onclick="agregarRegistro()">+ Guardar registro de cosecha</button>
+
+    <div class="section-title" style="margin-top:1rem">Histórico de cosechas</div>
+    <div id="historico-list"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATOS DE REFERENCIA
+// ============================================================
+
+// DEFECTOS A MANEJAR
+const DEFECTOS = [
+  {id:'goldspeck', nombre:'Goldspeck', desc:'Manchitas amarillas-doradas (oxalatos de Ca en cutícula)', priority:true},
+  {id:'microcrack', nombre:'Microcracking', desc:'Grietas finas en la cutícula, reduce vida útil', priority:true},
+  {id:'hombro_verde', nombre:'Hombro verde', desc:'Clorofila persistente en hombros del fruto', priority:true},
+  {id:'blotchy', nombre:'Blotchy ripening', desc:'Maduración irregular con manchas no maduras', priority:true},
+  {id:'gold_blotch', nombre:'Gold-blotch', desc:'Manchas amarillas en la pared del fruto', priority:true},
+  {id:'gray_wall', nombre:'Gray wall', desc:'Internas grisáceas, vasculares oscurecidos', priority:true},
+  {id:'frutos_huecos', nombre:'Frutos huecos / puffyness', desc:'Lóculos sin pulpa, baja densidad', priority:true},
+  {id:'cracking', nombre:'Cracking radial', desc:'Grietas radiales (poco frecuente en tus campos)', priority:false}
+];
+
+// EPOCAS — datos clave climáticos extraídos del módulo principal
+const EPOCAS_DATA = {
+  otono:    {icon:'🍂', nombre:'Otoño',     variedad:'Moria',   fpl:'2024-12-30', dap_r1:17, dac_r1:51, t_engorda:19.3, rad_engorda:24, gdd_dia:9.3, hr_estim:65},
+  primor:   {icon:'🌱', nombre:'Primor',    variedad:'Alamina', fpl:'2024-06-10', dap_r1:45, dac_r1:81, t_engorda:13.0, rad_engorda:14, gdd_dia:3.0, hr_estim:78},
+  verano:   {icon:'☀️', nombre:'Verano',    variedad:'888',     fpl:'2024-10-23', dap_r1:19, dac_r1:53, t_engorda:18.1, rad_engorda:26, gdd_dia:8.1, hr_estim:62},
+  invierno: {icon:'❄️', nombre:'Invierno',  variedad:'Alamina', fpl:'2024-02-12', dap_r1:20, dac_r1:70, t_engorda:16.4, rad_engorda:14, gdd_dia:6.4, hr_estim:75},
+  trastomate:{icon:'🌅',nombre:'Trastomate',variedad:'888',     fpl:'2024-08-13', dap_r1:27, dac_r1:70, t_engorda:14.9, rad_engorda:21, gdd_dia:4.9, hr_estim:72}
+};
+
+// ENMIENDAS ORGÁNICAS con curvas de mineralización
+// % de N total liberado por mes (acumulado)
+const ENMIENDAS = [
+  {id:'guano_gallina', nombre:'Guano gallina',     cn:8.5,  n_pct:4.5, p_pct:2.0, k_pct:2.0, ca_pct:6.0, nh4_no3:9.5,
+   curva:[0,40,55,65,75,80,85,90,90,90,90,90,90], color:'#C4452D',
+   nota:'⚠ NH₄/NO₃ alto (9.5). Mineralización descontrolada. C/N <10. Uso restringido pre-plantación.'},
+  {id:'estabilizado_pollo', nombre:'Estabilizado Pollo Leyda', cn:12, n_pct:3.5, p_pct:1.8, k_pct:1.5, ca_pct:3.5, nh4_no3:3.5,
+   curva:[0,25,40,50,60,68,75,78,80,80,80,80,80], color:'#D4820A',
+   nota:'C/N moderado. Liberación más regulada que guano fresco.'},
+  {id:'compost', nombre:'Compost N°3 San Carlos',  cn:18, n_pct:1.5, p_pct:0.8, k_pct:1.0, ca_pct:2.5, nh4_no3:0.5,
+   curva:[0,10,18,25,30,35,40,42,44,45,45,45,45], color:'#2A6041',
+   nota:'C/N alto. Liberación gradual. Ideal para mejora estructural sin riesgo de N excesivo.'},
+  {id:'huechun', nombre:'Huechún (biosólido)',     cn:10, n_pct:3.0, p_pct:2.5, k_pct:0.8, ca_pct:5.0, nh4_no3:4.0,
+   curva:[0,35,50,60,68,72,75,78,80,82,82,82,82], color:'#7A4F2F',
+   nota:'Biosólido humano DS 4/2009 MMA. C/N 10. Liberación rápida-media.'},
+  {id:'weltun', nombre:'Compost Weltun Mapu',      cn:16, n_pct:2.0, p_pct:1.0, k_pct:1.5, ca_pct:3.0, nh4_no3:0.8,
+   curva:[0,12,20,28,35,40,45,48,50,52,53,53,53], color:'#5A4A8A',
+   nota:'Compost maduro. Liberación lenta. Buena opción para épocas de ciclo largo.'},
+  {id:'arizona', nombre:'Guano Arizona',           cn:11, n_pct:2.5, p_pct:1.2, k_pct:1.5, ca_pct:4.0, nh4_no3:2.5,
+   curva:[0,30,45,55,62,68,72,75,77,78,78,78,78], color:'#1E5A8C',
+   nota:'Guano semi-procesado. C/N intermedio. Mineralización media.'}
+];
+
+// PRODUCTOS FOLIARES Y BIOESTIMULANTES (base de cálculo del programa)
+const PRODUCTOS_FOLIAR = {
+  sett:        {nombre:'Sett',              empresa:'Stoller',  composicion:'Ca 8% + B 0.5% + trazas hormonas', dosis:1.75, dosis_min:1.5, dosis_max:2.0, unidad:'L/ha', uso:'foliar', objetivo:'Cuaje, paredes celulares, anti-etileno'},
+  lokomotive:  {nombre:'Lokomotive',        empresa:'Nutrien',  composicion:'K-acetato 25% K₂O', dosis:3, dosis_min:2, dosis_max:4, unidad:'L/ha', uso:'foliar', objetivo:'K para llenado y firmeza'},
+  fullmag:     {nombre:'Fullmag',           empresa:'Nutrien',  composicion:'Mg-acetato', dosis:1.75, dosis_min:1.5, dosis_max:2.0, unidad:'L/ha', uso:'foliar', objetivo:'Mg para clorofila y pigmentos'},
+  megafol:     {nombre:'Megafol',           empresa:'Valagro/Syngenta', composicion:'Aminoácidos+betaínas+Ascophyllum+vitaminas', dosis:2, dosis_min:2, dosis_max:2.5, unidad:'L/ha', uso:'foliar', objetivo:'Anti-estrés, recuperador, carrier'},
+  betasilica:  {nombre:'Betasilica Activ',  empresa:'Iansa',    composicion:'Silicio bioactivado', dosis:2, dosis_min:1.5, dosis_max:2.5, unidad:'L/ha', uso:'foliar', objetivo:'Anti-microcracking, refuerzo cutícula'},
+  silwet:      {nombre:'Silwet (humectante)', empresa:'—',      composicion:'Surfactante organosiliconado', dosis:0.5, dosis_min:0.3, dosis_max:0.8, unidad:'cc/L', uso:'humectante', objetivo:'Mejora penetración foliar'},
+  bayfolan:    {nombre:'Bayfolan Ambition', empresa:'Bayer',    composicion:'NPK + algas + micros', dosis:1.5, dosis_min:1, dosis_max:2, unidad:'L/ha', uso:'foliar', objetivo:'Bioestimulante completo'},
+  vitanica:    {nombre:'Vitanica Silicio',  empresa:'Compo',    composicion:'Silicio bioactivado', dosis:2, dosis_min:1.5, dosis_max:2.5, unidad:'L/ha', uso:'foliar', objetivo:'Pared celular, tolerancia estrés'},
+  bioforge:    {nombre:'Bioforge',          empresa:'Stoller',  composicion:'Reguladores fisiológicos', dosis:1.5, dosis_min:1, dosis_max:2, unidad:'L/ha', uso:'riego', objetivo:'Anti-estrés via riego'},
+  stimulate:   {nombre:'Stimulate',         empresa:'Stoller',  composicion:'Citocinina+auxina+giberelina', dosis:1, dosis_min:0.5, dosis_max:1.5, unidad:'L/ha', uso:'foliar', objetivo:'Hormonas crecimiento balanceado'},
+  stimplex:    {nombre:'Stimplex',          empresa:'Acadian',  composicion:'Ascophyllum nodosum 100%', dosis:2, dosis_min:1.5, dosis_max:3, unidad:'L/ha', uso:'riego', objetivo:'Bioestimulante via riego'},
+  rootex:      {nombre:'Rootex',            empresa:'Cosmocel', composicion:'Aminoácidos+auxinas', dosis:3, dosis_min:2, dosis_max:4, unidad:'kg/ha', uso:'riego', objetivo:'Enraizante establecimiento'},
+  rizogen:     {nombre:'Rizogen Plus',      empresa:'Agrospec', composicion:'Aminoácidos+algas', dosis:2, dosis_min:1.5, dosis_max:3, unidad:'L/ha', uso:'riego', objetivo:'Enraizante establecimiento'}
+};
+
+// UMBRALES AGRONÓMICOS (validados con Rafael)
+const UMBRALES = {
+  cn_critico_bajo: 10,        // C/N < 10 → mineralización descontrolada
+  cn_ideal_min: 15,
+  cn_ideal_max: 20,
+  n_ferti_max_ppm: 200,       // N total fertirriego sostenido > 200 ppm = riesgo
+  hco3_acid: 1.5,             // HCO3 > 1.5 mmol/L → acidificar
+  ph_alto: 7.0,               // pH > 7 → riesgo (Fe, Mn, P bloqueados)
+  ph_objetivo_riego: 5.7,     // pH objetivo del riego
+  k_n_savia_min: 2,           // K:N savia madurez < 2 → riesgo hombro verde
+  ca_n_suelo_max: 4,          // Ca:N suelo > 4 + NH4 alto + pH>7 → goldspeck
+  vida_util_objetivo: 14,     // días firmes
+  n_exceso_pct: 110           // N proyectado > 110% demanda → exceso
+};
+
+// ============================================================
+// ESTADO Y NAVEGACIÓN
+// ============================================================
+let currentEpoca = 'trastomate';
+let defectosActivos = new Set(DEFECTOS.filter(d => d.priority).map(d => d.id));
+let enmiendaActiva = 'estabilizado_pollo';
+let registros = JSON.parse(localStorage.getItem('postcosecha_registros') || '[]');
+
+// Tabs
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('page-' + t.dataset.page).classList.add('active');
+  };
+});
+
+// Helpers
+const $ = id => document.getElementById(id);
+const fmt = (v, d=1) => v == null || v === '' || isNaN(v) ? '—' : Number(v).toFixed(d);
+function fmtDate(d) { if (!d) return '—'; const dd = new Date(d); return dd.toLocaleDateString('es-CL', {day:'2-digit', month:'short'}); }
+
+// ============================================================
+// CONEXIÓN CON OTROS MÓDULOS (localStorage)
+// ============================================================
+function leerContextoExterno() {
+  let status = [];
+  // 1. Plan Nutricional Tomate (época, fechas)
+  try {
+    const plan = localStorage.getItem('plan_nutricional_config');
+    if (plan) {
+      const pdata = JSON.parse(plan);
+      if (pdata.epoca) {
+        currentEpoca = pdata.epoca;
+        $('cfg-epoca').value = pdata.epoca;
+      }
+      if (pdata.variedad) $('cfg-variedad').value = pdata.variedad;
+      if (pdata.predio) $('cfg-predio').value = pdata.predio;
+      status.push('✓ Plan nutricional');
+    } else {
+      status.push('⚠ Plan nutricional no cargado');
+    }
+  } catch(e) { status.push('✗ Error plan nutricional'); }
+
+  // 2. Análisis de Suelo y Agua
+  try {
+    const suelo = localStorage.getItem('sapsoil_analisis_actual');
+    if (suelo) {
+      const sdata = JSON.parse(suelo);
+      if (sdata.ph) $('diag-ph').value = sdata.ph;
+      if (sdata.ph_agua) $('diag-ph-agua').value = sdata.ph_agua;
+      if (sdata.hco3) $('diag-hco3').value = sdata.hco3;
+      if (sdata.k_disp) $('diag-k').value = sdata.k_disp;
+      status.push('✓ Análisis suelo/agua');
+    } else {
+      status.push('⚠ Análisis suelo no cargado');
+    }
+  } catch(e) {}
+
+  $('cfg-status-msg').innerHTML = status.join(' · ');
+  return status;
+}
+
+// Guardar configuración para que otros módulos puedan leerla
+function guardarContexto() {
+  const cfg = {
+    epoca: currentEpoca,
+    variedad: $('cfg-variedad').value,
+    predio: $('cfg-predio').value,
+    vida_util_objetivo: parseFloat($('cfg-vida').value),
+    defectos: Array.from(defectosActivos)
+  };
+  localStorage.setItem('postcosecha_config', JSON.stringify(cfg));
+}
+
+// ============================================================
+// PESTAÑA 1: CONFIGURACIÓN
+// ============================================================
+function renderDefectos() {
+  $('defectos-grid').innerHTML = DEFECTOS.map(d => `
+    <button class="defect-card ${defectosActivos.has(d.id) ? 'active' : ''}" data-defecto="${d.id}">
+      <span class="df-check"></span>
+      <div class="df-content">
+        <div class="df-name">${d.nombre}</div>
+        <div class="df-desc">${d.desc}</div>
+      </div>
+    </button>
+  `).join('');
+
+  document.querySelectorAll('.defect-card').forEach(card => {
+    card.onclick = () => {
+      const id = card.dataset.defecto;
+      if (defectosActivos.has(id)) defectosActivos.delete(id);
+      else defectosActivos.add(id);
+      card.classList.toggle('active');
+      guardarContexto();
+      renderHeaderContext();
+    };
+  });
+}
+
+function renderHeaderContext() {
+  const e = EPOCAS_DATA[currentEpoca];
+  $('ctx-epoca').textContent = e.icon + ' ' + e.nombre;
+  $('ctx-vida-val').textContent = $('cfg-vida').value || 14;
+}
+
+// ============================================================
+// PESTAÑA 2: MAPA DE RIESGO
+// ============================================================
+// Lógica: cada defecto se evalúa según fórmulas que combinan T° engorda, radiación, GDD, HR, época específica
+function calcularRiesgoEpoca(epocaId, defectoId) {
+  const e = EPOCAS_DATA[epocaId];
+  const t = e.t_engorda, r = e.rad_engorda, gdd = e.gdd_dia, hr = e.hr_estim;
+
+  switch(defectoId) {
+    case 'goldspeck':
+      // Alto: T° > 17°C engorda + radiación > 22 + invernadero (HR media)
+      // Promueve oxalatos en cutícula
+      if (t >= 17 && r >= 22 && hr >= 60) return 'alto';
+      if (t >= 15 && r >= 18) return 'med';
+      return 'bajo';
+
+    case 'microcrack':
+      // Alto: HR alta (>72) + fluctuación crecimiento (gdd_dia variable) + radiación moderada-alta
+      if (hr >= 72 && r >= 18 && gdd >= 5) return 'alto';
+      if (hr >= 70 || (gdd >= 6 && r >= 20)) return 'med';
+      return 'bajo';
+
+    case 'hombro_verde':
+      // Alto: alta radiación (>22) + T media engorda alta (>17) + N alto (asumimos manejo)
+      if (r >= 22 && t >= 17) return 'alto';
+      if (r >= 18 || t >= 16) return 'med';
+      return 'bajo';
+
+    case 'blotchy':
+      // Alto: baja radiación (<16) + baja T (<15) + ciclo largo
+      if (r <= 16 && t <= 14) return 'alto';
+      if (r <= 18 || t <= 16) return 'med';
+      return 'bajo';
+
+    case 'gold_blotch':
+      // Variante de blotchy: similar, pero con énfasis en radiación irregular
+      if (r <= 16 && hr >= 70) return 'alto';
+      if (r <= 18 || hr >= 70) return 'med';
+      return 'bajo';
+
+    case 'gray_wall':
+      // Alto: baja T + baja radiación (deficiencia K en periodos fríos) + ciclo largo
+      if (t <= 14 && r <= 16) return 'alto';
+      if (t <= 16 || r <= 18) return 'med';
+      return 'bajo';
+
+    case 'frutos_huecos':
+      // Alto: baja T en cuaje (problema polinización) + variedad + época fría
+      if (t <= 14) return 'alto';
+      if (t <= 16) return 'med';
+      return 'bajo';
+
+    case 'cracking':
+      // Generalmente bajo en estos campos, depende de HR
+      if (hr >= 75 && r >= 22) return 'med';
+      return 'bajo';
+  }
+  return 'bajo';
+}
+
+function renderRiesgoMatrix() {
+  const epocaList = ['otono','primor','verano','invierno','trastomate'];
+  const defectosShow = DEFECTOS.filter(d => d.priority || defectosActivos.has(d.id));
+
+  $('riesgo-tbody').innerHTML = defectosShow.map(d => {
+    const cells = epocaList.map(epId => {
+      const r = calcularRiesgoEpoca(epId, d.id);
+      const lbl = r === 'alto' ? '🔴 Alto' : r === 'med' ? '🟡 Med' : '🟢 Bajo';
+      return `<td><span class="risk-cell ${r}">${lbl}</span></td>`;
+    }).join('');
+    return `<tr><td>${d.nombre}</td>${cells}</tr>`;
+  }).join('');
+
+  // Detalle de la época actual
+  const e = EPOCAS_DATA[currentEpoca];
+  let detail = `<div class="kpi-grid">
+    <div class="kpi-cell"><span class="kpi-val">${e.t_engorda}°C</span><span class="kpi-lbl">T° media engorda</span></div>
+    <div class="kpi-cell"><span class="kpi-val">${e.rad_engorda} MJ</span><span class="kpi-lbl">Radiación diaria</span></div>
+    <div class="kpi-cell"><span class="kpi-val">${e.gdd_dia}</span><span class="kpi-lbl">GDD/día (Tbase 10)</span></div>
+    <div class="kpi-cell"><span class="kpi-val">${e.hr_estim}%</span><span class="kpi-lbl">HR estimada</span></div>
+    <div class="kpi-cell"><span class="kpi-val">${e.dac_r1}d</span><span class="kpi-lbl">Días R1 antesis→cosecha</span></div>
+  </div>`;
+
+  detail += '<div style="margin-top:.7rem">';
+  defectosShow.forEach(d => {
+    const r = calcularRiesgoEpoca(currentEpoca, d.id);
+    const cls = r === 'alto' ? 'critical' : r === 'med' ? 'warning' : 'ok';
+    const icon = r === 'alto' ? '🔴' : r === 'med' ? '🟡' : '🟢';
+    const msg = explicarRiesgo(currentEpoca, d.id, r);
+    detail += `<div class="diag-card ${cls}">
+      <span class="diag-icon">${icon}</span>
+      <div class="diag-content">
+        <div class="diag-param">${d.nombre} — Riesgo ${r === 'alto' ? 'ALTO' : r === 'med' ? 'MEDIO' : 'BAJO'}</div>
+        <div class="diag-msg">${msg.razon}</div>
+        ${msg.accion ? `<div class="diag-action"><strong>Acción</strong>${msg.accion}</div>` : ''}
+      </div>
+    </div>`;
+  });
+  detail += '</div>';
+  $('riesgo-detallado').innerHTML = detail;
+}
+
+function explicarRiesgo(epId, defId, riesgo) {
+  const e = EPOCAS_DATA[epId];
+  const explicaciones = {
+    goldspeck: {
+      alto: {razon: `T° engorda ${e.t_engorda}°C + radiación ${e.rad_engorda} MJ + HR ${e.hr_estim}% favorecen depósitos de oxalato de Ca en cutícula.`,
+             accion: 'Reducir Ca soluble en riego, controlar NH₄, acidificar agua si HCO₃>1.5, evitar enmiendas con NH₄/NO₃ alto.'},
+      med:   {razon: `Condiciones moderadas. Alguno de los factores presente.`,
+              accion: 'Monitorear tendencias, mantener foliares de Ca-aminoácidos.'},
+      bajo:  {razon: `T°, radiación o HR no favorecen. Riesgo natural bajo.`,
+              accion: 'Mantener buen manejo nutricional.'}
+    },
+    microcrack: {
+      alto: {razon: `HR alta ${e.hr_estim}% + crecimiento variable. Frutos sufren cambios bruscos de turgencia que generan microgrietas.`,
+             accion: 'Aplicar Betasilica Activ + Sett + Silwet cada 7 días desde engorda. Riegos frecuentes y cortos. Ventilar invernadero.'},
+      med:   {razon: 'Condiciones intermedias. HR o gradientes presentes.',
+              accion: 'Programa preventivo Betasilica + Vitanica Silicio cada 14 días.'},
+      bajo:  {razon: 'HR baja o crecimiento estable. Riesgo natural bajo.',
+              accion: 'Mantener manejo regular.'}
+    },
+    hombro_verde: {
+      alto: {razon: `Radiación alta ${e.rad_engorda} MJ + T° elevada favorece persistencia de clorofila en hombros si N alto.`,
+             accion: 'Reducir N total, aumentar K (ratio K:N savia >2 en madurez), Lokomotive cada 10 días pre-cosecha. Sombreado parcial si T>32°C.'},
+      med:   {razon: 'Riesgo moderado por radiación o T°.',
+              accion: 'Vigilar K:N en savia, aplicar Lokomotive en pre-cosecha.'},
+      bajo:  {razon: 'Radiación moderada-baja, riesgo natural bajo.',
+              accion: 'Mantener equilibrio N:K.'}
+    },
+    blotchy: {
+      alto: {razon: `Radiación baja ${e.rad_engorda} MJ + T° baja ${e.t_engorda}°C generan maduración irregular.`,
+             accion: 'Maximizar Mg foliar (Fullmag), K (Lokomotive), maximizar luz disponible (poda inferior, limpieza plástico). Reducir N en madurez.'},
+      med:   {razon: 'Condiciones moderadas.',
+              accion: 'Programa K-Mg foliar regular.'},
+      bajo:  {razon: 'Suficiente T° y radiación.',
+              accion: 'Mantener manejo regular.'}
+    },
+    gold_blotch: {
+      alto: {razon: `Radiación baja + HR alta favorece manchas amarillas en pared.`,
+             accion: 'Mejorar ventilación, K foliar pre-cosecha, evitar exceso N.'},
+      med:   {razon: 'Riesgo moderado.', accion: 'Vigilar HR y aireación.'},
+      bajo:  {razon: 'Condiciones favorables.', accion: 'Manejo regular.'}
+    },
+    gray_wall: {
+      alto: {razon: `T° baja ${e.t_engorda}°C + radiación ${e.rad_engorda} MJ + ciclo largo afectan vasos del fruto. K bajo agrava.`,
+             accion: 'Aumentar K en fertirriego (ratio NO₃:K hacia 1:3 antes), Lokomotive foliar cada 10 días en engorda. Aumentar Mg.'},
+      med:   {razon: 'T° o radiación moderadamente bajas.',
+              accion: 'Aumentar K foliar.'},
+      bajo:  {razon: 'Buenas condiciones T° y radiación.',
+              accion: 'Manejo regular.'}
+    },
+    frutos_huecos: {
+      alto: {razon: `T° baja ${e.t_engorda}°C en cuaje afecta polinización y desarrollo de lóculos.`,
+             accion: 'Sett 2 L/ha cada 7 días en cuaje + Megafol anti-estrés. Considerar aumentar T° invernadero >18°C en período cuaje.'},
+      med:   {razon: 'T° moderada en cuaje.',
+              accion: 'Sett en cuaje.'},
+      bajo:  {razon: 'Buena T° en cuaje.',
+              accion: 'Manejo regular.'}
+    },
+    cracking: {
+      alto: {razon: 'Combinación HR + radiación alta puede provocar cracking radial.',
+             accion: 'Riegos uniformes, Sett + Ca, Silwet humectante.'},
+      med:   {razon: 'Riesgo moderado.', accion: 'Vigilar uniformidad de riego.'},
+      bajo:  {razon: 'Condiciones favorables.', accion: 'Manejo regular.'}
+    }
+  };
+  return explicaciones[defId][riesgo] || {razon:'—', accion:'—'};
+}
+
+// ============================================================
+// PESTAÑA 3: DIAGNÓSTICO PRE-TEMPORADA
+// ============================================================
+function renderDiagnostico() {
+  const ph = parseFloat($('diag-ph').value) || 0;
+  const phAgua = parseFloat($('diag-ph-agua').value) || 0;
+  const hco3 = parseFloat($('diag-hco3').value) || 0;
+  const cnSuelo = parseFloat($('diag-cn-suelo').value) || 0;
+  const nResid = parseFloat($('diag-n-suelo').value) || 0;
+  const nFerti = parseFloat($('diag-n-ferti').value) || 0;
+  const nDemanda = parseFloat($('diag-n-demanda').value) || 1;
+  const efic = (parseFloat($('diag-efic-n').value) || 50) / 100;
+  const k = parseFloat($('diag-k').value) || 0;
+
+  // N efectivo del fertirriego (tras eficiencia)
+  const nEfectivo = nFerti * efic;
+  const nEnmiendaProj = enmiendaActiva ? estimarNEnmienda() : 0;
+  const nTotalDisp = nResid + nEfectivo + nEnmiendaProj;
+  const pctSobreDemanda = (nTotalDisp / nDemanda) * 100;
+
+  // Trifecta detection
+  const enm = ENMIENDAS.find(e => e.id === enmiendaActiva);
+  const nh4Alto = enm && enm.nh4_no3 >= 3.5;
+  const phAlto = ph >= UMBRALES.ph_alto;
+  const hco3Alto = hco3 >= UMBRALES.hco3_acid;
+  const trifecta = nh4Alto && phAlto && hco3Alto;
+  const cnBajo = cnSuelo < UMBRALES.cn_critico_bajo;
+
+  // Render trifecta alert
+  if (trifecta) {
+    $('diag-trifecta').innerHTML = `
+      <div class="trifecta-alert">
+        <div class="trifecta-title">⚡ TRIFECTA GOLDSPECK DETECTADA</div>
+        <div style="font-size:.78rem;color:var(--ink2);line-height:1.5">Convergen los tres factores que crean condiciones ideales para depósitos de oxalato de calcio en la cutícula del fruto. Riesgo de goldspeck severo si no se interviene.</div>
+        <div class="trifecta-list">
+          <div class="trif-item">
+            <span class="trif-val">${enm ? enm.nh4_no3 : '—'}</span>
+            <span class="trif-lbl">NH₄/NO₃ enmienda (>3.5)</span>
+          </div>
+          <div class="trif-item">
+            <span class="trif-val">${ph}</span>
+            <span class="trif-lbl">pH suelo (>7.0)</span>
+          </div>
+          <div class="trif-item">
+            <span class="trif-val">${hco3}</span>
+            <span class="trif-lbl">HCO₃ agua (>1.5 mmol/L)</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    $('diag-trifecta').innerHTML = '';
+  }
+
+  // Diagnostics
+  let diag = '';
+
+  // N total vs demanda
+  if (pctSobreDemanda > UMBRALES.n_exceso_pct) {
+    diag += `<div class="diag-card critical">
+      <span class="diag-icon">🔴</span>
+      <div class="diag-content">
+        <div class="diag-param">Exceso de N proyectado (${pctSobreDemanda.toFixed(0)}% demanda)</div>
+        <div class="diag-msg">N total disponible (${nTotalDisp.toFixed(0)} kg/ha) supera demanda del cultivo (${nDemanda} kg/ha) en más de 10%. Riesgo: hombro verde, blotchy, exceso vigor vegetativo, microcracking.</div>
+        <div class="diag-action"><strong>Acción</strong>Reducir N de fertirriego, considerar aplazar enmienda o reducir dosis.</div>
+      </div>
+    </div>`;
+  } else if (pctSobreDemanda < 80) {
+    diag += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">N proyectado bajo (${pctSobreDemanda.toFixed(0)}% demanda)</div>
+        <div class="diag-msg">N total disponible (${nTotalDisp.toFixed(0)} kg/ha) está por debajo de la demanda (${nDemanda} kg/ha). Riesgo: bajo vigor, frutos pequeños, baja producción.</div>
+        <div class="diag-action"><strong>Acción</strong>Revisar plan de fertirriego o complementar con enmienda.</div>
+      </div>
+    </div>`;
+  } else {
+    diag += `<div class="diag-card ok">
+      <span class="diag-icon">🟢</span>
+      <div class="diag-content">
+        <div class="diag-param">N total balanceado (${pctSobreDemanda.toFixed(0)}% demanda)</div>
+        <div class="diag-msg">N total disponible (${nTotalDisp.toFixed(0)} kg/ha) está dentro del rango óptimo respecto a la demanda (${nDemanda} kg/ha).</div>
+      </div>
+    </div>`;
+  }
+
+  // C/N suelo
+  if (cnBajo) {
+    diag += `<div class="diag-card critical">
+      <span class="diag-icon">🔴</span>
+      <div class="diag-content">
+        <div class="diag-param">C/N suelo bajo (${cnSuelo})</div>
+        <div class="diag-msg">Relación C/N inferior a 10 indica mineralización descontrolada de N. Liberación rápida en momentos no programados.</div>
+        <div class="diag-action"><strong>Acción</strong>Aplicar enmiendas con C/N alto (>15) para diluir efecto. Reducir aportes de N en fertirriego.</div>
+      </div>
+    </div>`;
+  } else if (cnSuelo >= 15 && cnSuelo <= 20) {
+    diag += `<div class="diag-card ok">
+      <span class="diag-icon">🟢</span>
+      <div class="diag-content">
+        <div class="diag-param">C/N suelo en rango ideal (${cnSuelo})</div>
+        <div class="diag-msg">Relación C/N entre 15-20 es óptima para mineralización gradual.</div>
+      </div>
+    </div>`;
+  } else {
+    diag += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">C/N suelo (${cnSuelo})</div>
+        <div class="diag-msg">Fuera del rango ideal 15-20. Vigilar mineralización.</div>
+      </div>
+    </div>`;
+  }
+
+  // pH suelo
+  if (phAlto) {
+    diag += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">pH suelo alto (${ph})</div>
+        <div class="diag-msg">pH ≥ 7.0 reduce disponibilidad de Fe, Mn, Zn, P y favorece acumulación de Ca soluble (factor goldspeck).</div>
+        <div class="diag-action"><strong>Acción</strong>Acidificar agua de riego con HNO₃ o H₃PO₄. Aplicar Ultraferro (Fe-EDDHA) si hay clorosis.</div>
+      </div>
+    </div>`;
+  }
+
+  // Bicarbonatos
+  if (hco3Alto) {
+    diag += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">Bicarbonatos altos (${hco3} mmol/L)</div>
+        <div class="diag-msg">HCO₃ ≥ 1.5 mmol/L bloquea micros y eleva pH del bulbo de riego. Va en pestaña "Acidificación" para cálculo de dosis.</div>
+        <div class="diag-action"><strong>Acción</strong>Calcular dosis de ácido en pestaña 5.</div>
+      </div>
+    </div>`;
+  }
+
+  // K disponible
+  if (k < 200) {
+    diag += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">K disponible bajo (${k} ppm)</div>
+        <div class="diag-msg">K bajo afecta ratio NO₃:K, color del fruto y firmeza pre-cosecha. Riesgo gray wall, hombro verde.</div>
+        <div class="diag-action"><strong>Acción</strong>Reforzar K en fertirriego. Lokomotive foliar cada 10-14 días en engorda.</div>
+      </div>
+    </div>`;
+  }
+
+  $('diag-results').innerHTML = diag;
+}
+
+function estimarNEnmienda() {
+  const enm = ENMIENDAS.find(e => e.id === enmiendaActiva);
+  if (!enm) return 0;
+  const dosis = parseFloat($('enm-dosis').value) || 0; // t/ha
+  const nPct = parseFloat($('enm-n-pct').value) || enm.n_pct;
+  // Asumir mineralización ~50-60% disponible durante el ciclo
+  const nAplicado = dosis * 1000 * (nPct/100); // kg N total
+  const nDispCiclo = nAplicado * 0.55;
+  return nDispCiclo;
+}
+
+// ============================================================
+// PESTAÑA 4: ENMIENDAS Y MINERALIZACIÓN
+// ============================================================
+function renderEnmiendaSelector() {
+  $('enm-selector').innerHTML = ENMIENDAS.map(e => `
+    <button class="enm-card ${e.id === enmiendaActiva ? 'active' : ''}" data-enm="${e.id}">
+      <div class="enm-name">${e.nombre}</div>
+      <div class="enm-cn">C/N ${e.cn} · N ${e.n_pct}%</div>
+      <div class="enm-rate">NH₄/NO₃: ${e.nh4_no3}</div>
+    </button>
+  `).join('');
+
+  document.querySelectorAll('[data-enm]').forEach(card => {
+    card.onclick = () => {
+      enmiendaActiva = card.dataset.enm;
+      const enm = ENMIENDAS.find(e => e.id === enmiendaActiva);
+      if (enm) $('enm-n-pct').value = enm.n_pct;
+      renderMineralizacion();
+      renderDiagnostico();
+    };
+  });
+}
+
+function renderMineralizacion() {
+  const enm = ENMIENDAS.find(e => e.id === enmiendaActiva);
+  if (!enm) return;
+  const dosis = parseFloat($('enm-dosis').value) || 0;
+  const diasPrev = parseFloat($('enm-dias-prev').value) || 0;
+  const nPct = parseFloat($('enm-n-pct').value) || enm.n_pct;
+
+  const nAplicado = dosis * 1000 * (nPct/100);
+
+  // Resumen
+  $('enm-resumen').innerHTML = `
+    <div class="kpi-grid" style="margin-top:.7rem">
+      <div class="kpi-cell"><span class="kpi-val">${nAplicado.toFixed(0)} kg</span><span class="kpi-lbl">N aplicado total/ha</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${(nAplicado*0.55).toFixed(0)} kg</span><span class="kpi-lbl">N disponible (~55%)</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${enm.cn}</span><span class="kpi-lbl">C/N enmienda</span></div>
+      <div class="kpi-cell ${enm.nh4_no3 >= 3.5 ? 'danger' : ''}"><span class="kpi-val">${enm.nh4_no3}</span><span class="kpi-lbl">NH₄/NO₃ ratio</span></div>
+    </div>
+  `;
+
+  // Dibujar curva
+  drawMineralizacionChart(enm, nAplicado, diasPrev);
+
+  // Recomendaciones
+  let recs = '';
+  if (enm.cn < 10) {
+    recs += `<div class="diag-card critical">
+      <span class="diag-icon">🔴</span>
+      <div class="diag-content">
+        <div class="diag-param">Mineralización rápida — riesgo crítico</div>
+        <div class="diag-msg">Con C/N=${enm.cn}, esta enmienda libera 40% del N en los primeros 30 días. ${enm.nota}</div>
+        <div class="diag-action"><strong>Aplicar</strong>Mínimo 60-90 días antes de plantación, idealmente al barbecho previo. NUNCA durante el ciclo.</div>
+      </div>
+    </div>`;
+  } else if (enm.cn < 12) {
+    recs += `<div class="diag-card warning">
+      <span class="diag-icon">🟡</span>
+      <div class="diag-content">
+        <div class="diag-param">Mineralización rápida-media</div>
+        <div class="diag-msg">${enm.nota}</div>
+        <div class="diag-action"><strong>Aplicar</strong>30-45 días antes de plantación.</div>
+      </div>
+    </div>`;
+  } else if (enm.cn >= 15) {
+    recs += `<div class="diag-card ok">
+      <span class="diag-icon">🟢</span>
+      <div class="diag-content">
+        <div class="diag-param">Mineralización gradual</div>
+        <div class="diag-msg">${enm.nota}</div>
+        <div class="diag-action"><strong>Aplicar</strong>Al momento de la plantación o pre-trasplante.</div>
+      </div>
+    </div>`;
+  }
+
+  // Verificar si la liberación coincide con período crítico
+  const e = EPOCAS_DATA[currentEpoca];
+  // Período crítico: cuaje a engorda activa (R3-R5) ≈ días dap_r1+15 a dap_r1+45
+  const diaIniCrit = e.dap_r1 + 15;
+  const diaFinCrit = e.dap_r1 + 45;
+  // Días desde aplicación al período crítico
+  const diaIniCritDesdeAplic = diasPrev + diaIniCrit;
+  const diaFinCritDesdeAplic = diasPrev + diaFinCrit;
+
+  // Liberación durante período crítico
+  const idxIni = Math.min(12, Math.floor(diaIniCritDesdeAplic / 30));
+  const idxFin = Math.min(12, Math.floor(diaFinCritDesdeAplic / 30));
+  const libIni = enm.curva[idxIni] || 0;
+  const libFin = enm.curva[idxFin] || 0;
+  const libDuranteCrit = libFin - libIni;
+
+  if (libDuranteCrit >= 15) {
+    recs += `<div class="diag-card critical">
+      <span class="diag-icon">⚠️</span>
+      <div class="diag-content">
+        <div class="diag-param">Coincidencia con período crítico (R3-R5)</div>
+        <div class="diag-msg">La curva de mineralización indica que ${libDuranteCrit.toFixed(0)}% del N se libera durante el período de engorda activa, justo cuando un exceso de N favorece hombro verde, blotchy y goldspeck.</div>
+        <div class="diag-action"><strong>Acción</strong>Aplicar antes (más días previos a plantación) o reducir dosis a la mitad.</div>
+      </div>
+    </div>`;
+  } else if (libDuranteCrit < 5) {
+    recs += `<div class="diag-card ok">
+      <span class="diag-icon">✓</span>
+      <div class="diag-content">
+        <div class="diag-param">Liberación bien sincronizada</div>
+        <div class="diag-msg">Solo ${libDuranteCrit.toFixed(0)}% del N se libera durante el período crítico. Buen sincronización.</div>
+      </div>
+    </div>`;
+  }
+
+  $('enm-recomendaciones').innerHTML = recs;
+}
+
+function drawMineralizacionChart(enm, nAplicado, diasPrev) {
+  const svg = $('chart-mineralizacion');
+  const W = 700, H = 320, padL = 55, padR = 100, padT = 25, padB = 50;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  let html = `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFAFA" stroke="#E0E0E0"/>`;
+
+  // Y axis (% N liberado)
+  for (let i = 0; i <= 5; i++) {
+    const y = padT + plotH * (1 - i/5);
+    const v = i * 20;
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${padL-5}" y="${y+4}" text-anchor="end" font-family="DM Mono" font-size="10" fill="#666">${v}%</text>`;
+  }
+  html += `<text x="${padL/2-5}" y="${padT + plotH/2}" text-anchor="middle" font-family="Karla" font-size="11" font-weight="700" fill="#333" transform="rotate(-90 ${padL/2-5} ${padT + plotH/2})">N liberado (%)</text>`;
+
+  // X axis (meses desde aplicación)
+  const maxMeses = 12;
+  for (let m = 0; m <= maxMeses; m += 2) {
+    const x = padL + (m / maxMeses) * plotW;
+    html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT+plotH}" stroke="#EEE" stroke-width="0.5"/>`;
+    html += `<text x="${x}" y="${H-padB+15}" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#666">${m}m</text>`;
+  }
+  html += `<text x="${padL+plotW/2}" y="${H-5}" text-anchor="middle" font-family="Karla" font-size="10" fill="#333">Meses desde aplicación de la enmienda</text>`;
+
+  // Sombrear período crítico (R3-R5)
+  const e = EPOCAS_DATA[currentEpoca];
+  const mesIniPlant = diasPrev / 30;
+  const mesIniCrit = (diasPrev + e.dap_r1 + 15) / 30;
+  const mesFinCrit = (diasPrev + e.dap_r1 + 45) / 30;
+  const xIniCrit = padL + (Math.min(maxMeses, mesIniCrit) / maxMeses) * plotW;
+  const xFinCrit = padL + (Math.min(maxMeses, mesFinCrit) / maxMeses) * plotW;
+  if (mesIniCrit < maxMeses) {
+    html += `<rect x="${xIniCrit}" y="${padT}" width="${xFinCrit-xIniCrit}" height="${plotH}" fill="#FCEAE6" opacity="0.6"/>`;
+    html += `<text x="${(xIniCrit+xFinCrit)/2}" y="${padT+15}" text-anchor="middle" font-family="DM Mono" font-size="9" font-weight="700" fill="#C4452D">PERÍODO CRÍTICO</text>`;
+    html += `<text x="${(xIniCrit+xFinCrit)/2}" y="${padT+27}" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#C4452D">(engorda R3-R5)</text>`;
+  }
+
+  // Línea vertical en plantación
+  if (mesIniPlant < maxMeses) {
+    const xPlant = padL + (mesIniPlant / maxMeses) * plotW;
+    html += `<line x1="${xPlant}" y1="${padT}" x2="${xPlant}" y2="${padT+plotH}" stroke="#5A4A8A" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    html += `<text x="${xPlant}" y="${padT-5}" text-anchor="middle" font-family="DM Mono" font-size="9" font-weight="700" fill="#5A4A8A">Plantación</text>`;
+  }
+
+  // Curva de mineralización
+  let path = '';
+  enm.curva.forEach((v, i) => {
+    if (i > maxMeses) return;
+    const x = padL + (i / maxMeses) * plotW;
+    const y = padT + plotH * (1 - v / 100);
+    path += (path === '' ? 'M' : ' L') + `${x.toFixed(1)},${y.toFixed(1)}`;
+    html += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${enm.color}" stroke="#fff" stroke-width="1"/>`;
+  });
+  html += `<path d="${path}" stroke="${enm.color}" stroke-width="2.4" fill="none" opacity="0.95"/>`;
+
+  // Etiqueta de la curva
+  html += `<text x="${W-padR+5}" y="${padT+15}" font-family="Karla" font-size="10" font-weight="700" fill="${enm.color}">${enm.nombre}</text>`;
+  html += `<text x="${W-padR+5}" y="${padT+28}" font-family="DM Mono" font-size="8" fill="${enm.color}">N total: ${nAplicado.toFixed(0)} kg/ha</text>`;
+  html += `<text x="${W-padR+5}" y="${padT+40}" font-family="DM Mono" font-size="8" fill="${enm.color}">C/N: ${enm.cn}</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ============================================================
+// PESTAÑA 5: ACIDIFICACIÓN
+// ============================================================
+function renderAcidificacion() {
+  const hco3 = parseFloat($('agua-hco3').value) || 0;
+  const ph = parseFloat($('agua-ph').value) || 0;
+  const hco3Obj = parseFloat($('agua-hco3-obj').value) || 0.5;
+  const pSuelo = parseFloat($('agua-p-suelo').value) || 0;
+  const vol = parseFloat($('agua-vol').value) || 40;
+  const dias = parseFloat($('agua-dias').value) || 180;
+
+  const hco3Neutralizar = Math.max(0, hco3 - hco3Obj);
+
+  if (hco3Neutralizar <= 0) {
+    $('agua-resultados').innerHTML = `<div class="diag-card ok">
+      <span class="diag-icon">✓</span>
+      <div class="diag-content">
+        <div class="diag-param">Bicarbonatos en rango aceptable</div>
+        <div class="diag-msg">No requiere acidificación. HCO₃ actual (${hco3} mmol/L) ya está por debajo del objetivo (${hco3Obj} mmol/L).</div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // Cálculos
+  // 1 mmol/L HCO3 = 1 mmol/L HNO3 para neutralización
+  // HNO3 60% pureza, densidad ~1.37 g/mL
+  // HNO3 PM=63 g/mol → 1 mmol = 63 mg = 0.063 g
+  // 60% pureza → 0.063/0.6 = 0.105 g de producto comercial
+  // densidad 1.37 → 0.105/1.37 = 0.077 mL del producto
+  const dosisHNO3_mL_L = hco3Neutralizar * 0.077; // mL HNO3 60% por L riego
+  const dosisHNO3_mL_m3 = dosisHNO3_mL_L * 1000;  // mL/m³ = cc/m³
+  const aporteN_ppm = hco3Neutralizar * 14; // mmol/L × 14 mg/mmol
+
+  // H3PO4 85% (densidad 1.69)
+  // H3PO4 PM=98, neutraliza 3 H+ por molécula → 1 mmol/L HCO3 = 1/3 mmol H3PO4
+  // 1 mmol H3PO4 = 98 mg = 0.098 g
+  // 85% pureza → 0.115 g
+  // densidad 1.69 → 0.068 mL
+  const dosisH3PO4_mL_L = (hco3Neutralizar / 3) * 0.068;
+  const dosisH3PO4_mL_m3 = dosisH3PO4_mL_L * 1000;
+  const aporteP_ppm = (hco3Neutralizar / 3) * 31; // mmol P × PM P
+
+  const litrosTotales = vol * dias; // m³ totales del ciclo
+  const totalHNO3_L = (dosisHNO3_mL_m3 / 1000) * litrosTotales;
+  const totalH3PO4_L = (dosisH3PO4_mL_m3 / 1000) * litrosTotales;
+
+  const phEfectivoEstimado = ph - 1.5; // estimación grosera
+
+  let html = `
+    <div class="kpi-grid" style="margin-top:.7rem">
+      <div class="kpi-cell danger"><span class="kpi-val">${hco3Neutralizar.toFixed(1)}</span><span class="kpi-lbl">HCO₃ a neutralizar (mmol/L)</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${(hco3Neutralizar*61).toFixed(0)}</span><span class="kpi-lbl">mg/L HCO₃ a neutralizar</span></div>
+      <div class="kpi-cell success"><span class="kpi-val">~${phEfectivoEstimado.toFixed(1)}</span><span class="kpi-lbl">pH estimado tras acidificación</span></div>
+    </div>
+
+    <div class="section-title" style="margin-top:1rem">Opción A — Ácido nítrico (HNO₃ 60%)</div>
+    <div class="kpi-grid">
+      <div class="kpi-cell total"><span class="kpi-val">${dosisHNO3_mL_m3.toFixed(0)} cc</span><span class="kpi-lbl">cc/m³ riego</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${aporteN_ppm.toFixed(0)} ppm</span><span class="kpi-lbl">N adicional aportado</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${totalHNO3_L.toFixed(0)} L</span><span class="kpi-lbl">Total ciclo (${dias} días)</span></div>
+    </div>
+    <div class="note success">
+      <strong>✓ Recomendado por defecto</strong>
+      Aporta N útil al cultivo. No genera P excesivo. Apto para suelos con cualquier nivel de P.
+    </div>
+
+    <div class="section-title">Opción B — Ácido fosfórico (H₃PO₄ 85%)</div>
+    <div class="kpi-grid">
+      <div class="kpi-cell total"><span class="kpi-val">${dosisH3PO4_mL_m3.toFixed(0)} cc</span><span class="kpi-lbl">cc/m³ riego</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${aporteP_ppm.toFixed(0)} ppm</span><span class="kpi-lbl">P adicional aportado</span></div>
+      <div class="kpi-cell"><span class="kpi-val">${totalH3PO4_L.toFixed(0)} L</span><span class="kpi-lbl">Total ciclo (${dias} días)</span></div>
+    </div>
+    <div class="note ${pSuelo > 25 ? 'danger' : 'warn'}">
+      <strong>${pSuelo > 25 ? '⚠ NO usar — P suelo alto' : '⚠ Vigilar acumulación de P'}</strong>
+      ${pSuelo > 25 ? `P del suelo (${pSuelo} ppm) ya está alto. El uso de H₃PO₄ acumulará P en exceso.` : 'Aporta P útil pero monitorea acumulación a largo plazo.'}
+    </div>
+  `;
+
+  $('agua-resultados').innerHTML = html;
+}
+
+// ============================================================
+// PESTAÑA 6: PLAN FOLIAR
+// ============================================================
+function renderPlanFoliar() {
+  const e = EPOCAS_DATA[currentEpoca];
+  const dap_r1 = e.dap_r1, dac_r1 = e.dac_r1;
+
+  // Determinar riesgos elevados de la época para personalizar el plan
+  const riesgos = {};
+  DEFECTOS.forEach(d => { riesgos[d.id] = calcularRiesgoEpoca(currentEpoca, d.id); });
+
+  const riesgoMicrocrack = riesgos.microcrack === 'alto';
+  const riesgoGoldspeck = riesgos.goldspeck === 'alto';
+  const riesgoBlotchy = riesgos.blotchy === 'alto' || riesgos.gold_blotch === 'alto';
+  const riesgoGrayWall = riesgos.gray_wall === 'alto';
+  const riesgoFrutosHuecos = riesgos.frutos_huecos === 'alto';
+  const riesgoHombroVerde = riesgos.hombro_verde === 'alto';
+
+  // Alertas en cabecera
+  let alertas = '';
+  if (riesgoMicrocrack) alertas += '<div class="diag-card critical"><span class="diag-icon">🔴</span><div class="diag-content"><div class="diag-param">Riesgo MICROCRACKING alto</div><div class="diag-msg">Programa adicional de Betasilica + Sett + Silwet desde inicio engorda.</div></div></div>';
+  if (riesgoGoldspeck) alertas += '<div class="diag-card critical"><span class="diag-icon">🔴</span><div class="diag-content"><div class="diag-param">Riesgo GOLDSPECK alto</div><div class="diag-msg">Reducir aportes de Ca soluble vía riego. Foliares de Ca-aminoácido en lugar de Ca-nitrato puro.</div></div></div>';
+  if (riesgoFrutosHuecos) alertas += '<div class="diag-card critical"><span class="diag-icon">🔴</span><div class="diag-content"><div class="diag-param">Riesgo FRUTOS HUECOS alto</div><div class="diag-msg">Sett + Megafol en cuaje, considerar elevar T° invernadero.</div></div></div>';
+  if (riesgoBlotchy || riesgoGrayWall) alertas += '<div class="diag-card warning"><span class="diag-icon">🟡</span><div class="diag-content"><div class="diag-param">Riesgo BLOTCHY/GRAY WALL elevado</div><div class="diag-msg">Maximizar Lokomotive y Fullmag durante engorda.</div></div></div>';
+  if (riesgoHombroVerde) alertas += '<div class="diag-card warning"><span class="diag-icon">🟡</span><div class="diag-content"><div class="diag-param">Riesgo HOMBRO VERDE elevado</div><div class="diag-msg">Reducir N en madurez, intensificar K foliar.</div></div></div>';
+  $('foliar-alertas').innerHTML = alertas;
+
+  // Construir programa
+  let programa = '';
+
+  // ETAPA 1: Establecimiento (días 0 a dap_r1-15)
+  programa += `<div class="foliar-stage veg">
+    <div class="fs-head">
+      <span class="fs-icon">🌱</span>
+      <div>
+        <div class="fs-title">Establecimiento y crecimiento vegetativo</div>
+        <div style="font-size:.7rem;color:var(--muted)">Trasplante hasta pre-cuaje · Día 0 al ${dap_r1-15}</div>
+      </div>
+      <span class="fs-period">${Math.max(0, dap_r1-15)} días</span>
+    </div>
+    <div class="fs-products">
+      <div class="prod-row">
+        <div class="prod-name">Megafol <small>${PRODUCTOS_FOLIAR.megafol.empresa} · anti-estrés trasplante</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">2 aplic. (días 7 y 21)</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Sett <small>${PRODUCTOS_FOLIAR.sett.empresa} · Ca + B paredes celulares</small></div>
+        <div>
+          <span class="prod-dose">1.5 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  // ETAPA 2: Cuaje
+  programa += `<div class="foliar-stage cuaje">
+    <div class="fs-head">
+      <span class="fs-icon">🌸</span>
+      <div>
+        <div class="fs-title">Cuaje y antesis (R1-R3)</div>
+        <div style="font-size:.7rem;color:var(--muted)">Día ${dap_r1} al ${dap_r1+20} · Crítico para frutos huecos</div>
+      </div>
+      <span class="fs-period">~20 días</span>
+    </div>
+    <div class="fs-products">
+      <div class="prod-row">
+        <div class="prod-name">Sett <small>cuaje, Ca/B/hormonas anti-aborto</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">cada 7-10 días</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Megafol <small>anti-estrés cuaje</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>
+      ${riesgoFrutosHuecos ? `<div class="prod-row" style="background:#FCEAE6;border-left:3px solid var(--red)">
+        <div class="prod-name">Stimulate <small>⚠ adicional · hormonas para cuaje (riesgo huecos alto)</small></div>
+        <div>
+          <span class="prod-dose">1 L/ha</span>
+          <span class="prod-frec">2 aplic. en cuaje</span>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+
+  // ETAPA 3: Engorda
+  programa += `<div class="foliar-stage engorda">
+    <div class="fs-head">
+      <span class="fs-icon">🍅</span>
+      <div>
+        <div class="fs-title">Engorda activa (R3-R5)</div>
+        <div style="font-size:.7rem;color:var(--muted)">Día ${dap_r1+20} al ${dap_r1+50} · Llenado, color, firmeza</div>
+      </div>
+      <span class="fs-period">~30 días</span>
+    </div>
+    <div class="fs-products">
+      <div class="prod-row">
+        <div class="prod-name">Lokomotive <small>K-acetato, llenado uniforme</small></div>
+        <div>
+          <span class="prod-dose">3 L/ha</span>
+          <span class="prod-frec">cada 10-14 días</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Fullmag <small>Mg-acetato, color y pigmentos</small></div>
+        <div>
+          <span class="prod-dose">1.75 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Sett <small>Ca + B continuo, vida útil</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>
+      ${riesgoMicrocrack ? `<div class="prod-row" style="background:#FCEAE6;border-left:3px solid var(--red)">
+        <div class="prod-name">Mezcla anti-microcracking <small>⚠ Betasilica Activ + Sett + Silwet</small></div>
+        <div>
+          <span class="prod-dose">2 + 1 + 0.5cc/L</span>
+          <span class="prod-frec">cada 7 días, 4 aplic.</span>
+        </div>
+      </div>` : ''}
+      ${(riesgoBlotchy || riesgoGrayWall) ? `<div class="prod-row" style="background:#FEFAEC;border-left:3px solid var(--gold)">
+        <div class="prod-name">Bayfolan Ambition <small>⚠ refuerzo NPK+algas</small></div>
+        <div>
+          <span class="prod-dose">1.5 L/ha</span>
+          <span class="prod-frec">cada 15 días</span>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+
+  // ETAPA 4: Pre-cosecha y madurez
+  programa += `<div class="foliar-stage precosecha">
+    <div class="fs-head">
+      <span class="fs-icon">🍅</span>
+      <div>
+        <div class="fs-title">Pre-cosecha y madurez (R5+)</div>
+        <div style="font-size:.7rem;color:var(--muted)">Día ${dap_r1+50} al cosecha · Vida útil 12-14 días</div>
+      </div>
+      <span class="fs-period">final de ciclo</span>
+    </div>
+    <div class="fs-products">
+      <div class="prod-row">
+        <div class="prod-name">Lokomotive <small>K para firmeza pre-cosecha</small></div>
+        <div>
+          <span class="prod-dose">2.5 L/ha</span>
+          <span class="prod-frec">cada 10 días</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Fullmag <small>Mg uniformidad color</small></div>
+        <div>
+          <span class="prod-dose">1.5 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>
+      <div class="prod-row">
+        <div class="prod-name">Sett <small>Ca para 14 días anaquel</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">cada 14 días hasta cosecha</span>
+        </div>
+      </div>
+      ${riesgoHombroVerde ? `<div class="prod-row" style="background:#FEFAEC;border-left:3px solid var(--gold)">
+        <div class="prod-name">Vitanica Silicio <small>⚠ Si para uniformidad madurez</small></div>
+        <div>
+          <span class="prod-dose">2 L/ha</span>
+          <span class="prod-frec">cada 14 días</span>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+
+  $('foliar-program').innerHTML = programa;
+
+  // Vía riego
+  $('foliar-via-riego').innerHTML = `
+    <div class="foliar-stage cuaje">
+      <div class="fs-head">
+        <span class="fs-icon">🌱</span>
+        <div>
+          <div class="fs-title">Establecimiento (vía riego)</div>
+        </div>
+      </div>
+      <div class="fs-products">
+        <div class="prod-row">
+          <div class="prod-name">Rootex <small>${PRODUCTOS_FOLIAR.rootex.empresa} · enraizante</small></div>
+          <div><span class="prod-dose">3 kg/ha</span><span class="prod-frec">1 aplic. semana 1</span></div>
+        </div>
+        <div class="prod-row">
+          <div class="prod-name">Rizogen Plus <small>${PRODUCTOS_FOLIAR.rizogen.empresa} · alternativa enraizante</small></div>
+          <div><span class="prod-dose">2 L/ha</span><span class="prod-frec">1-2 aplic. semanas 1-3</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foliar-stage engorda">
+      <div class="fs-head">
+        <span class="fs-icon">🌊</span>
+        <div>
+          <div class="fs-title">Bioestimulación durante todo el ciclo</div>
+        </div>
+      </div>
+      <div class="fs-products">
+        <div class="prod-row">
+          <div class="prod-name">Stimplex <small>Ascophyllum 100% via riego</small></div>
+          <div><span class="prod-dose">2 L/ha</span><span class="prod-frec">cada 14 días</span></div>
+        </div>
+        <div class="prod-row">
+          <div class="prod-name">Bioforge <small>${PRODUCTOS_FOLIAR.bioforge.empresa} · reguladores</small></div>
+          <div><span class="prod-dose">1.5 L/ha</span><span class="prod-frec">en momentos críticos</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Calcular costos del programa foliar
+  renderCostosFoliar();
+}
+
+function renderCostosFoliar() {
+  // Aprox: contar aplicaciones y multiplicar por dosis típicas
+  // No tenemos precios específicos por producto comercial sin catálogo, mostramos resumen de cantidades
+  const e = EPOCAS_DATA[currentEpoca];
+  const dac = e.dac_r1;
+  const dap = e.dap_r1;
+  const cicloTotal = dap + dac + 30; // hasta últimos racimos
+
+  // Estimación gruesa de cantidades totales por ciclo
+  const aplics = {
+    sett: Math.floor((dap+dac) / 10), // cada ~10d en cuaje + 14d en engorda
+    lokomotive: Math.floor(dac / 12),
+    fullmag: Math.floor(dac / 14),
+    megafol: 6, // ~6 aplicaciones por ciclo
+    betasilica: calcularRiesgoEpoca(currentEpoca, 'microcrack') === 'alto' ? 4 : 2,
+    bayfolan: (calcularRiesgoEpoca(currentEpoca, 'blotchy') === 'alto' || calcularRiesgoEpoca(currentEpoca, 'gray_wall') === 'alto') ? 3 : 0,
+    vitanica: calcularRiesgoEpoca(currentEpoca, 'hombro_verde') === 'alto' ? 3 : 0,
+    stimulate: calcularRiesgoEpoca(currentEpoca, 'frutos_huecos') === 'alto' ? 2 : 0,
+    rootex: 1,
+    stimplex: Math.floor(cicloTotal / 14)
+  };
+
+  let html = `
+    <table class="reg-table">
+      <thead>
+        <tr><th>Producto</th><th>Empresa</th><th>Dosis</th><th>Aplic./ciclo</th><th>Total/ha</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sett</td><td>Stoller</td><td>1.75 L/ha</td><td>${aplics.sett}</td><td>${(aplics.sett*1.75).toFixed(1)} L</td></tr>
+        <tr><td>Lokomotive</td><td>Nutrien</td><td>3 L/ha</td><td>${aplics.lokomotive}</td><td>${(aplics.lokomotive*3).toFixed(1)} L</td></tr>
+        <tr><td>Fullmag</td><td>Nutrien</td><td>1.75 L/ha</td><td>${aplics.fullmag}</td><td>${(aplics.fullmag*1.75).toFixed(1)} L</td></tr>
+        <tr><td>Megafol</td><td>Valagro</td><td>2 L/ha</td><td>${aplics.megafol}</td><td>${(aplics.megafol*2).toFixed(1)} L</td></tr>
+        ${aplics.betasilica > 0 ? `<tr><td>Betasilica Activ</td><td>Iansa</td><td>2 L/ha</td><td>${aplics.betasilica}</td><td>${(aplics.betasilica*2).toFixed(1)} L</td></tr>` : ''}
+        ${aplics.bayfolan > 0 ? `<tr><td>Bayfolan Ambition</td><td>Bayer</td><td>1.5 L/ha</td><td>${aplics.bayfolan}</td><td>${(aplics.bayfolan*1.5).toFixed(1)} L</td></tr>` : ''}
+        ${aplics.vitanica > 0 ? `<tr><td>Vitanica Silicio</td><td>Compo</td><td>2 L/ha</td><td>${aplics.vitanica}</td><td>${(aplics.vitanica*2).toFixed(1)} L</td></tr>` : ''}
+        ${aplics.stimulate > 0 ? `<tr><td>Stimulate</td><td>Stoller</td><td>1 L/ha</td><td>${aplics.stimulate}</td><td>${(aplics.stimulate).toFixed(1)} L</td></tr>` : ''}
+        <tr><td>Rootex (riego)</td><td>Cosmocel</td><td>3 kg/ha</td><td>${aplics.rootex}</td><td>${(aplics.rootex*3).toFixed(1)} kg</td></tr>
+        <tr><td>Stimplex (riego)</td><td>Acadian</td><td>2 L/ha</td><td>${aplics.stimplex}</td><td>${(aplics.stimplex*2).toFixed(1)} L</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:.5rem">
+      <strong>💰 Para el costo total</strong>
+      Carga los precios de los productos comerciales en el catálogo de Fertilidad de Suelo (futura ampliación). Por ahora se muestran cantidades totales/ha.
+    </div>
+  `;
+  $('foliar-costos').innerHTML = html;
+}
+
+// ============================================================
+// PESTAÑA 7: PREDICCIÓN Y REGISTRO
+// ============================================================
+function renderPrediccion() {
+  const e = EPOCAS_DATA[currentEpoca];
+  const ph = parseFloat($('diag-ph').value) || 7;
+  const hco3 = parseFloat($('diag-hco3').value) || 0;
+  const cn = parseFloat($('diag-cn-suelo').value) || 15;
+  const nFerti = parseFloat($('diag-n-ferti').value) || 0;
+  const nDemanda = parseFloat($('diag-n-demanda').value) || 1;
+  const efic = (parseFloat($('diag-efic-n').value) || 50) / 100;
+  const enm = ENMIENDAS.find(en => en.id === enmiendaActiva);
+  const nh4Alto = enm && enm.nh4_no3 >= 3.5;
+  const phAlto = ph >= UMBRALES.ph_alto;
+  const hco3Alto = hco3 >= UMBRALES.hco3_acid;
+  const trifecta = nh4Alto && phAlto && hco3Alto;
+
+  const nTotal = nFerti * efic + (parseFloat($('diag-n-suelo').value) || 0) + estimarNEnmienda();
+  const pctN = (nTotal / nDemanda) * 100;
+  const excesoN = pctN > UMBRALES.n_exceso_pct;
+
+  // Calcular predicción por defecto
+  const predicciones = {};
+  DEFECTOS.filter(d => defectosActivos.has(d.id)).forEach(d => {
+    let nivel = calcularRiesgoEpoca(currentEpoca, d.id);
+    let factores = [];
+
+    // Modificar nivel según diagnóstico pre-temporada
+    if (d.id === 'goldspeck') {
+      if (trifecta) { nivel = 'alto'; factores.push('Trifecta detectada'); }
+      if (cn < 10) factores.push('C/N bajo');
+    }
+    if (d.id === 'hombro_verde') {
+      if (excesoN) { nivel = 'alto'; factores.push('Exceso N proyectado'); }
+    }
+    if (d.id === 'microcrack') {
+      if (cn < 10) factores.push('C/N bajo (mineralización irregular)');
+    }
+    if (d.id === 'blotchy' || d.id === 'gold_blotch') {
+      if (excesoN) factores.push('Exceso N reduce maduración uniforme');
+    }
+    predicciones[d.id] = {nivel, factores};
+  });
+
+  // Render predicción
+  $('pred-defectos').innerHTML = DEFECTOS.filter(d => defectosActivos.has(d.id)).map(d => {
+    const p = predicciones[d.id];
+    const lblNivel = p.nivel === 'alto' ? 'ALTO' : p.nivel === 'med' ? 'MEDIO' : 'BAJO';
+    const expl = explicarRiesgo(currentEpoca, d.id, p.nivel);
+    return `<div class="pred-card ${p.nivel}">
+      <div class="pred-defect">${d.nombre}</div>
+      <span class="pred-status">Riesgo ${lblNivel}</span>
+      <div class="pred-msg">${expl.razon}${p.factores.length > 0 ? '<br><strong>Factores adicionales:</strong> ' + p.factores.join(', ') : ''}</div>
+    </div>`;
+  }).join('');
+
+  // KPIs estimados
+  let vidaUtilEstim = 14; // base
+  if (predicciones.microcrack && predicciones.microcrack.nivel === 'alto') vidaUtilEstim -= 3;
+  if (predicciones.goldspeck && predicciones.goldspeck.nivel === 'alto') vidaUtilEstim -= 2;
+  if (predicciones.gray_wall && predicciones.gray_wall.nivel === 'alto') vidaUtilEstim -= 1;
+  if (excesoN) vidaUtilEstim -= 1;
+  vidaUtilEstim = Math.max(7, vidaUtilEstim);
+
+  const cumpleObjetivo = vidaUtilEstim >= parseFloat($('cfg-vida').value || 14);
+  $('pred-kpis').innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-cell ${cumpleObjetivo ? 'success' : 'danger'}">
+        <span class="kpi-val">~${vidaUtilEstim} d</span>
+        <span class="kpi-lbl">Vida útil estimada</span>
+      </div>
+      <div class="kpi-cell"><span class="kpi-val">${pctN.toFixed(0)}%</span><span class="kpi-lbl">N/demanda</span></div>
+      <div class="kpi-cell ${trifecta ? 'danger' : 'success'}">
+        <span class="kpi-val">${trifecta ? 'SI' : 'NO'}</span>
+        <span class="kpi-lbl">Trifecta detectada</span>
+      </div>
+      <div class="kpi-cell"><span class="kpi-val">${e.icon}</span><span class="kpi-lbl">${e.nombre}</span></div>
+    </div>
+  `;
+
+  // Acciones críticas
+  let acciones = [];
+  if (trifecta) acciones.push({lvl:'critical', msg:'Resolver trifecta goldspeck: posponer enmienda con NH₄ alto, acidificar agua de riego, monitorear pH suelo.'});
+  if (excesoN) acciones.push({lvl:'critical', msg:'Reducir N programado: aporte total supera demanda en más del 10%.'});
+  if (cn < 10) acciones.push({lvl:'warning', msg:'C/N suelo bajo: aplicar enmiendas con C/N > 15 para regular mineralización.'});
+  if (hco3 >= 1.5) acciones.push({lvl:'warning', msg:'Acidificar agua de riego: ver pestaña 5 para cálculo de dosis.'});
+  if (predicciones.microcrack && predicciones.microcrack.nivel === 'alto') acciones.push({lvl:'warning', msg:'Programa intensivo Betasilica + Sett + Silwet contra microcracking.'});
+  if (predicciones.frutos_huecos && predicciones.frutos_huecos.nivel === 'alto') acciones.push({lvl:'warning', msg:'Sett intensivo en cuaje + Stimulate. Considerar elevar T° invernadero.'});
+  if (vidaUtilEstim < parseFloat($('cfg-vida').value || 14)) acciones.push({lvl:'critical', msg:`Vida útil estimada (${vidaUtilEstim} d) por debajo del objetivo (${$('cfg-vida').value} d). Reforzar K, Ca, Si en pre-cosecha.`});
+
+  if (acciones.length === 0) {
+    acciones.push({lvl:'ok', msg:'No se detectan acciones críticas. Mantener manejo programado y registrar resultados post-cosecha.'});
+  }
+
+  $('pred-acciones').innerHTML = acciones.map(a => `<div class="diag-card ${a.lvl}">
+    <span class="diag-icon">${a.lvl === 'critical' ? '🔴' : a.lvl === 'warning' ? '🟡' : '✓'}</span>
+    <div class="diag-content"><div class="diag-msg">${a.msg}</div></div>
+  </div>`).join('');
+}
+
+// REGISTRO POST-COSECHA
+function agregarRegistro() {
+  const reg = {
+    fecha: $('reg-fecha').value,
+    racimo: $('reg-racimo').value,
+    epoca: currentEpoca,
+    variedad: $('cfg-variedad').value,
+    predio: $('cfg-predio').value,
+    vida: parseFloat($('reg-vida').value) || null,
+    firmeza: parseFloat($('reg-firmeza').value) || null,
+    brix: parseFloat($('reg-brix').value) || null,
+    peso: parseFloat($('reg-peso').value) || null,
+    defectos: {
+      goldspeck: parseFloat($('reg-d-gs').value) || 0,
+      microcrack: parseFloat($('reg-d-mc').value) || 0,
+      hombro_verde: parseFloat($('reg-d-hv').value) || 0,
+      blotchy: parseFloat($('reg-d-bl').value) || 0,
+      gold_blotch: parseFloat($('reg-d-gb').value) || 0,
+      gray_wall: parseFloat($('reg-d-gw').value) || 0,
+      frutos_huecos: parseFloat($('reg-d-fh').value) || 0,
+      cracking: parseFloat($('reg-d-cr').value) || 0
+    }
+  };
+  if (!reg.fecha || reg.vida == null) {
+    alert('Ingresa fecha y vida útil');
+    return;
+  }
+  registros.push(reg);
+  localStorage.setItem('postcosecha_registros', JSON.stringify(registros));
+  renderHistorico();
+  // Limpiar
+  ['reg-vida','reg-firmeza','reg-brix','reg-peso','reg-d-gs','reg-d-mc','reg-d-hv','reg-d-bl','reg-d-gb','reg-d-gw','reg-d-fh','reg-d-cr']
+    .forEach(id => $(id).value = '');
+}
+
+function renderHistorico() {
+  if (registros.length === 0) {
+    $('historico-list').innerHTML = '<div class="no-data">Aún no hay registros de cosechas. Agrega el primero arriba.</div>';
+    return;
+  }
+  $('historico-list').innerHTML = `<table class="reg-table">
+    <thead><tr><th>Fecha</th><th>Predio · Rac</th><th>Época</th><th>Vida útil</th><th>Firmeza</th><th>°Brix</th><th>Total defectos</th></tr></thead>
+    <tbody>
+      ${registros.slice().reverse().map(r => {
+        const totalDef = Object.values(r.defectos).reduce((a,b) => a+b, 0);
+        const e = EPOCAS_DATA[r.epoca] || {icon:''};
+        return `<tr>
+          <td>${fmtDate(r.fecha)}</td>
+          <td>${r.predio||'—'} · R${r.racimo}</td>
+          <td>${e.icon} ${r.epoca}</td>
+          <td><strong>${r.vida || '—'} d</strong></td>
+          <td>${fmt(r.firmeza,1)}</td>
+          <td>${fmt(r.brix,1)}</td>
+          <td>${totalDef.toFixed(1)}%</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderHeaderContext();
+  renderDefectos();
+  renderRiesgoMatrix();
+  renderDiagnostico();
+  renderEnmiendaSelector();
+  renderMineralizacion();
+  renderAcidificacion();
+  renderPlanFoliar();
+  renderPrediccion();
+  renderHistorico();
+  guardarContexto();
+}
+
+// Listeners para inputs
+['cfg-epoca','cfg-variedad','cfg-predio','cfg-vida','cfg-firmeza','cfg-brix'].forEach(id => {
+  if ($(id)) $(id).addEventListener('input', () => {
+    if (id === 'cfg-epoca') currentEpoca = $(id).value;
+    renderAll();
+  });
+});
+
+document.querySelectorAll('.diag-input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    renderDiagnostico();
+    renderPrediccion();
+  });
+});
+
+document.querySelectorAll('.agua-input').forEach(inp => {
+  inp.addEventListener('input', renderAcidificacion);
+});
+
+// Init
+(function init() {
+  leerContextoExterno();
+  $('reg-fecha').value = new Date().toISOString().split('T')[0];
+  renderAll();
+})();
+</script>
+</body>
+</html>

@@ -7,10 +7,13 @@ import Header from "./components/Header";
 import EntryForm from "./components/EntryForm";
 import HistoryTable from "./components/HistoryTable";
 import ChartsPanel from "./components/ChartsPanel";
+import HubSapSoil from "./components/HubSapSoil";
+import ModuleViewer from "./components/ModuleViewer";
 
 import { onAuthStateChange, logout } from "./lib/auth";
 import { fetchEmpresas, fetchPredios, fetchMyProfile, fetchMyAssignedPredios, fetchRegistros, fetchRangos } from "./lib/db";
 import { supabase } from "./lib/supabase";
+import { findModulo } from "./lib/modules-config";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -92,6 +95,16 @@ export default function App() {
     setProfile(null);
   };
 
+  // Handler para abrir un módulo desde el hub
+  const openModulo = (modulo) => {
+    setTab(`modulo:${modulo.id}`);
+  };
+
+  // Handler para volver al hub desde un módulo
+  const backToHub = () => {
+    setTab("sapsoil");
+  };
+
   if (loading) {
     return (
       <div className="app-root" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
@@ -121,6 +134,11 @@ export default function App() {
   }
 
   const empresaNombre = empresas.find(e => e.id === profile.empresa_id)?.nombre;
+
+  // Determinar si estamos viendo un módulo Sap & Soil
+  const moduloActivo = (tab || "").startsWith("modulo:")
+    ? findModulo(tab.replace("modulo:", ""))
+    : null;
 
   return (
     <div className="app-root">
@@ -154,8 +172,24 @@ export default function App() {
         />
       )}
 
+      {/* HUB Sap & Soil */}
+      {tab === "sapsoil" && (
+        <HubSapSoil
+          profile={profile}
+          onSelectModulo={openModulo}
+        />
+      )}
+
+      {/* MÓDULO SELECCIONADO */}
+      {moduloActivo && (
+        <ModuleViewer
+          modulo={moduloActivo}
+          onBack={backToHub}
+        />
+      )}
+
       <footer style={{ borderTop: "1px solid var(--rule)", marginTop: 60, padding: "20px", textAlign: "center", fontSize: 11, color: "var(--ink-3)", letterSpacing: "0.06em" }}>
-        Quillota · {new Date().getFullYear()}
+        Rafael Elizondo Pastén · Quillota · {new Date().getFullYear()}
       </footer>
     </div>
   );

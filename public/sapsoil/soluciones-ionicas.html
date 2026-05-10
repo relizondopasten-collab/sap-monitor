@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Cálculo de Soluciones Iónicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --purple:#5A4A8A;--purple-pale:#F0EDFA;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+
+/* HEADER FORM */
+.dash-header{background:var(--navy);padding:1.5rem 1.4rem 1.4rem;color:#fff}
+.dash-tag{display:inline-block;background:rgba(13,110,110,0.3);border:1px solid rgba(26,158,158,0.4);color:#7DE8E8;font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .65rem;border-radius:2px;margin-bottom:.7rem}
+.dash-header h1{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:#fff;line-height:1.1;margin-bottom:.3rem;font-weight:600}
+.dash-header h1 em{color:#7DE8E8;font-style:italic}
+.dash-sub{font-size:.78rem;color:rgba(255,255,255,.55);margin-bottom:1rem}
+
+.id-form{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.id-field{display:flex;flex-direction:column;gap:.2rem}
+.id-field.full{grid-column:1/-1}
+.id-lbl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)}
+.id-inp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:5px;color:#fff;font-size:.92rem;font-family:'Karla',sans-serif;font-weight:500;padding:.4rem .6rem;outline:none}
+.id-inp:focus{border-color:#7DE8E8;background:rgba(255,255,255,.15)}
+.id-inp::placeholder{color:rgba(255,255,255,.3)}
+
+/* CARD */
+.card{background:#fff;margin:1rem .9rem;border-radius:12px;padding:1.2rem;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--line)}
+.card-header{display:flex;align-items:flex-start;gap:.6rem;margin-bottom:1rem;border-bottom:1px solid var(--line);padding-bottom:.7rem}
+.card-num{width:30px;height:30px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.card-titles{flex:1}
+.card-eyebrow{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--teal-lt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.15rem}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy);font-weight:600;line-height:1.15}
+
+/* ION GRID for inputs */
+.ion-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-bottom:.8rem}
+.ion-input{display:flex;flex-direction:column;gap:.15rem;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.5rem .55rem}
+.ion-input.cation{background:#EBF9F9;border-color:#9ED5D5}
+.ion-input.anion{background:#FFF8EC;border-color:#E8C470}
+.ion-lbl{display:flex;justify-content:space-between;align-items:baseline;gap:.3rem}
+.ion-name{font-weight:700;font-size:.78rem;color:var(--navy);font-family:'Karla',sans-serif}
+.ion-role-sm{font-size:.6rem;color:var(--muted)}
+.ion-inp{background:#fff;border:1px solid var(--line);border-radius:4px;padding:.3rem .5rem;font-size:.95rem;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);outline:none;width:100%}
+.ion-inp:focus{border-color:var(--teal)}
+.ion-unit{font-size:.6rem;color:var(--muted);text-align:right;margin-top:.05rem}
+
+/* RESULTS BAR */
+.summary{background:var(--navy);border-radius:8px;padding:.8rem;color:#fff;margin-top:.5rem}
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;text-align:center}
+.s-box{background:rgba(255,255,255,.06);border-radius:5px;padding:.45rem .3rem}
+.s-val{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:#7DE8E8;font-weight:700;display:block;line-height:1}
+.s-lbl{font-size:.58rem;color:rgba(255,255,255,.55);display:block;margin-top:.2rem;text-transform:uppercase;letter-spacing:.05em}
+.status-bar{margin-top:.55rem;padding:.5rem .7rem;border-radius:5px;font-size:.74rem;line-height:1.4;display:none}
+.s-ok{background:rgba(42,96,65,.4);border:1px solid rgba(42,96,65,.6);color:#A5E5C0}
+.s-warn{background:rgba(212,130,10,.3);border:1px solid rgba(212,130,10,.5);color:#FFD89A}
+.s-err{background:rgba(181,54,30,.3);border:1px solid rgba(181,54,30,.5);color:#FFB5A0}
+
+/* WATER inputs - additional fields */
+.water-extra{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-top:.4rem}
+
+/* NET NEEDS */
+.diff-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:.3rem}
+.diff-table th{background:var(--purple);color:#fff;padding:.4rem .55rem;font-size:.65rem;font-weight:600;text-align:left;letter-spacing:.04em}
+.diff-table th.r{text-align:right}
+.diff-table td{padding:.4rem .55rem;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:.78rem}
+.diff-table td.r{text-align:right}
+.diff-table td:first-child{font-family:'Karla',sans-serif;font-weight:600;color:var(--navy)}
+.diff-table tr:nth-child(even) td{background:var(--bg)}
+.pos{color:var(--green);font-weight:700}
+.neg{color:var(--red);font-weight:700}
+.zero{color:var(--muted)}
+
+/* RECIPE */
+.recipe-section{margin-top:.7rem}
+.recipe-h{font-size:.7rem;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.07em;margin:.7rem 0 .35rem;padding-bottom:.25rem;border-bottom:1px solid var(--purple-pale)}
+.recipe-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.recipe-table th{background:var(--teal);color:#fff;padding:.4rem .55rem;font-size:.65rem;font-weight:600;text-align:left}
+.recipe-table th.r{text-align:right}
+.recipe-table td{padding:.45rem .55rem;border-bottom:1px solid var(--line)}
+.recipe-table td.r{text-align:right;font-family:'DM Mono',monospace;font-weight:600;color:var(--navy)}
+.recipe-table tr:nth-child(even) td{background:var(--bg)}
+.fert-name{font-weight:600;color:var(--navy)}
+.fert-formula{font-size:.66rem;color:var(--muted);font-family:'DM Mono',monospace}
+.recipe-table tr.zero-row{opacity:.4}
+.recipe-table tr.zero-row td{font-style:italic}
+
+.acid-tag{background:var(--red);color:#fff;font-size:.55rem;padding:.08rem .35rem;border-radius:2px;margin-left:.3rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+.salt-tag{background:var(--teal);color:#fff;font-size:.55rem;padding:.08rem .35rem;border-radius:2px;margin-left:.3rem;text-transform:uppercase;letter-spacing:.05em;font-weight:700}
+
+/* TANK CONFIG */
+.tank-tabs{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.tank-tab{flex:1;min-width:140px;background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.55rem .7rem;font-size:.78rem;font-family:'Karla',sans-serif;cursor:pointer;text-align:center;transition:all .15s;color:var(--muted);font-weight:600}
+.tank-tab:hover{border-color:var(--teal-lt);color:var(--teal)}
+.tank-tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+.stock-config{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.8rem;margin-bottom:1rem}
+.stock-config-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:.5rem}
+.stock-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem}
+.stock-field{display:flex;flex-direction:column;gap:.15rem}
+.stock-lbl{font-size:.6rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.stock-inp{background:#fff;border:1px solid var(--line);border-radius:4px;padding:.35rem .5rem;font-size:.95rem;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy);outline:none}
+.stock-inp:focus{border-color:var(--teal)}
+
+.tank-grid{display:flex;flex-direction:column;gap:.7rem}
+.tank-card{border-radius:10px;padding:.95rem;border:2px solid var(--line);background:#fff}
+.tank-card.t-A{background:#EBF9F9;border-color:#9ED5D5}
+.tank-card.t-B{background:#FFF8EC;border-color:#E8C470}
+.tank-card.t-C{background:#F0EDFA;border-color:#C0B5E5}
+.tank-card.t-acid{background:#FAEAE6;border-color:#E8A090}
+
+.tank-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;padding-bottom:.45rem;border-bottom:1px solid rgba(0,0,0,.08)}
+.tank-letter{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:#fff;flex-shrink:0}
+.tank-letter.A{background:var(--teal)}
+.tank-letter.B{background:var(--amber)}
+.tank-letter.C{background:var(--purple)}
+.tank-letter.D{background:var(--red)}
+.tank-info{flex:1;margin-left:.6rem}
+.tank-title{font-weight:700;font-size:.92rem;color:var(--navy)}
+.tank-sub{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.tank-badges{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.3rem}
+.tank-badge{background:rgba(0,0,0,.08);font-size:.58rem;font-weight:700;padding:.1rem .4rem;border-radius:2px;text-transform:uppercase;letter-spacing:.04em}
+
+.tank-table{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:.3rem}
+.tank-table td{padding:.32rem .4rem;border-bottom:1px solid rgba(0,0,0,.08)}
+.tank-table td:first-child{color:var(--ink2)}
+.tank-table td.r{text-align:right;font-family:'DM Mono',monospace;font-weight:700;color:var(--navy)}
+.tank-table tr:last-child td{border-bottom:none}
+.tank-empty{font-size:.74rem;color:var(--muted);font-style:italic;text-align:center;padding:.5rem 0}
+
+.tank-total{margin-top:.5rem;padding-top:.45rem;border-top:1.5px solid rgba(0,0,0,.15);display:flex;justify-content:space-between;align-items:center;font-size:.76rem}
+.tank-total-lbl{font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:.65rem;color:var(--ink2)}
+.tank-total-val{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--navy)}
+
+.warning-strip{background:var(--red-pale);border:1px solid #E8A090;border-radius:6px;padding:.55rem .8rem;margin-top:.7rem;font-size:.74rem;color:#7A2010;line-height:1.5;display:none}
+.warning-strip.show{display:block}
+
+.note{background:var(--bg);border-left:3px solid var(--teal-lt);padding:.6rem .8rem;border-radius:0 5px 5px 0;font-size:.72rem;color:var(--muted);margin-top:.7rem;line-height:1.55}
+.note strong{color:var(--ink2);display:block;margin-bottom:.2rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}
+
+.btn-print{background:var(--navy);color:#fff;border:none;border-radius:6px;padding:.55rem 1rem;font-size:.78rem;font-weight:600;font-family:'Karla',sans-serif;cursor:pointer;width:100%;margin-top:.7rem}
+.btn-print:hover{background:#0B3D5C}
+
+/* PHENOLOGY SELECTOR */
+.phenology{background:linear-gradient(135deg,var(--teal-pale) 0%,var(--bg) 100%);border:1px solid #9ED5D5;border-radius:8px;padding:.65rem .75rem;margin-bottom:1rem}
+.ps-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.45rem}
+.ps-row:last-child{margin-bottom:0}
+.ps-lbl{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);min-width:55px;flex-shrink:0}
+.ps-buttons{display:flex;flex-wrap:wrap;gap:.3rem;flex:1}
+.crop-btn,.stage-btn{background:#fff;border:1.5px solid var(--line);color:var(--ink2);border-radius:5px;padding:.28rem .6rem;font-size:.72rem;font-family:'Karla',sans-serif;cursor:pointer;transition:all .15s;font-weight:500;white-space:nowrap}
+.crop-btn:hover,.stage-btn:hover{border-color:var(--teal-lt);color:var(--teal)}
+.crop-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:700}
+.stage-btn.active{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:700}
+
+/* MICROELEMENTS CARD */
+.micro-variant-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.8rem}
+.micro-variant{background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:.65rem .7rem;cursor:pointer;transition:all .15s}
+.micro-variant:hover{border-color:var(--teal-lt)}
+.micro-variant.active{background:var(--teal-pale);border-color:var(--teal);box-shadow:0 0 0 1px var(--teal) inset}
+.mv-name{font-weight:700;font-size:.78rem;color:var(--navy);margin-bottom:.15rem}
+.mv-info{font-size:.65rem;color:var(--muted);line-height:1.4}
+.mv-comp{font-size:.6rem;color:var(--teal);font-family:'DM Mono',monospace;margin-top:.3rem;line-height:1.4}
+
+.micro-input-row{display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:.7rem}
+.micro-table{width:100%;border-collapse:collapse;font-size:.76rem;margin-top:.4rem}
+.micro-table th{background:var(--purple);color:#fff;padding:.4rem .5rem;font-size:.62rem;font-weight:600;text-align:left}
+.micro-table th.r{text-align:right}
+.micro-table td{padding:.4rem .5rem;border-bottom:1px solid var(--line)}
+.micro-table td.r{text-align:right;font-family:'DM Mono',monospace;font-weight:600}
+.micro-table tr:nth-child(even) td{background:var(--bg)}
+.m-ok{color:var(--green);font-weight:700}
+.m-low{color:var(--amber);font-weight:700}
+.m-high{color:var(--red);font-weight:700}
+
+.dose-display{background:var(--navy);color:#fff;border-radius:8px;padding:.85rem 1rem;margin-top:.7rem;display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.dose-box{text-align:center;padding:.4rem;background:rgba(255,255,255,.06);border-radius:5px}
+.dose-val{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:#7DE8E8;font-weight:700;display:block;line-height:1.1}
+.dose-lbl{font-size:.6rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem;display:block}
+
+.boron-supp{background:var(--amber-pale);border:1px solid #E8C470;border-radius:6px;padding:.55rem .75rem;margin-top:.6rem;font-size:.74rem;line-height:1.5;display:none}
+.boron-supp.show{display:block}
+.boron-supp strong{color:var(--amber);text-transform:uppercase;letter-spacing:.05em;font-size:.65rem;display:block;margin-bottom:.2rem}
+
+/* EC ADJUST */
+.ec-adjust{background:linear-gradient(135deg,var(--purple-pale) 0%,var(--bg) 100%);border:1.5px solid #C0B5E5;border-radius:8px;padding:.75rem .85rem;margin-top:.7rem}
+.ea-title{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple);margin-bottom:.55rem}
+.ea-grid{display:flex;align-items:center;gap:.5rem;justify-content:space-between;flex-wrap:wrap}
+.ea-cell{flex:1;min-width:90px;text-align:center;background:#fff;border-radius:6px;padding:.45rem .35rem;border:1px solid var(--line)}
+.ea-cell.input-cell{border-color:var(--purple);background:#FBFAFE}
+.ea-lbl{font-size:.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.2rem;line-height:1.2}
+.ea-val{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--navy);font-weight:700;display:block;line-height:1}
+.ea-cell.input-cell .ea-val{color:var(--purple)}
+.ea-inp{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--purple);background:transparent;border:none;border-bottom:1.5px solid var(--purple);padding:0 .2rem 1px;text-align:center;width:65px;outline:none;display:block;margin:0 auto}
+.ea-inp:focus{border-bottom-width:2px}
+.ea-unit{font-size:.58rem;color:var(--muted);display:block;margin-top:.15rem}
+.ea-arrow{color:var(--purple);font-size:1.1rem;font-weight:700;flex-shrink:0;padding:0 .15rem}
+.ea-status{margin-top:.55rem;padding:.45rem .65rem;border-radius:5px;font-size:.72rem;line-height:1.45;display:none}
+.ea-status.s-down{background:rgba(212,130,10,.12);border:1px solid rgba(212,130,10,.3);color:#7A4810}
+.ea-status.s-up{background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.3);color:#7A2010}
+.ea-status.s-none{background:rgba(42,96,65,.1);border:1px solid rgba(42,96,65,.25);color:#1F4530}
+
+@media print{
+  body{font-size:11pt}
+  .card{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid;margin:.5rem 0}
+  .btn-print{display:none}
+  .tank-tabs{display:none}
+}
+
+@media (min-width:600px){
+  .ion-grid{grid-template-columns:repeat(3,1fr)}
+  .water-extra{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="dash-header">
+  <div class="dash-tag">Dashboard técnico</div>
+  <h1>Cálculo de <em>Soluciones Iónicas</em></h1>
+  <p class="dash-sub">Equilibrio iónico · Análisis de agua · Receta de fertilizantes · Configuración de estanques</p>
+
+  <div class="id-form">
+    <div class="id-field full">
+      <label class="id-lbl">Predio / Empresa</label>
+      <input class="id-inp" id="hdr-predio" placeholder="Ej: Agrícola Origen SpA">
+    </div>
+    <div class="id-field">
+      <label class="id-lbl">Cultivo / Variedad</label>
+      <input class="id-inp" id="hdr-cultivo" placeholder="Ej: Frutilla / Albión">
+    </div>
+    <div class="id-field">
+      <label class="id-lbl">Fecha</label>
+      <input class="id-inp" id="hdr-fecha" type="date">
+    </div>
+  </div>
+</div>
+
+<!-- ═════ CARD 1: SOLUCIÓN OBJETIVO ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">1</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Verificador de equilibrio iónico</div>
+      <div class="card-title">Solución objetivo en gotero</div>
+    </div>
+  </div>
+
+  <div class="phenology">
+    <div class="ps-row">
+      <span class="ps-lbl">Cultivo</span>
+      <div class="ps-buttons" id="crop-buttons">
+        <button class="crop-btn active" data-crop="frutilla">🍓 Frutilla</button>
+        <button class="crop-btn" data-crop="tomate">🍅 Tomate</button>
+        <button class="crop-btn" data-crop="pimiento">🫑 Pimiento</button>
+        <button class="crop-btn" data-crop="pepino">🥒 Pepino</button>
+      </div>
+    </div>
+    <div class="ps-row">
+      <span class="ps-lbl">Etapa</span>
+      <div class="ps-buttons" id="stage-buttons"></div>
+    </div>
+  </div>
+
+  <div class="ion-grid">
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">NH₄⁺</span><span class="ion-role-sm">Amonio</span></div><input class="ion-inp" id="t-nh4" type="number" value="0.5" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">K⁺</span><span class="ion-role-sm">Potasio</span></div><input class="ion-inp" id="t-k" type="number" value="6.5" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">Ca²⁺</span><span class="ion-role-sm">Calcio</span></div><input class="ion-inp" id="t-ca" type="number" value="5.0" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">Mg²⁺</span><span class="ion-role-sm">Magnesio</span></div><input class="ion-inp" id="t-mg" type="number" value="2.0" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">NO₃⁻</span><span class="ion-role-sm">Nitrato</span></div><input class="ion-inp" id="t-no3" type="number" value="13.0" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">H₂PO₄⁻</span><span class="ion-role-sm">Fosfato</span></div><input class="ion-inp" id="t-p" type="number" value="1.3" step="0.1"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">SO₄²⁻</span><span class="ion-role-sm">Sulfato</span></div><input class="ion-inp" id="t-so4" type="number" value="2.0" step="0.1"><div class="ion-unit">mmol/L</div></div>
+  </div>
+
+  <div class="ec-adjust">
+    <div class="ea-title">⚖️ Ajuste por CE limitante de fertirriego</div>
+    <div class="ea-grid">
+      <div class="ea-cell">
+        <span class="ea-lbl">CE ideal calculada</span>
+        <span class="ea-val" id="ec-ideal">—</span>
+        <span class="ea-unit">mS/cm</span>
+      </div>
+      <div class="ea-arrow">→</div>
+      <div class="ea-cell input-cell">
+        <span class="ea-lbl">CE objetivo</span>
+        <input class="ea-inp" id="ec-target" type="number" value="2.0" step="0.05" min="0.3" max="4">
+        <span class="ea-unit">mS/cm</span>
+      </div>
+      <div class="ea-arrow">=</div>
+      <div class="ea-cell">
+        <span class="ea-lbl">Factor de escala</span>
+        <span class="ea-val" id="ec-factor">—</span>
+        <span class="ea-unit">sobre la receta</span>
+      </div>
+    </div>
+    <div class="ea-status" id="ec-status"></div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-row">
+      <div class="s-box"><span class="s-val" id="t-cat">—</span><span class="s-lbl">Cationes (meq)</span></div>
+      <div class="s-box"><span class="s-val" id="t-an">—</span><span class="s-lbl">Aniones (meq)</span></div>
+      <div class="s-box"><span class="s-val" id="t-balance">—</span><span class="s-lbl">Balance Cat/An</span></div>
+      <div class="s-box"><span class="s-val" id="t-ec">—</span><span class="s-lbl">CE estimada</span></div>
+    </div>
+    <div class="status-bar" id="t-status"></div>
+  </div>
+</div>
+
+<!-- ═════ CARD 2: AGUA ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">2</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Análisis químico del agua</div>
+      <div class="card-title">Calidad de agua de riego (fuente)</div>
+    </div>
+  </div>
+
+  <div class="ion-grid">
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">NH₄⁺</span><span class="ion-role-sm">Amonio</span></div><input class="ion-inp" id="w-nh4" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">K⁺</span><span class="ion-role-sm">Potasio</span></div><input class="ion-inp" id="w-k" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">Ca²⁺</span><span class="ion-role-sm">Calcio</span></div><input class="ion-inp" id="w-ca" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">Mg²⁺</span><span class="ion-role-sm">Magnesio</span></div><input class="ion-inp" id="w-mg" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input cation"><div class="ion-lbl"><span class="ion-name">Na⁺</span><span class="ion-role-sm">Sodio</span></div><input class="ion-inp" id="w-na" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">NO₃⁻</span><span class="ion-role-sm">Nitrato</span></div><input class="ion-inp" id="w-no3" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">H₂PO₄⁻</span><span class="ion-role-sm">Fosfato</span></div><input class="ion-inp" id="w-p" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">SO₄²⁻</span><span class="ion-role-sm">Sulfato</span></div><input class="ion-inp" id="w-so4" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">Cl⁻</span><span class="ion-role-sm">Cloruro</span></div><input class="ion-inp" id="w-cl" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input anion"><div class="ion-lbl"><span class="ion-name">HCO₃⁻</span><span class="ion-role-sm">Bicarbonato</span></div><input class="ion-inp" id="w-hco3" type="number" value="0" step="0.05"><div class="ion-unit">mmol/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">CE</span><span class="ion-role-sm">Conductividad</span></div><input class="ion-inp" id="w-ec" type="number" value="0.05" step="0.05"><div class="ion-unit">mS/cm</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">pH</span><span class="ion-role-sm">Acidez</span></div><input class="ion-inp" id="w-ph" type="number" value="6.5" step="0.1"><div class="ion-unit">unidades</div></div>
+  </div>
+
+  <div class="recipe-h" style="margin-top:.5rem">Microelementos (mg/L o ppm)</div>
+  <div class="ion-grid">
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">Fe</span></div><input class="ion-inp" id="w-fe" type="number" value="0" step="0.01"><div class="ion-unit">mg/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">Mn</span></div><input class="ion-inp" id="w-mn" type="number" value="0" step="0.01"><div class="ion-unit">mg/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">Zn</span></div><input class="ion-inp" id="w-zn" type="number" value="0" step="0.01"><div class="ion-unit">mg/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">B</span></div><input class="ion-inp" id="w-b" type="number" value="0" step="0.01"><div class="ion-unit">mg/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">Cu</span></div><input class="ion-inp" id="w-cu" type="number" value="0" step="0.001"><div class="ion-unit">mg/L</div></div>
+    <div class="ion-input"><div class="ion-lbl"><span class="ion-name">Mo</span></div><input class="ion-inp" id="w-mo" type="number" value="0" step="0.001"><div class="ion-unit">mg/L</div></div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-row">
+      <div class="s-box"><span class="s-val" id="w-catval">—</span><span class="s-lbl">Cationes (meq)</span></div>
+      <div class="s-box"><span class="s-val" id="w-anval">—</span><span class="s-lbl">Aniones (meq)</span></div>
+      <div class="s-box"><span class="s-val" id="w-bal">—</span><span class="s-lbl">Balance</span></div>
+      <div class="s-box"><span class="s-val" id="w-ecest">—</span><span class="s-lbl">CE calculada</span></div>
+    </div>
+    <div class="status-bar" id="w-status"></div>
+  </div>
+
+  <div class="note">
+    <strong>Conversión rápida</strong>
+    1 mmol/L NO₃⁻ = 62 mg/L · 1 mmol/L Ca²⁺ = 40 mg/L · 1 mmol/L K⁺ = 39 mg/L · 1 mmol/L SO₄²⁻ = 96 mg/L · 1 mmol/L HCO₃⁻ = 61 mg/L · 1 mmol/L Mg²⁺ = 24 mg/L
+  </div>
+</div>
+
+<!-- ═════ CARD 3: NECESIDADES NETAS ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">3</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Diferencia Objetivo − Agua</div>
+      <div class="card-title">Aporte neto necesario por fertilizantes</div>
+    </div>
+  </div>
+
+  <table class="diff-table">
+    <thead><tr><th>Ion</th><th class="r">Objetivo</th><th class="r">Agua</th><th class="r">Aporte neto</th><th class="r">Estado</th></tr></thead>
+    <tbody id="diff-tbody"></tbody>
+  </table>
+
+  <div class="warning-strip" id="excess-warn"></div>
+</div>
+
+<!-- ═════ CARD 4: RECETA ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">4</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Cálculo de fertilizantes</div>
+      <div class="card-title">Receta de sales y ácidos por litro de solución final</div>
+    </div>
+  </div>
+
+  <div class="recipe-h">Ácidos (neutralizan HCO₃⁻ y aportan N / P)</div>
+  <table class="recipe-table">
+    <thead><tr><th>Producto</th><th class="r">Dosis</th><th class="r">Aporta</th></tr></thead>
+    <tbody id="acid-tbody"></tbody>
+  </table>
+
+  <div class="recipe-h">Sales (formulación maestra)</div>
+  <table class="recipe-table">
+    <thead><tr><th>Fertilizante</th><th class="r">Dosis (g/L)</th><th class="r">Aporta</th></tr></thead>
+    <tbody id="salt-tbody"></tbody>
+  </table>
+
+  <div class="warning-strip" id="recipe-warn"></div>
+
+  <div class="note">
+    <strong>Concentración de los ácidos comerciales</strong>
+    HNO₃ 60 % (densidad 1,37 g/mL) = 13,05 mmol H⁺ / mL · H₃PO₄ 85 % (densidad 1,685 g/mL) = 14,61 mmol H⁺ / mL. Si la concentración de tu producto comercial es distinta, ajustar proporcionalmente.
+  </div>
+</div>
+
+<!-- ═════ CARD 5: MICROELEMENTOS ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">5</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Mix de microelementos</div>
+      <div class="card-title">Fetrilon Combi · cálculo de dosis y aporte</div>
+    </div>
+  </div>
+
+  <div class="micro-variant-row">
+    <div class="micro-variant active" data-v="combi1">
+      <div class="mv-name">Fetrilon Combi 1 (con boro)</div>
+      <div class="mv-info">Aplicación general en agua de pH ≤ 6,5. Fe quelado con EDTA.</div>
+      <div class="mv-comp">Fe 9% · Mn 4% · Zn 1,5% · Cu 1,5% · B 0,5% · Mo 0,1%</div>
+    </div>
+    <div class="micro-variant" data-v="combi2">
+      <div class="mv-name">Fetrilon Combi 2 (sin boro)</div>
+      <div class="mv-info">Permite ajustar B independientemente con ácido bórico. Fe con DTPA, más estable a pH alto.</div>
+      <div class="mv-comp">Fe 9% · Mn 4% · Zn 1,5% · Cu 1,5% · Mo 0,1% · sin B</div>
+    </div>
+  </div>
+
+  <div class="micro-input-row">
+    <div class="ion-input">
+      <div class="ion-lbl"><span class="ion-name">Fe objetivo</span><span class="ion-role-sm">Hierro</span></div>
+      <input class="ion-inp" id="m-fe-target" type="number" value="20" step="1" min="5" max="50">
+      <div class="ion-unit">µmol/L (15–25 normal · 30–40 con clorosis)</div>
+    </div>
+    <div class="ion-input" style="background:var(--bg)">
+      <div class="ion-lbl"><span class="ion-name">Producto</span><span class="ion-role-sm">Variante</span></div>
+      <div class="ion-inp" id="m-variant-display" style="font-size:.78rem;line-height:1.3;padding:.4rem .5rem;cursor:default;background:#fff">Combi 1 (con B)</div>
+      <div class="ion-unit">cambia con el selector arriba</div>
+    </div>
+  </div>
+
+  <table class="micro-table">
+    <thead><tr><th>Elemento</th><th class="r">Objetivo (µmol/L)</th><th class="r">Aporta Fetrilon</th><th class="r">mg/L final</th><th class="r">Estado</th></tr></thead>
+    <tbody id="micro-tbody"></tbody>
+  </table>
+
+  <div class="dose-display">
+    <div class="dose-box">
+      <span class="dose-val" id="m-dose">—</span>
+      <span class="dose-lbl">Dosis Fetrilon (g/m³ final)</span>
+    </div>
+    <div class="dose-box">
+      <span class="dose-val" id="m-dose-stock">—</span>
+      <span class="dose-lbl">Por estanque madre</span>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Cómo elegir entre las variantes de Fetrilon Combi</strong>
+    Ambos son productos comerciales de Compo con la misma base de Fe-Mn-Zn-Cu-Mo. <strong>Combi 1</strong> incluye boro en su formulación (B 0,5 %) — es la opción para cultivos con demanda media de B (frutilla, pepino) cuando se busca simplificar el manejo. <strong>Combi 2</strong> no contiene boro — se selecciona cuando el agua de riego ya aporta B suficiente, cuando el cultivo es sensible al B (frutilla en agua con B alto), o cuando se desea ajustar el B independientemente con otro producto. La dosis del cálculo se basa en alcanzar el Fe objetivo; los demás elementos resultan proporcionales a la composición del producto.
+  </div>
+</div>
+
+<!-- ═════ CARD 6: ESTANQUES ═════ -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-num">6</div>
+    <div class="card-titles">
+      <div class="card-eyebrow">Configuración de estanques</div>
+      <div class="card-title">Solución madre concentrada</div>
+    </div>
+  </div>
+
+  <div class="stock-config">
+    <div class="stock-config-title">📐 Parámetros de los estanques</div>
+    <div class="stock-row">
+      <div class="stock-field">
+        <label class="stock-lbl">Volumen estanque (L)</label>
+        <input class="stock-inp" id="tank-vol" type="number" value="1000" step="50">
+      </div>
+      <div class="stock-field">
+        <label class="stock-lbl">Factor concentración</label>
+        <input class="stock-inp" id="tank-conc" type="number" value="100" step="10">
+      </div>
+      <div class="stock-field">
+        <label class="stock-lbl">Sol. final equiv. (L)</label>
+        <input class="stock-inp" id="tank-final" type="number" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="tank-tabs">
+    <div class="tank-tab active" data-conf="2">2 estanques sales + 1 ácido</div>
+    <div class="tank-tab" data-conf="3">3 estanques sales + 1 ácido</div>
+  </div>
+
+  <div class="tank-grid" id="tank-grid"></div>
+
+  <div class="note" style="margin-top:1rem">
+    <strong>⚠️ Reglas de separación</strong>
+    Los iones Ca²⁺ no pueden estar en la misma disolución concentrada que SO₄²⁻ (precipita CaSO₄ — yeso) ni con H₂PO₄⁻ / HPO₄²⁻ (precipita fosfato cálcico). Por eso:<br>
+    • <strong>Estanque A:</strong> Ca(NO₃)₂, KNO₃, Fe quelatado<br>
+    • <strong>Estanque B:</strong> MgSO₄, K₂SO₄, KH₂PO₄, NH₄NO₃<br>
+    • <strong>Estanque C</strong> (opción 3 tanques): microelementos por separado para mayor estabilidad<br>
+    • <strong>Estanque ácidos:</strong> HNO₃ + H₃PO₄ — siempre separado (corrosividad y reactividad)
+  </div>
+
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+</div>
+
+<script>
+// ═══════════ ETAPAS FENOLÓGICAS POR CULTIVO ═══════════
+// Todas las soluciones tienen balance Cationes = Aniones (en meq/L)
+const CROP_STAGES = {
+  frutilla: {
+    name:'Frutilla', icon:'🍓',
+    stages: [
+      { id:'sat',  name:'Saturación CEC',   target:{NH4:0.4,K:2.0,Ca:6.5,Mg:1.5,NO3:14.0,P:0.8,SO4:1.8} },
+      { id:'est',  name:'Establecimiento',  target:{NH4:1.0,K:4.5,Ca:4.0,Mg:1.5,NO3:11.5,P:1.0,SO4:2.0} },
+      { id:'veg',  name:'Vegetativo',       target:{NH4:0.8,K:5.0,Ca:4.5,Mg:1.5,NO3:12.5,P:1.3,SO4:2.0} },
+      { id:'flor', name:'Floración',        target:{NH4:0.5,K:5.5,Ca:4.5,Mg:2.0,NO3:12.5,P:1.5,SO4:2.5} },
+      { id:'prod', name:'Producción',       target:{NH4:0.5,K:6.5,Ca:5.0,Mg:2.0,NO3:13.5,P:1.5,SO4:3.0} },
+      { id:'pico', name:'Pico cosecha',     target:{NH4:0.5,K:7.0,Ca:5.5,Mg:2.0,NO3:14.0,P:1.5,SO4:3.5} },
+    ]
+  },
+  tomate: {
+    name:'Tomate', icon:'🍅',
+    stages: [
+      { id:'est',   name:'Establecimiento',       target:{NH4:1.0,K:4.5,Ca:4.5,Mg:1.5,NO3:11.5,P:1.2,SO4:2.4} },
+      { id:'veg',   name:'Vegetativo',            target:{NH4:1.0,K:5.5,Ca:5.0,Mg:2.0,NO3:13.0,P:1.5,SO4:3.0} },
+      { id:'flor',  name:'Floración 1er racimo',  target:{NH4:0.5,K:6.5,Ca:5.5,Mg:2.0,NO3:13.5,P:1.5,SO4:3.5} },
+      { id:'cuaje', name:'Cuaje y crecim. fruto', target:{NH4:0.5,K:7.5,Ca:5.5,Mg:2.0,NO3:14.5,P:1.5,SO4:3.5} },
+      { id:'cos',   name:'Cosecha plena',         target:{NH4:0.5,K:8.5,Ca:6.0,Mg:2.5,NO3:15.5,P:1.5,SO4:4.5} },
+    ]
+  },
+  pimiento: {
+    name:'Pimiento', icon:'🫑',
+    stages: [
+      { id:'est',  name:'Establecimiento', target:{NH4:0.5,K:4.5,Ca:4.0,Mg:1.5,NO3:11.0,P:1.0,SO4:2.0} },
+      { id:'veg',  name:'Vegetativo',      target:{NH4:0.5,K:5.5,Ca:5.0,Mg:1.5,NO3:13.0,P:1.0,SO4:2.5} },
+      { id:'flor', name:'Floración',       target:{NH4:0.5,K:6.5,Ca:5.0,Mg:2.0,NO3:13.5,P:1.5,SO4:3.0} },
+      { id:'prod', name:'Producción',      target:{NH4:0.5,K:7.5,Ca:5.0,Mg:2.0,NO3:14.5,P:1.5,SO4:3.0} },
+      { id:'cos',  name:'Cosecha plena',   target:{NH4:0.5,K:8.0,Ca:5.5,Mg:2.0,NO3:15.0,P:1.5,SO4:3.5} },
+    ]
+  },
+  pepino: {
+    name:'Pepino', icon:'🥒',
+    stages: [
+      { id:'est',  name:'Establecimiento', target:{NH4:0.5,K:4.5,Ca:4.0,Mg:1.5,NO3:11.0,P:1.0,SO4:2.0} },
+      { id:'veg',  name:'Vegetativo',      target:{NH4:0.8,K:5.0,Ca:4.0,Mg:1.5,NO3:12.0,P:1.2,SO4:1.8} },
+      { id:'flor', name:'Floración / inicio fruto', target:{NH4:0.5,K:6.0,Ca:4.5,Mg:1.5,NO3:12.5,P:1.0,SO4:2.5} },
+      { id:'prod', name:'Producción',      target:{NH4:0.5,K:7.0,Ca:4.5,Mg:1.5,NO3:13.5,P:1.0,SO4:2.5} },
+      { id:'cos',  name:'Cosecha plena',   target:{NH4:0.5,K:7.5,Ca:4.5,Mg:1.5,NO3:14.0,P:1.0,SO4:2.5} },
+    ]
+  }
+};
+
+// ═══════════ FETRILON COMBI ═══════════
+const FETRILON = {
+  combi1: {
+    name:'Fetrilon Combi 1 (con boro)',
+    pct:{ Fe:0.090, Mn:0.040, Zn:0.015, Cu:0.015, B:0.005, Mo:0.001 },
+    chelate:'Fe-EDTA · Mn-EDTA · Zn-EDTA · Cu-EDTA'
+  },
+  combi2: {
+    name:'Fetrilon Combi 2 (sin boro)',
+    pct:{ Fe:0.090, Mn:0.040, Zn:0.015, Cu:0.015, Mo:0.001 },
+    chelate:'Fe-DTPA · Mn-EDTA · Zn-EDTA · Cu-EDTA'
+  }
+};
+const ATOMIC = { Fe:55.85, Mn:54.94, Zn:65.4, Cu:63.55, B:10.81, Mo:95.94 };
+const MICRO_TARGET = { Fe:20, Mn:10, Zn:5, Cu:0.75, B:25, Mo:0.5 };
+let microVariant = 'combi1';
+// ═══════════ DATOS QUÍMICOS ═══════════
+const SALTS = {
+  CaNO3:  { name: 'Nitrato de calcio',     formula: 'Ca(NO₃)₂·4H₂O', mw: 236, ions: { Ca:1, NO3:2 } },
+  KNO3:   { name: 'Nitrato de potasio',    formula: 'KNO₃',          mw: 101, ions: { K:1,  NO3:1 } },
+  MgSO4:  { name: 'Sulfato de magnesio',   formula: 'MgSO₄·7H₂O',    mw: 246, ions: { Mg:1, SO4:1 } },
+  KH2PO4: { name: 'Fosfato monopotásico (MKP)', formula: 'KH₂PO₄',   mw: 136, ions: { K:1,  P:1   } },
+  K2SO4:  { name: 'Sulfato de potasio',    formula: 'K₂SO₄',         mw: 174, ions: { K:2,  SO4:1 } },
+  NH4NO3: { name: 'Nitrato de amonio',     formula: 'NH₄NO₃',        mw: 80,  ions: { NH4:1,NO3:1 } },
+  MgNO3:  { name: 'Nitrato de magnesio',   formula: 'Mg(NO₃)₂·6H₂O', mw: 256, ions: { Mg:1, NO3:2 } },
+};
+
+const ACIDS = {
+  HNO3:  { name:'Ácido nítrico 60%',    formula:'HNO₃ 60%',   mmolPerML: 13.05, ion:'NO3' },
+  H3PO4: { name:'Ácido fosfórico 85%',  formula:'H₃PO₄ 85%',  mmolPerML: 14.61, ion:'P'   },
+};
+
+const ION_LABELS = {
+  NH4:'NH₄⁺', K:'K⁺', Ca:'Ca²⁺', Mg:'Mg²⁺', Na:'Na⁺',
+  NO3:'NO₃⁻', P:'H₂PO₄⁻', SO4:'SO₄²⁻', Cl:'Cl⁻', HCO3:'HCO₃⁻'
+};
+const ION_CHARGE = { NH4:1, K:1, Ca:2, Mg:2, Na:1, NO3:1, P:1, SO4:2, Cl:1, HCO3:1 };
+
+// ═══════════ LECTURA DE INPUTS ═══════════
+const $ = id => parseFloat(document.getElementById(id).value) || 0;
+
+function getTarget() {
+  return { NH4:$('t-nh4'), K:$('t-k'), Ca:$('t-ca'), Mg:$('t-mg'),
+           NO3:$('t-no3'), P:$('t-p'), SO4:$('t-so4') };
+}
+function getWater() {
+  return { NH4:$('w-nh4'), K:$('w-k'), Ca:$('w-ca'), Mg:$('w-mg'), Na:$('w-na'),
+           NO3:$('w-no3'), P:$('w-p'), SO4:$('w-so4'), Cl:$('w-cl'), HCO3:$('w-hco3'),
+           ec:$('w-ec'), ph:$('w-ph') };
+}
+
+// Solución escalada por la CE objetivo de fertirriego
+function getScaledTarget() {
+  const t = getTarget();
+  const cat = meqSum(t, ['NH4','K','Ca','Mg']);
+  const an  = meqSum(t, ['NO3','P','SO4']);
+  // CE ≈ promedio de cationes y aniones (en meq/L) × 0,1
+  // En solución equilibrada cat = an, el factor 0,1 (Sonneveld-Voogt) se aplica a una sola suma
+  const ec_ideal = ((cat + an) / 2) * 0.1;
+  const ec_target = $('ec-target') || ec_ideal;
+  const factor = (ec_ideal > 0 && ec_target > 0) ? ec_target / ec_ideal : 1;
+
+  return {
+    ideal: t,
+    scaled: {
+      NH4: t.NH4 * factor, K: t.K * factor, Ca: t.Ca * factor, Mg: t.Mg * factor,
+      NO3: t.NO3 * factor, P: t.P * factor, SO4: t.SO4 * factor,
+    },
+    factor: factor,
+    ec_ideal: ec_ideal,
+    ec_target: ec_target,
+  };
+}
+
+// ═══════════ BALANCE Y CE ═══════════
+function meqSum(obj, ions) {
+  return ions.reduce((s,k) => s + (obj[k]||0) * ION_CHARGE[k], 0);
+}
+function balanceTarget() {
+  const sc = getScaledTarget();
+  const t = sc.ideal;
+  const cat = meqSum(t, ['NH4','K','Ca','Mg']);
+  const an  = meqSum(t, ['NO3','P','SO4']);
+  const ratio = an>0 ? cat/an : 0;
+  const ec = sc.ec_ideal;
+  document.getElementById('t-cat').textContent = cat.toFixed(1);
+  document.getElementById('t-an').textContent = an.toFixed(1);
+  document.getElementById('t-balance').textContent = ratio.toFixed(2);
+  document.getElementById('t-ec').textContent = ec.toFixed(2);
+  // Panel de ajuste por CE
+  document.getElementById('ec-ideal').textContent = sc.ec_ideal.toFixed(2);
+  document.getElementById('ec-factor').textContent = '×' + sc.factor.toFixed(2);
+  const ecst = document.getElementById('ec-status');
+  const reduction = (1 - sc.factor) * 100;
+  if (Math.abs(sc.factor - 1) < 0.02) {
+    ecst.className = 'ea-status s-none'; ecst.style.display='block';
+    ecst.textContent = '✓ Sin escalado — la receta se calcula con la solución iónica ideal.';
+  } else if (sc.factor < 1) {
+    ecst.className = 'ea-status s-down'; ecst.style.display='block';
+    ecst.textContent = `↓ Solución diluida — concentración iónica reducida ${reduction.toFixed(0)}% para alcanzar la CE objetivo. Las proporciones entre iones se mantienen.`;
+  } else {
+    ecst.className = 'ea-status s-up'; ecst.style.display='block';
+    ecst.textContent = `↑ Solución concentrada — concentración iónica aumentada ${(-reduction).toFixed(0)}% para alcanzar la CE objetivo. Verificar tolerancia del cultivo a alta CE.`;
+  }
+
+  const st = document.getElementById('t-status');
+  const kca = t.Ca>0 ? t.K/t.Ca : 0;
+  if (Math.abs(ratio - 1) < 0.10 && kca <= 1.5) {
+    st.className = 'status-bar s-ok'; st.style.display='block';
+    st.textContent = '✅ Balance iónico correcto. K/Ca = ' + kca.toFixed(2) + ' dentro de rango.';
+  } else if (ratio > 1.10) {
+    st.className = 'status-bar s-warn'; st.style.display='block';
+    st.textContent = '⚠️ Exceso de cationes. Aumentar NO₃⁻ o SO₄²⁻ para balancear.';
+  } else if (ratio < 0.90) {
+    st.className = 'status-bar s-warn'; st.style.display='block';
+    st.textContent = '⚠️ Exceso de aniones. Aumentar cationes o reducir SO₄²⁻.';
+  } else if (kca > 1.5) {
+    st.className = 'status-bar s-warn'; st.style.display='block';
+    st.textContent = '⚠️ Ratio K/Ca = ' + kca.toFixed(2) + ' supera 1,5 — riesgo de inhibición de Ca.';
+  } else {
+    st.style.display = 'none';
+  }
+}
+
+function balanceWater() {
+  const w = getWater();
+  const cat = meqSum(w, ['NH4','K','Ca','Mg','Na']);
+  const an  = meqSum(w, ['NO3','P','SO4','Cl','HCO3']);
+  const ratio = an>0 ? cat/an : (cat>0 ? 999 : 1);
+  const ec = ((cat + an) / 2) * 0.1;
+  document.getElementById('w-catval').textContent = cat.toFixed(2);
+  document.getElementById('w-anval').textContent = an.toFixed(2);
+  document.getElementById('w-bal').textContent = (cat+an < 0.05) ? '—' : ratio.toFixed(2);
+  document.getElementById('w-ecest').textContent = ec.toFixed(2);
+
+  const st = document.getElementById('w-status');
+  if (cat + an < 0.1) {
+    st.className = 'status-bar s-ok'; st.style.display='block';
+    st.textContent = '💧 Agua de muy baja salinidad (compatible con ósmosis inversa). Excelente para fertirriego.';
+  } else if (Math.abs(cat - an) / Math.max(cat,an) > 0.20) {
+    st.className = 'status-bar s-warn'; st.style.display='block';
+    st.textContent = '⚠️ El balance Cat/An del análisis difiere >20%. Verificar el laboratorio o ingresar todos los iones.';
+  } else if (w.HCO3 > 2) {
+    st.className = 'status-bar s-warn'; st.style.display='block';
+    st.textContent = '⚠️ Bicarbonatos altos (' + w.HCO3.toFixed(1) + ' mmol/L). Requiere acidificación importante.';
+  } else {
+    st.style.display = 'none';
+  }
+}
+
+// ═══════════ DIFERENCIA ═══════════
+function renderDiff() {
+  const sc = getScaledTarget();
+  const t = sc.scaled;  // valores escalados a CE objetivo
+  const w = getWater();
+  const ions = [
+    {k:'NH4',  l:ION_LABELS.NH4},
+    {k:'K',    l:ION_LABELS.K},
+    {k:'Ca',   l:ION_LABELS.Ca},
+    {k:'Mg',   l:ION_LABELS.Mg},
+    {k:'NO3',  l:ION_LABELS.NO3},
+    {k:'P',    l:ION_LABELS.P},
+    {k:'SO4',  l:ION_LABELS.SO4},
+  ];
+  let rows = '';
+  let warnIons = [];
+  ions.forEach(i => {
+    const obj = t[i.k] || 0;
+    const wat = w[i.k] || 0;
+    const net = obj - wat;
+    let cls = 'zero', txt = '✓ OK';
+    if (net > 0.1) { cls = 'pos'; txt = '↑ Aportar'; }
+    else if (net < -0.1) { cls = 'neg'; txt = '⚠ EXCESO'; warnIons.push(i.l); }
+    rows += `<tr>
+      <td>${i.l}</td>
+      <td class="r">${obj.toFixed(2)}</td>
+      <td class="r">${wat.toFixed(2)}</td>
+      <td class="r ${cls}">${net>=0?'+':''}${net.toFixed(2)}</td>
+      <td class="r ${cls}">${txt}</td>
+    </tr>`;
+  });
+  // bicarbonate row
+  const Hneed = Math.max(0, w.HCO3 - 0.5);
+  rows += `<tr>
+    <td>${ION_LABELS.HCO3}</td>
+    <td class="r">— (residual 0,5)</td>
+    <td class="r">${w.HCO3.toFixed(2)}</td>
+    <td class="r neg">−${Hneed.toFixed(2)}</td>
+    <td class="r neg">↓ Neutralizar con ácido</td>
+  </tr>`;
+  document.getElementById('diff-tbody').innerHTML = rows;
+
+  const wn = document.getElementById('excess-warn');
+  if (warnIons.length > 0) {
+    wn.classList.add('show');
+    wn.textContent = '⚠️ El agua aporta más ' + warnIons.join(', ') + ' que el objetivo escalado. Estos iones quedarán en exceso — considerar dilución con agua de menor concentración o aumentar la CE objetivo si la calidad del agua lo permite.';
+  } else {
+    wn.classList.remove('show');
+  }
+}
+
+// ═══════════ RECETA ═══════════
+function calcRecipe() {
+  const sc = getScaledTarget();
+  const t = sc.scaled;  // usar valores escalados
+  const w = getWater();
+  const need = {
+    NH4: Math.max(0, t.NH4 - w.NH4),
+    K:   Math.max(0, t.K   - w.K  ),
+    Ca:  Math.max(0, t.Ca  - w.Ca ),
+    Mg:  Math.max(0, t.Mg  - w.Mg ),
+    NO3: Math.max(0, t.NO3 - w.NO3),
+    P:   Math.max(0, t.P   - w.P  ),
+    SO4: Math.max(0, t.SO4 - w.SO4),
+  };
+  // Acidificación
+  const Hneed = Math.max(0, w.HCO3 - 0.5);
+  // Distribución de ácidos: H3PO4 hasta cubrir P, resto a HNO3
+  let molH3PO4 = Math.min(need.P, Hneed);
+  let molHNO3  = Math.max(0, Hneed - molH3PO4);
+  // Volumen ácido
+  const mLH3PO4 = molH3PO4 / ACIDS.H3PO4.mmolPerML;
+  const mLHNO3  = molHNO3  / ACIDS.HNO3.mmolPerML;
+
+  // Después de ácidos, residuales
+  let resNO3 = need.NO3 - molHNO3;
+  let resP   = need.P   - molH3PO4;
+  if (resNO3 < 0) resNO3 = 0;
+  if (resP < 0)   resP = 0;
+
+  // 1) NH4NO3
+  const m_NH4NO3 = need.NH4;
+  resNO3 = Math.max(0, resNO3 - m_NH4NO3);
+
+  // 2) Ca(NO3)2 — toda la Ca
+  const m_CaNO3 = need.Ca;
+  resNO3 = Math.max(0, resNO3 - 2 * m_CaNO3);
+
+  // 3) Mg: usar MgSO4 hasta el límite de SO4 disponible, resto Mg(NO3)2
+  let m_MgSO4 = Math.min(need.Mg, need.SO4);
+  let m_MgNO3 = need.Mg - m_MgSO4;
+  let resSO4 = need.SO4 - m_MgSO4;
+  resNO3 = Math.max(0, resNO3 - 2 * m_MgNO3);
+
+  // 4) P residual: KH2PO4
+  const m_KH2PO4 = resP;
+  let resK = need.K - m_KH2PO4;
+  if (resK < 0) resK = 0;
+
+  // 5) Equilibrar K, NO3, SO4
+  // Usar K2SO4 para SO4 residual (provee 2 K por SO4)
+  let m_K2SO4 = Math.min(resSO4, resK / 2);
+  resK = Math.max(0, resK - 2 * m_K2SO4);
+  let resSO4_final = resSO4 - m_K2SO4;
+
+  // 6) KNO3 para K residual
+  const m_KNO3 = resK;
+  resNO3 = Math.max(0, resNO3 - m_KNO3);
+
+  // ── Render ácidos ──
+  let aRows = '';
+  aRows += renderRow('Ácido nítrico 60%', 'HNO₃', mLHNO3, 'mL/L', `${molHNO3.toFixed(2)} mmol NO₃ + ${molHNO3.toFixed(2)} mmol H⁺`, 'acid', 'HNO3');
+  aRows += renderRow('Ácido fosfórico 85%', 'H₃PO₄', mLH3PO4, 'mL/L', `${molH3PO4.toFixed(2)} mmol P + ${molH3PO4.toFixed(2)} mmol H⁺`, 'acid', 'H3PO4');
+  document.getElementById('acid-tbody').innerHTML = aRows;
+
+  // ── Render sales ──
+  const saltRecipe = [
+    { key:'CaNO3',  m: m_CaNO3,  contrib: `${m_CaNO3.toFixed(2)} Ca + ${(2*m_CaNO3).toFixed(2)} NO₃` },
+    { key:'KNO3',   m: m_KNO3,   contrib: `${m_KNO3.toFixed(2)} K + ${m_KNO3.toFixed(2)} NO₃` },
+    { key:'MgSO4',  m: m_MgSO4,  contrib: `${m_MgSO4.toFixed(2)} Mg + ${m_MgSO4.toFixed(2)} SO₄` },
+    { key:'MgNO3',  m: m_MgNO3,  contrib: `${m_MgNO3.toFixed(2)} Mg + ${(2*m_MgNO3).toFixed(2)} NO₃` },
+    { key:'KH2PO4', m: m_KH2PO4, contrib: `${m_KH2PO4.toFixed(2)} K + ${m_KH2PO4.toFixed(2)} P` },
+    { key:'K2SO4',  m: m_K2SO4,  contrib: `${(2*m_K2SO4).toFixed(2)} K + ${m_K2SO4.toFixed(2)} SO₄` },
+    { key:'NH4NO3', m: m_NH4NO3, contrib: `${m_NH4NO3.toFixed(2)} NH₄ + ${m_NH4NO3.toFixed(2)} NO₃` },
+  ];
+  let sRows = '';
+  saltRecipe.forEach(r => {
+    const s = SALTS[r.key];
+    const gL = r.m * s.mw / 1000;
+    sRows += renderRow(s.name, s.formula, gL, 'g/L', r.contrib, 'salt', r.key);
+  });
+  document.getElementById('salt-tbody').innerHTML = sRows;
+
+  // Almacenar para el módulo de tanques
+  window._recipe = {
+    acids:  { HNO3: mLHNO3, H3PO4: mLH3PO4 },
+    salts:  { CaNO3:m_CaNO3, KNO3:m_KNO3, MgSO4:m_MgSO4, MgNO3:m_MgNO3,
+              KH2PO4:m_KH2PO4, K2SO4:m_K2SO4, NH4NO3:m_NH4NO3 },
+    residuals: { NO3: resNO3, SO4: resSO4_final }
+  };
+
+  // Aviso de residuales
+  const wn = document.getElementById('recipe-warn');
+  let msgs = [];
+  if (resNO3 > 0.5) msgs.push(`exceso de NO₃ ${resNO3.toFixed(2)} mmol/L sin asignar a sal`);
+  if (resSO4_final > 0.5) msgs.push(`exceso de SO₄ ${resSO4_final.toFixed(2)} mmol/L`);
+  if (msgs.length) {
+    wn.classList.add('show');
+    wn.textContent = '⚠️ Algoritmo: ' + msgs.join(' · ') + '. La receta puede ajustarse manualmente. Verificar balance final con el verificador del módulo 1.';
+  } else {
+    wn.classList.remove('show');
+  }
+
+  renderTanks();
+}
+
+function renderRow(name, formula, dose, unit, contrib, type, key) {
+  const isZero = dose < 0.001;
+  const tag = type === 'acid' ? '<span class="acid-tag">ácido</span>' : '<span class="salt-tag">sal</span>';
+  return `<tr class="${isZero?'zero-row':''}">
+    <td><span class="fert-name">${name}</span>${tag}<br><span class="fert-formula">${formula}</span></td>
+    <td class="r">${dose.toFixed(3)}<br><span class="fert-formula">${unit}</span></td>
+    <td class="r" style="font-size:.7rem;text-align:right;color:var(--muted);font-family:'DM Mono',monospace">${isZero?'—':contrib}</td>
+  </tr>`;
+}
+
+// ═══════════ ESTANQUES ═══════════
+let tankConfig = 2;
+
+document.querySelectorAll('.tank-tab').forEach(tab => {
+  tab.onclick = () => {
+    tankConfig = parseInt(tab.dataset.conf);
+    document.querySelectorAll('.tank-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderTanks();
+  };
+});
+
+function renderTanks() {
+  const r = window._recipe;
+  if (!r) return;
+  const vol = $('tank-vol');
+  const conc = $('tank-conc');
+  const finalVol = vol * conc;
+  document.getElementById('tank-final').value = finalVol.toLocaleString('es');
+
+  // Cantidad por estanque = dosis_g_L_final × volumen_final_equivalente
+  // = dosis × (vol_estanque × concentracion)
+  const factor = vol * conc;
+
+  // Para ácidos (mL/L final) → mL totales en estanque ácidos
+  const acidVol = vol; // estanque ácidos comparten volumen y concentración
+  const acidF = acidVol * conc;
+
+  let groups;
+  if (tankConfig === 2) {
+    groups = [
+      { letter:'A', cls:'A', title:'Estanque A — Calcio + Microelementos',
+        sub:'Nitrato de calcio + nitrato de potasio + Fetrilon Combi (Fe quelado compatible con Ca)',
+        salts:['CaNO3','KNO3'], micros:true, extras:[] },
+      { letter:'B', cls:'B', title:'Estanque B — Sulfatos / Fosfatos',
+        sub:'Magnesio, fósforo, potasio adicional, amonio',
+        salts:['MgSO4','MgNO3','KH2PO4','K2SO4','NH4NO3'], extras:[] },
+      { letter:'C', cls:'acid', title:'Estanque ácidos',
+        sub:'HNO₃ y H₃PO₄ — siempre separado por corrosividad y reactividad',
+        acids:true, extras:[] },
+    ];
+  } else {
+    groups = [
+      { letter:'A', cls:'A', title:'Estanque A — Calcio',
+        sub:'Nitrato de calcio + nitrato de potasio',
+        salts:['CaNO3','KNO3'], extras:[] },
+      { letter:'B', cls:'B', title:'Estanque B — Sulfatos / Fosfatos',
+        sub:'Magnesio, fósforo, potasio adicional, amonio',
+        salts:['MgSO4','MgNO3','KH2PO4','K2SO4','NH4NO3'], extras:[] },
+      { letter:'C', cls:'C', title:'Estanque C — Microelementos',
+        sub:'Fetrilon Combi (mejor estabilidad química y dosificación independiente)',
+        salts:[], micros:true, boron:true, extras:[] },
+      { letter:'D', cls:'acid', title:'Estanque ácidos',
+        sub:'HNO₃ y H₃PO₄',
+        acids:true, extras:[] },
+    ];
+  }
+
+  let html = '';
+  groups.forEach(g => {
+    let totalKg = 0;
+    let bodyRows = '';
+
+    if (g.acids) {
+      const HNO3_mL = r.acids.HNO3 * acidF;
+      const H3PO4_mL = r.acids.H3PO4 * acidF;
+      const HNO3_L = HNO3_mL / 1000;
+      const H3PO4_L = H3PO4_mL / 1000;
+      bodyRows += `<tr><td>Ácido nítrico 60% <span class="fert-formula">(HNO₃)</span></td><td class="r">${HNO3_L.toFixed(2)} L<br><span class="fert-formula">${HNO3_mL.toFixed(0)} mL</span></td></tr>`;
+      bodyRows += `<tr><td>Ácido fosfórico 85% <span class="fert-formula">(H₃PO₄)</span></td><td class="r">${H3PO4_L.toFixed(2)} L<br><span class="fert-formula">${H3PO4_mL.toFixed(0)} mL</span></td></tr>`;
+      totalKg = (HNO3_L * 1.37 + H3PO4_L * 1.685);
+    } else {
+      g.salts.forEach(k => {
+        const m = r.salts[k] || 0;
+        if (m < 0.001) return;
+        const s = SALTS[k];
+        const totG = m * s.mw / 1000 * factor;
+        const totKg = totG / 1000;
+        totalKg += totKg;
+        bodyRows += `<tr>
+          <td><span class="fert-name">${s.name}</span><br><span class="fert-formula">${s.formula}</span></td>
+          <td class="r">${totKg >= 1 ? totKg.toFixed(2)+' kg' : (totG).toFixed(0)+' g'}</td>
+        </tr>`;
+      });
+
+      // Agregar Fetrilon Combi si corresponde
+      if (g.micros && window._micros) {
+        const m = window._micros;
+        const totG = m.dose_mgL * factor / 1000; // gramos
+        const totKg = totG / 1000;
+        totalKg += totKg;
+        bodyRows += `<tr>
+          <td><span class="fert-name">${m.name}</span><br><span class="fert-formula">mix de microelementos quelados</span></td>
+          <td class="r">${totKg >= 1 ? totKg.toFixed(2)+' kg' : (totG).toFixed(0)+' g'}</td>
+        </tr>`;
+      }
+
+      if (!bodyRows) bodyRows = `<tr><td colspan="2" class="tank-empty">Sin sales asignadas en esta configuración</td></tr>`;
+    }
+
+    let extrasHtml = g.extras && g.extras.length
+      ? `<div class="tank-badges">${g.extras.map(e => `<span class="tank-badge">+ ${e}</span>`).join('')}</div>` : '';
+
+    html += `<div class="tank-card t-${g.cls}">
+      <div class="tank-head">
+        <div class="tank-letter ${g.letter}">${g.letter}</div>
+        <div class="tank-info">
+          <div class="tank-title">${g.title}</div>
+          <div class="tank-sub">${g.sub}</div>
+          ${extrasHtml}
+        </div>
+      </div>
+      <table class="tank-table"><tbody>${bodyRows}</tbody></table>
+      ${g.acids
+        ? `<div class="tank-total"><span class="tank-total-lbl">Volumen total ácidos</span><span class="tank-total-val">${(r.acids.HNO3+r.acids.H3PO4)*acidF/1000 < 0.01 ? '—' : ((r.acids.HNO3+r.acids.H3PO4)*acidF/1000).toFixed(2)+' L'}</span></div>`
+        : `<div class="tank-total"><span class="tank-total-lbl">Total sales en estanque</span><span class="tank-total-val">${totalKg.toFixed(2)} kg</span></div>`
+      }
+    </div>`;
+  });
+
+  document.getElementById('tank-grid').innerHTML = html;
+}
+
+// ═══════════ SELECTOR CULTIVO / ETAPA ═══════════
+let currentCrop = 'frutilla';
+let currentStage = null;
+
+function buildStageButtons() {
+  const cont = document.getElementById('stage-buttons');
+  const stages = CROP_STAGES[currentCrop].stages;
+  cont.innerHTML = '';
+  stages.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'stage-btn';
+    btn.textContent = s.name;
+    btn.dataset.id = s.id;
+    btn.onclick = () => applyStage(s.id);
+    cont.appendChild(btn);
+  });
+  currentStage = null;
+}
+
+function applyStage(stageId) {
+  const stage = CROP_STAGES[currentCrop].stages.find(s => s.id === stageId);
+  if (!stage) return;
+  // Cargar valores en inputs
+  document.getElementById('t-nh4').value = stage.target.NH4;
+  document.getElementById('t-k').value   = stage.target.K;
+  document.getElementById('t-ca').value  = stage.target.Ca;
+  document.getElementById('t-mg').value  = stage.target.Mg;
+  document.getElementById('t-no3').value = stage.target.NO3;
+  document.getElementById('t-p').value   = stage.target.P;
+  document.getElementById('t-so4').value = stage.target.SO4;
+
+  // Sincronizar CE objetivo con la CE ideal de la etapa (factor = 1.0 por defecto)
+  const cat = stage.target.NH4 + stage.target.K + 2*stage.target.Ca + 2*stage.target.Mg;
+  const an  = stage.target.NO3 + stage.target.P + 2*stage.target.SO4;
+  const ec_stage = ((cat + an) / 2) * 0.1;
+  document.getElementById('ec-target').value = ec_stage.toFixed(2);
+
+  // marcar etapa activa
+  document.querySelectorAll('.stage-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.id === stageId);
+  });
+  currentStage = stageId;
+  recompute();
+}
+
+document.querySelectorAll('.crop-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentCrop = btn.dataset.crop;
+    document.querySelectorAll('.crop-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    buildStageButtons();
+  };
+});
+
+// ═══════════ MICROELEMENTOS / FETRILON ═══════════
+function calcMicros() {
+  const f = FETRILON[microVariant];
+  const Fe_target = parseFloat(document.getElementById('m-fe-target').value) || 20;
+
+  // Actualizar display de variante
+  const vd = document.getElementById('m-variant-display');
+  if (vd) vd.textContent = microVariant === 'combi1' ? 'Combi 1 (con B)' : 'Combi 2 (sin B)';
+
+  // Dosis para alcanzar Fe target
+  const mgL_Fe_target = Fe_target * ATOMIC.Fe / 1000;
+  const dose_mgL = mgL_Fe_target / f.pct.Fe; // mg/L de producto = g/m³
+
+  // Calcular concentraciones resultantes
+  const elements = ['Fe','Mn','Zn','Cu','B','Mo'];
+  let rows = '';
+  elements.forEach(el => {
+    const pct = f.pct[el] || 0;
+    const mgL = dose_mgL * pct;
+    const umolL = pct > 0 ? mgL * 1000 / ATOMIC[el] : 0;
+    const target = MICRO_TARGET[el];
+
+    let cls = 'm-ok', label = '✓ OK';
+    if (pct === 0) {
+      cls = 'm-low';
+      label = el === 'B' ? '— variante sin B' : '— no presente';
+    } else if (umolL < target * 0.7) {
+      cls = 'm-low'; label = '↓ bajo';
+    } else if (umolL > target * 1.5) {
+      cls = 'm-high'; label = '↑ alto';
+    }
+
+    rows += `<tr>
+      <td><strong>${el}</strong></td>
+      <td class="r">${target}</td>
+      <td class="r">${pct === 0 ? '—' : umolL.toFixed(1) + ' µmol/L'}</td>
+      <td class="r">${pct === 0 ? '—' : mgL.toFixed(3)}</td>
+      <td class="r ${cls}">${label}</td>
+    </tr>`;
+  });
+  document.getElementById('micro-tbody').innerHTML = rows;
+
+  document.getElementById('m-dose').textContent = dose_mgL.toFixed(1);
+  const tankVol = parseFloat(document.getElementById('tank-vol').value) || 1000;
+  const conc = parseFloat(document.getElementById('tank-conc').value) || 100;
+  const totG = dose_mgL * tankVol * conc / 1000;
+  document.getElementById('m-dose-stock').textContent =
+    totG >= 1000 ? (totG/1000).toFixed(2) + ' kg' : totG.toFixed(0) + ' g';
+
+  window._micros = {
+    variant: microVariant,
+    name: f.name,
+    dose_mgL: dose_mgL,
+  };
+
+  renderTanks();
+}
+
+document.querySelectorAll('.micro-variant').forEach(el => {
+  el.onclick = () => {
+    microVariant = el.dataset.v;
+    document.querySelectorAll('.micro-variant').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    calcMicros();
+  };
+});
+document.getElementById('m-fe-target').addEventListener('input', calcMicros);
+function recompute() {
+  balanceTarget();
+  balanceWater();
+  renderDiff();
+  calcRecipe();
+  calcMicros();
+}
+
+document.querySelectorAll('input[type=number], input[type=date], input.id-inp').forEach(el => {
+  el.addEventListener('input', recompute);
+});
+
+// fecha por defecto = hoy
+document.getElementById('hdr-fecha').valueAsDate = new Date();
+buildStageButtons();
+recompute();
+</script>
+</body>
+</html>

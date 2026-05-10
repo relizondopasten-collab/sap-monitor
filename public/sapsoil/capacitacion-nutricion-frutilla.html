@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrición Frutilla Hidropónica · La Serena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D6E6E;--teal-lt:#1A9E9E;--teal-pale:#E0F4F4;
+  --amber:#D4820A;--amber-pale:#FDF3E0;
+  --red:#B5361E;--red-pale:#FAEAE6;
+  --green:#2A6041;--green-pale:#E6F2EC;
+  --ink:#141C1C;--ink2:#2D3D3D;
+  --muted:#637070;--line:#D8E4E4;
+  --bg:#F7FAFA;--white:#FFFFFF;
+  --navy:#0B2B3C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.65}
+
+/* HERO */
+.hero{background:var(--navy);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(13,110,110,0.35) 0%,transparent 65%)}
+.hero-inner{padding:2.2rem 1.5rem 1.8rem;position:relative;z-index:2}
+.hero-tag{display:inline-flex;align-items:center;gap:.4rem;background:rgba(13,110,110,0.3);border:1px solid rgba(26,158,158,0.4);color:#7DE8E8;font-size:.67rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.22rem .7rem;border-radius:2px;margin-bottom:.9rem}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:2.1rem;color:#fff;line-height:1.1;margin-bottom:.5rem;font-weight:600}
+.hero h1 em{color:#7DE8E8;font-style:italic}
+.hero-sub{font-size:.83rem;color:rgba(255,255,255,.55);margin-bottom:1rem;line-height:1.6}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.7);border-radius:20px;padding:.18rem .65rem;font-size:.71rem}
+
+/* ALERT */
+.alert-bar{background:var(--red);color:#fff;padding:.75rem 1.5rem;font-size:.8rem;display:flex;gap:.6rem;line-height:1.55;align-items:flex-start}
+.alert-bar strong{font-weight:700}
+
+/* NAV */
+.nav{background:var(--teal);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:rgba(255,255,255,.65);text-decoration:none;padding:.6rem 1rem;font-size:.74rem;font-weight:600;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.02em}
+.nav a:hover{color:#fff;border-bottom-color:rgba(255,255,255,.5)}
+
+/* SECTIONS */
+.section{padding:1.8rem 1.4rem;border-bottom:1px solid var(--line)}
+.section.alt{background:var(--white)}
+.sec-eyebrow{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--teal-lt);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--navy);line-height:1.15;margin-bottom:1.1rem;font-weight:600}
+p{font-size:.9rem;color:var(--ink2);margin-bottom:.8rem;line-height:1.65}
+p:last-child{margin-bottom:0}
+
+/* CALLOUT */
+.call{border-left:3px solid var(--teal);background:var(--teal-pale);padding:.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.86rem}
+.call.amber{border-color:var(--amber);background:var(--amber-pale)}
+.call.red{border-color:var(--red);background:var(--red-pale)}
+.call.green{border-color:var(--green);background:var(--green-pale)}
+.call strong{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.35rem;color:var(--navy)}
+
+/* DIAGNOSIS CARDS */
+.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1.1rem 0}
+.diag-card{border-radius:9px;padding:1rem;border:1.5px solid var(--line)}
+.diag-card.critical{background:var(--red-pale);border-color:#E8A090;grid-column:1/-1}
+.diag-card.warn{background:var(--amber-pale);border-color:#E8C870}
+.diag-card.info{background:var(--teal-pale);border-color:#9AD5D5}
+.diag-icon{font-size:1.4rem;display:block;margin-bottom:.4rem}
+.diag-title{font-weight:700;font-size:.85rem;color:var(--navy);margin-bottom:.25rem;display:block}
+.diag-body{font-size:.78rem;color:var(--ink2);line-height:1.5}
+.diag-badge{display:inline-block;font-size:.62rem;font-weight:700;padding:.12rem .45rem;border-radius:2px;margin-top:.4rem;text-transform:uppercase;letter-spacing:.05em}
+.badge-cr{background:var(--red);color:#fff}
+.badge-w{background:var(--amber);color:#fff}
+.badge-i{background:var(--teal);color:#fff}
+
+/* SUBSTRATE ISSUE */
+.cec-box{background:var(--navy);border-radius:12px;padding:1.3rem;color:#fff;margin:1.2rem 0}
+.cec-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#7DE8E8;margin-bottom:.25rem}
+.cec-sub{font-size:.76rem;color:rgba(255,255,255,.5);margin-bottom:1.1rem}
+.cec-flow{display:flex;flex-direction:column;gap:.5rem;margin-top:.8rem}
+.cec-step{display:flex;gap:.8rem;align-items:flex-start}
+.cec-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;font-family:'DM Mono',monospace}
+.cd-red{background:var(--red);color:#fff}
+.cd-amber{background:var(--amber);color:#fff}
+.cd-green{background:var(--green);color:#fff}
+.cec-text{font-size:.8rem;line-height:1.5;color:rgba(255,255,255,.85);padding-top:.05rem}
+.cec-text strong{color:#7DE8E8}
+
+/* STAGE SELECTOR */
+.stage-card{background:var(--white);border:2px solid var(--line);border-radius:12px;padding:1.3rem;margin:1.1rem 0;transition:border-color .2s}
+.stage-card.active{border-color:var(--teal)}
+.stage-nav{display:flex;overflow-x:auto;scrollbar-width:none;gap:.4rem;margin-bottom:1.1rem;padding-bottom:.3rem}
+.stage-nav::-webkit-scrollbar{display:none}
+.stage-btn{background:var(--bg);border:1.5px solid var(--line);color:var(--muted);border-radius:6px;padding:.4rem .75rem;font-size:.73rem;font-family:'Karla',sans-serif;cursor:pointer;white-space:nowrap;transition:all .15s;font-weight:500}
+.stage-btn:hover{border-color:var(--teal-lt);color:var(--teal)}
+.stage-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:700}
+
+.stage-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;gap:.5rem}
+.stage-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy);font-weight:600;line-height:1.15}
+.stage-ec{background:var(--teal);color:#fff;border-radius:6px;padding:.3rem .7rem;text-align:center;flex-shrink:0}
+.stage-ec span{display:block}
+.ec-val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700}
+.ec-unit{font-size:.6rem;opacity:.8}
+.stage-desc{font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+
+/* ION TABLE */
+.ion-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:.8rem 0}
+.ion-table th{background:var(--navy);color:#fff;padding:.45rem .6rem;font-size:.69rem;font-weight:600;text-align:left}
+.ion-table th.r{text-align:right}
+.ion-table td{padding:.45rem .6rem;border-bottom:1px solid var(--line);vertical-align:middle}
+.ion-table td.r{text-align:right;font-family:'DM Mono',monospace;font-size:.77rem}
+.ion-table tr:nth-child(even) td{background:var(--bg)}
+.ion-group-cat td{background:#EBF9F9 !important}
+.ion-group-an td{background:#FFF8EC !important}
+.ion-name{font-weight:600;color:var(--navy)}
+.ion-role{font-size:.7rem;color:var(--muted)}
+.bar-mini{height:8px;border-radius:3px;background:var(--line);margin-top:3px;overflow:hidden}
+.bar-mini-fill{height:100%;border-radius:3px;background:var(--teal-lt)}
+.balance-row td{background:var(--teal-pale) !important;font-weight:600;font-size:.75rem}
+.ratio-row td{background:#F5F0FF !important;font-size:.72rem;color:#5A4A8A}
+
+/* EC METER */
+.ec-meter{background:var(--navy);border-radius:12px;padding:1.3rem;color:#fff;margin:1.2rem 0}
+.ec-meter-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#7DE8E8;margin-bottom:.3rem}
+.ec-meter-sub{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:1.1rem}
+.ec-input-row{display:flex;gap:.6rem;align-items:flex-end;margin-bottom:.9rem;flex-wrap:wrap}
+.ec-inp-grp{display:flex;flex-direction:column;gap:.25rem;flex:1;min-width:100px}
+.ec-inp-lbl{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.55)}
+.ec-inp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:#fff;font-size:1rem;font-family:'Cormorant Garamond',serif;font-weight:600;padding:.45rem .7rem;outline:none;width:100%}
+.ec-inp:focus{border-color:#7DE8E8}
+.ec-results{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.ec-res-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:.75rem;text-align:center}
+.ec-res-box.main{grid-column:1/-1;background:rgba(13,110,110,.25);border-color:rgba(125,232,232,.3)}
+.ec-rv{font-family:'Cormorant Garamond',serif;font-size:1.9rem;color:#7DE8E8;line-height:1;display:block;font-weight:700}
+.ec-res-box.main .ec-rv{font-size:2.4rem}
+.ec-ru{font-size:.65rem;color:rgba(255,255,255,.4);display:block;margin-top:.2rem}
+.ec-rl{font-size:.67rem;font-weight:700;color:#7DE8E8;display:block;margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.05em}
+.ec-status{border-radius:6px;padding:.6rem .9rem;font-size:.78rem;margin-top:.7rem;line-height:1.5;display:none}
+.ec-ok{background:rgba(42,96,65,.35);border:1px solid rgba(42,96,65,.5);color:#90E8B0}
+.ec-low{background:rgba(181,54,30,.3);border:1px solid rgba(181,54,30,.5);color:#FFB5A0}
+.ec-high{background:rgba(212,130,10,.3);border:1px solid rgba(212,130,10,.5);color:#FFD98A}
+
+/* CORRECTION PROTOCOL */
+.protocol-timeline{margin:1rem 0}
+.pt-item{display:flex;gap:.9rem;margin-bottom:1.1rem;position:relative}
+.pt-item:not(:last-child)::before{content:'';position:absolute;left:13px;top:28px;bottom:-1.1rem;width:2px;background:var(--line)}
+.pt-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;z-index:1}
+.pt-urgent{background:var(--red);color:#fff}
+.pt-week{background:var(--amber);color:#fff}
+.pt-month{background:var(--green);color:#fff}
+.pt-content{flex:1}
+.pt-head{font-weight:700;font-size:.88rem;color:var(--navy);margin-bottom:.2rem}
+.pt-time{font-size:.68rem;font-family:'DM Mono',monospace;color:var(--teal-lt);font-weight:500;margin-bottom:.2rem;display:block}
+.pt-body{font-size:.8rem;color:var(--muted);line-height:1.5}
+.pt-body strong{color:var(--ink2)}
+
+/* DRAIN MONITOR */
+.drain-card{background:linear-gradient(135deg,var(--navy) 0%,#0D3D3D 100%);border-radius:12px;padding:1.3rem;color:#fff;margin:1.2rem 0}
+.drain-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:#7DE8E8;margin-bottom:.25rem}
+.drain-sub{font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:1rem}
+.drain-input-row{display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:.8rem}
+.drain-ig{display:flex;flex-direction:column;gap:.25rem;flex:1;min-width:90px}
+.drain-lbl{font-size:.63rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)}
+.drain-inp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:5px;color:#fff;font-size:1rem;font-family:'Cormorant Garamond',serif;font-weight:600;padding:.4rem .65rem;outline:none;width:100%}
+.drain-inp:focus{border-color:#7DE8E8}
+.drain-result{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.8rem;text-align:center}
+.drain-rv{font-family:'Cormorant Garamond',serif;font-size:2rem;color:#7DE8E8;line-height:1;display:block;font-weight:700}
+.drain-status{border-radius:6px;padding:.55rem .8rem;font-size:.78rem;margin-top:.7rem;line-height:1.5;display:none}
+
+/* SUBSTRATE TABLE */
+.substrate-props{background:var(--teal-pale);border:1.5px solid #9AD5D5;border-radius:10px;padding:1rem;margin:1rem 0}
+.sp-title{font-weight:700;font-size:.82rem;color:var(--teal);margin-bottom:.7rem}
+.sp-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.35rem 0;border-bottom:1px solid rgba(13,110,110,.15);font-size:.8rem;gap:.5rem}
+.sp-row:last-child{border-bottom:none}
+.sp-prop{color:var(--muted);flex:1}
+.sp-val{color:var(--navy);font-weight:600;text-align:right;flex:1}
+
+/* WEEKLY LOG */
+.log-table{width:100%;border-collapse:collapse;font-size:.78rem;margin:1rem 0}
+.log-table th{background:var(--teal);color:#fff;padding:.45rem .55rem;font-size:.68rem;font-weight:600;text-align:left}
+.log-table td{padding:.45rem .55rem;border-bottom:1px solid var(--line);vertical-align:top}
+.log-table tr:nth-child(even) td{background:var(--bg)}
+.log-ok td{background:#E6F2EC !important}
+.log-warn td{background:var(--amber-pale) !important}
+.log-crit td{background:var(--red-pale) !important}
+
+.footnote{background:var(--bg);border:1px dashed var(--muted);border-radius:6px;padding:.8rem 1rem;font-size:.75rem;color:var(--muted);margin:1rem 0;line-height:1.6}
+.footer{background:var(--navy);color:rgba(255,255,255,.4);padding:1.5rem 1.4rem;font-size:.72rem;text-align:center;line-height:1.7}
+.footer strong{color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Capacitación técnica</div>
+    <h1>Nutrición y Equilibrio<br><em>Iónico</em></h1>
+    <p class="hero-sub">Programa nutricional por etapa fenológica · Frutilla hidropónica en sustrato orgánico · La Serena</p>
+    <div class="hero-chips">
+      <span class="chip">💧 Agua de ósmosis inversa</span>
+      <span class="chip">🪴 Corteza pino 66% + capotillo arroz 33%</span>
+      <span class="chip">🍓 Albión / San Andreas</span>
+      <span class="chip">⚠️ Protocolo de corrección activo</span>
+    </div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<!-- NAV -->
+<nav class="nav">
+  <a href="#sustrato">1. El sustrato</a>
+  <a href="#agua">2. Agua base</a>
+  <a href="#etapas">3. Solución por etapa</a>
+  <a href="#correccion">4. Protocolo corrección</a>
+  <a href="#drenaje">5. Monitor drenaje</a>
+  <a href="#registro">6. Registro semanal</a>
+</nav>
+
+<!-- ══ 1. SUSTRATO ══ -->
+<section class="section alt" id="sustrato">
+  <div class="sec-eyebrow">Módulo 02</div>
+  <div class="sec-title">El sustrato y su efecto sobre la nutrición</div>
+
+  <p>El sustrato no es inerte. La corteza de pino tiene propiedades químicas que interactúan directamente con la solución nutritiva. Entender esto es clave para interpretar las lecturas de CE de drenaje.</p>
+
+  <div class="substrate-props">
+    <div class="sp-title">🪴 Propiedades del sustrato (Corteza pino 66% + Capotillo arroz 33%)</div>
+    <div class="sp-row"><span class="sp-prop">Capacidad de intercambio catiónico (CEC)</span><span class="sp-val">Alta en corteza (~80–150 meq/100g)</span></div>
+    <div class="sp-row"><span class="sp-prop">Retención de Ca²⁺, Mg²⁺, K⁺</span><span class="sp-val">Muy activa hasta saturación del CEC</span></div>
+    <div class="sp-row"><span class="sp-prop">pH inicial corteza de pino</span><span class="sp-val">Ácido (4,5–5,5) sin estabilizar</span></div>
+    <div class="sp-row"><span class="sp-prop">Capotillo de arroz</span><span class="sp-val">Inerte, bajo CEC, alta porosidad</span></div>
+    <div class="sp-row"><span class="sp-prop">Pre-saturación con Ca aplicada</span><span class="sp-val">❌ No realizada antes de la plantación</span></div>
+    <div class="sp-row"><span class="sp-prop">Estado actual del CEC</span><span class="sp-val">⚠️ Parcialmente insaturado (CE drenaje &lt; CE entrada)</span></div>
+    <div class="sp-row"><span class="sp-prop">Efecto sobre el pH de la solución</span><span class="sp-val">Puede elevar el pH (intercambio H⁺/Ca²⁺)</span></div>
+  </div>
+
+  <div class="cec-box">
+    <div class="cec-title">⚗️ ¿Por qué la CE de drenaje es menor que la entrada?</div>
+    <div class="cec-sub">Mecanismo del intercambio iónico en la corteza de pino sin saturar</div>
+    <div class="cec-flow">
+      <div class="cec-step"><div class="cec-dot cd-red">1</div><div class="cec-text">La corteza de pino sin pre-saturar tiene sitios de intercambio cargados negativamente, con H⁺ y Al³⁺ retenidos en su CEC.</div></div>
+      <div class="cec-step"><div class="cec-dot cd-red">2</div><div class="cec-text">Cuando la solución nutritiva (con Ca²⁺, K⁺, Mg²⁺) ingresa al sustrato, los cationes de la solución desplazan los H⁺ del CEC. <strong>El sustrato retiene Ca²⁺ y libera H⁺</strong>.</div></div>
+      <div class="cec-step"><div class="cec-dot cd-amber">3</div><div class="cec-text">Resultado: la solución que drena tiene <strong>menos cationes</strong> y más H⁺ que la solución de entrada → CE de drenaje &lt; CE entrada. El pH puede alterarse.</div></div>
+      <div class="cec-step"><div class="cec-dot cd-amber">4</div><div class="cec-text">Las raíces compiten con el sustrato por el Ca²⁺ disponible. El sustrato "gana" mientras el CEC no esté saturado → <strong>deficiencia de Ca en planta</strong>.</div></div>
+      <div class="cec-step"><div class="cec-dot cd-green">5</div><div class="cec-text">Una vez que el CEC se satura (CE drenaje ≥ CE entrada), el sustrato deja de retener y la planta puede acceder libremente a los nutrientes. <strong>Ese es el objetivo inmediato.</strong></div></div>
+    </div>
+  </div>
+
+  <div class="call">
+    <strong>📐 Cómo saber si el CEC está saturado</strong>
+    Medir la CE de entrada y la CE de drenaje simultáneamente en el mismo riego. Cuando CE drenaje ≥ 90–100% de CE entrada, el sustrato está saturado. Recién en ese punto la solución diseñada es la que realmente recibe la planta.
+  </div>
+</section>
+
+<!-- ══ 3. AGUA ══ -->
+<section class="section" id="agua">
+  <div class="sec-eyebrow">Módulo 03</div>
+  <div class="sec-title">Agua de ósmosis: ventaja y responsabilidad</div>
+
+  <p>El proyecto usa agua tratada por ósmosis inversa (RO). Esto es una ventaja técnica enorme, pero también una responsabilidad: la planta recibe <strong>exclusivamente lo que se formula en el tanque</strong>. No hay iones de fondo que "compensen" errores.</p>
+
+  <div class="diag-grid">
+    <div class="diag-card info">
+      <span class="diag-icon">✅</span>
+      <span class="diag-title">Ventajas del agua RO</span>
+      <p class="diag-body">CE inicial ~0,02–0,05 mS/cm · Sin bicarbonatos interferentes · Sin exceso de Na, Cl, B · Control total de la relación iónica · pH manejable sin neutralización previa</p>
+    </div>
+    <div class="diag-card warn">
+      <span class="diag-icon">⚠️</span>
+      <span class="diag-title">Riesgos del agua RO</span>
+      <p class="diag-body">Cualquier error en la formulación no tiene "colchón" iónico de fondo. Las deficiencias se manifiestan rápido. La formulación debe ser <strong>precisa y completa</strong> incluyendo micronutrientes.</p>
+    </div>
+  </div>
+
+  <div class="call amber">
+    <strong>📌 Punto de partida para la formulación</strong>
+    Con agua RO, el pH objetivo de la solución preparada es <strong>5,8–6,0</strong>. Se ajusta con ácido nítrico (HNO₃) o ácido fosfórico (H₃PO₄). El pH en zona de raíz dentro del sustrato puede ser ligeramente diferente — monitorear con tiras o sonda en el drenaje.
+  </div>
+</section>
+
+<!-- ══ 4. ETAPAS ══ -->
+<section class="section alt" id="etapas">
+  <div class="sec-eyebrow">Módulo 04</div>
+  <div class="sec-title">Solución nutritiva por etapa fenológica</div>
+
+  <p>Selecciona la etapa fenológica para ver la solución recomendada. Las concentraciones están expresadas en <strong>mmol/L</strong> para la solución madre diluida (solución final al gotero).</p>
+
+  <div class="stage-nav" id="stage-nav"></div>
+  <div id="stage-display"></div>
+
+  <div class="call">
+    <strong>📐 Cómo leer la tabla iónica</strong>
+    mmol/L = milimoles por litro en la solución final. meq/L = miliequivalentes (considera la carga del ion). Ca²⁺ tiene carga +2, por lo que 3 mmol/L Ca²⁺ = 6 meq/L. La suma de meq de cationes debe ser aproximadamente igual a la suma de meq de aniones (balance de cargas).
+  </div>
+
+  <div class="ec-meter">
+    <div class="ec-meter-title">🔬 Verificador de equilibrio iónico</div>
+    <div class="ec-meter-sub">Ingresa las concentraciones reales de tu tanque para verificar el balance</div>
+    <div class="ec-input-row">
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">NO₃⁻ (mmol)</span><input class="ec-inp" id="vi-no3" type="number" value="12" step="0.5"></div>
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">NH₄⁺ (mmol)</span><input class="ec-inp" id="vi-nh4" type="number" value="0.5" step="0.1"></div>
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">H₂PO₄⁻ (mmol)</span><input class="ec-inp" id="vi-po4" type="number" value="1.3" step="0.1"></div>
+    </div>
+    <div class="ec-input-row">
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">K⁺ (mmol)</span><input class="ec-inp" id="vi-k" type="number" value="6.5" step="0.5"></div>
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">Ca²⁺ (mmol)</span><input class="ec-inp" id="vi-ca" type="number" value="5.0" step="0.5"></div>
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">Mg²⁺ (mmol)</span><input class="ec-inp" id="vi-mg" type="number" value="2.0" step="0.5"></div>
+      <div class="ec-inp-grp"><span class="ec-inp-lbl">SO₄²⁻ (mmol)</span><input class="ec-inp" id="vi-so4" type="number" value="2.0" step="0.5"></div>
+    </div>
+    <div class="ec-results">
+      <div class="ec-res-box main">
+        <span class="ec-rl">Balance iónico</span>
+        <span class="ec-rv" id="vi-balance">—</span>
+        <span class="ec-ru">meq cationes / meq aniones (ideal: 1,00)</span>
+      </div>
+      <div class="ec-res-box"><span class="ec-rl">Cationes</span><span class="ec-rv" id="vi-cat">—</span><span class="ec-ru">meq/L</span></div>
+      <div class="ec-res-box"><span class="ec-rl">Aniones</span><span class="ec-rv" id="vi-an">—</span><span class="ec-ru">meq/L</span></div>
+      <div class="ec-res-box"><span class="ec-rl">K / Ca ratio</span><span class="ec-rv" id="vi-kca">—</span><span class="ec-ru">ideal &lt; 1,5 en frutilla</span></div>
+      <div class="ec-res-box"><span class="ec-rl">EC estimada</span><span class="ec-rv" id="vi-ec">—</span><span class="ec-ru">mS/cm (verificar con conductímetro)</span></div>
+    </div>
+    <div class="ec-status ec-ok" id="vi-status"></div>
+  </div>
+</section>
+
+<!-- ══ 5. CORRECCIÓN ══ -->
+<section class="section" id="correccion">
+  <div class="sec-eyebrow">Módulo 05</div>
+  <div class="sec-title">Protocolo de corrección: situación actual</div>
+
+  <p>Dado el diagnóstico activo, se propone el siguiente protocolo de corrección en tres fases. La secuencia es obligatoria — no saltar fases.</p>
+
+  <div class="protocol-timeline">
+    <div class="pt-item">
+      <div class="pt-dot pt-urgent">!</div>
+      <div class="pt-content">
+        <span class="pt-time">INMEDIATO · Esta semana</span>
+        <div class="pt-head">Aplicación foliar de calcio</div>
+        <div class="pt-body">Aplicar <strong>CaCl₂ al 0,3–0,4 %</strong> (p.v.) o calcium chelate EDTA 0,3 % en las horas de menor radiación (06:00–08:00 o 18:00–20:00). Repetir cada 3–4 días hasta que los síntomas foliares se detengan. No esperar que la solución de riego resuelva el Ca foliar — el flujo transpiratorio lleva Ca a la hoja, pero si la raíz no tiene Ca disponible, la aplicación foliar es el camino más rápido.</div>
+      </div>
+    </div>
+    <div class="pt-item">
+      <div class="pt-dot pt-urgent">!</div>
+      <div class="pt-content">
+        <span class="pt-time">INMEDIATO · Esta semana</span>
+        <div class="pt-head">Cambiar a solución de saturación de CEC (alta en Ca)</div>
+        <div class="pt-body">Preparar la solución de <strong>"Estabilización CEC"</strong> (Módulo 04, primera etapa): Ca²⁺ = 7 mmol/L, K⁺ = 3 mmol/L, relación K/Ca = 0,43. CE objetivo 1,8 mS/cm. <strong>Mantener esta solución hasta que CE drenaje ≥ 90% de CE entrada</strong> en dos mediciones consecutivas.</div>
+      </div>
+    </div>
+    <div class="pt-item">
+      <div class="pt-dot pt-urgent">!</div>
+      <div class="pt-content">
+        <span class="pt-time">INMEDIATO · Verificar</span>
+        <div class="pt-head">Confirmar pH de la solución y del drenaje</div>
+        <div class="pt-body">Medir pH de la solución preparada y pH del drenaje. Si pH drenaje &gt; 6,5: la corteza está liberando OH⁻ / HCO₃⁻ — aplicar un pulso de agua pura (RO) a pH 5,0 (ajustado con HNO₃ o H₃PO₄) para lavar el sustrato antes de cada jornada. La clorosis en hojas nuevas puede ser deficiencia de Fe inducida por pH alto.</div>
+      </div>
+    </div>
+    <div class="pt-item">
+      <div class="pt-dot pt-week">2</div>
+      <div class="pt-content">
+        <span class="pt-time">SEMANA 1–2</span>
+        <div class="pt-head">Monitoreo diario CE entrada y drenaje</div>
+        <div class="pt-body">Medir CE entrada y CE drenaje en cada sector cada mañana antes del primer riego. Registrar en planilla (ver Módulo 07). Cuando CE drenaje ≥ CE entrada en dos días consecutivos, <strong>pasar a la solución de producción correspondiente a la etapa fenológica</strong>.</div>
+      </div>
+    </div>
+    <div class="pt-item">
+      <div class="pt-dot pt-week">3</div>
+      <div class="pt-content">
+        <span class="pt-time">SEMANA 2–3</span>
+        <div class="pt-head">Transición gradual a solución de producción</div>
+        <div class="pt-body">No cambiar abruptamente. Mezclar 50% solución saturación + 50% solución producción por 3–4 días. Luego pasar a 100% solución producción. Continuar monitoreando CE drenaje.</div>
+      </div>
+    </div>
+    <div class="pt-item">
+      <div class="pt-dot pt-month">✓</div>
+      <div class="pt-content">
+        <span class="pt-time">MES 1–2</span>
+        <div class="pt-head">Análisis de savia o foliar para verificar</div>
+        <div class="pt-body">Una vez estabilizado el sistema, realizar análisis de savia (NovaCropControl o equivalente) para confirmar que los niveles de Ca, K, Mg, Fe, Mn en planta estén dentro de rango. Ajustar la formulación con base en ese resultado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="call green">
+    <strong>✅ Indicadores de que la corrección está funcionando</strong>
+    ① CE drenaje se acerca a CE entrada · ② Hojas nuevas sin clorosis · ③ Nuevas flores sin quemazón de pétalos · ④ Frutas sin punta blanda (blossom end rot) · ⑤ Turgencia visual mejorada en corona y hojas jóvenes
+  </div>
+</section>
+
+<!-- ══ 6. MONITOR DRENAJE ══ -->
+<section class="section alt" id="drenaje">
+  <div class="sec-eyebrow">Módulo 06</div>
+  <div class="sec-title">Monitor de drenaje: el termómetro del sustrato</div>
+
+  <p>La relación CE entrada / CE drenaje es el indicador más directo del estado del sustrato. Usarlo diariamente es obligatorio durante la fase de corrección.</p>
+
+  <div class="drain-card">
+    <div class="drain-title">📊 Interpretador CE entrada ↔ drenaje</div>
+    <div class="drain-sub">Ingresa los valores medidos con el conductímetro</div>
+    <div class="drain-input-row">
+      <div class="drain-ig"><span class="drain-lbl">CE entrada (mS/cm)</span><input class="drain-inp" id="d-in" type="number" value="1.8" step="0.05"></div>
+      <div class="drain-ig"><span class="drain-lbl">CE drenaje (mS/cm)</span><input class="drain-inp" id="d-out" type="number" value="1.2" step="0.05"></div>
+      <div class="drain-ig"><span class="drain-lbl">pH drenaje</span><input class="drain-inp" id="d-ph" type="number" value="6.2" step="0.1"></div>
+    </div>
+    <div class="drain-result">
+      <span class="ec-rl">Ratio CE drenaje / CE entrada</span>
+      <span class="drain-rv" id="d-ratio">—</span>
+      <span class="ec-ru">objetivo: ≥ 0,90 (sustrato saturado)</span>
+    </div>
+    <div class="drain-status" id="d-status"></div>
+  </div>
+
+  <table class="log-table">
+    <thead><tr><th>Ratio CE drn/ent</th><th>Interpretación</th><th>Acción</th></tr></thead>
+    <tbody>
+      <tr class="log-crit"><td>&lt; 0,70</td><td>CEC muy insaturado — sustrato reteniendo activamente</td><td>Mantener solución alta en Ca. Aumentar drenaje al 30%.</td></tr>
+      <tr class="log-warn"><td>0,70 – 0,89</td><td>CEC en proceso de saturación</td><td>Continuar solución de saturación. Monitoreo diario.</td></tr>
+      <tr class="log-ok"><td>0,90 – 1,05</td><td>CEC saturado — sistema estabilizado ✓</td><td>Transición gradual a solución de producción.</td></tr>
+      <tr class="log-warn"><td>&gt; 1,05</td><td>Acumulación de sales en sustrato</td><td>Reducir CE de entrada. Aumentar frecuencia de riego (más drenaje).</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footnote">
+    📝 <strong>pH del drenaje como indicador adicional:</strong> pH &lt; 5,5 en drenaje indica acidificación del sustrato (exceso de H⁺ liberados por el CEC) → reducir acidez de la solución de entrada. pH &gt; 6,8 en drenaje indica alcalinización → verificar si hay producción de HCO₃⁻ por descomposición de la corteza de pino, y acidificar la solución de entrada.
+  </div>
+</section>
+
+<!-- ══ 7. REGISTRO ══ -->
+<section class="section" id="registro">
+  <div class="sec-eyebrow">Módulo 07</div>
+  <div class="sec-title">Registro semanal mínimo</div>
+
+  <p>Durante la fase de corrección activa, el siguiente set de datos debe registrarse <strong>diariamente por sector</strong>. Una vez estabilizado (CE drn ≥ CE ent), se puede reducir a 3 veces por semana.</p>
+
+  <table class="log-table">
+    <thead>
+      <tr><th>Variable</th><th>Frecuencia</th><th>Instrumento</th><th>Alerta si...</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>CE entrada tanque</strong></td><td>Cada preparación</td><td>Conductímetro</td><td>Varía &gt;0,1 mS entre días sin cambio de fórmula</td></tr>
+      <tr><td><strong>pH entrada tanque</strong></td><td>Cada preparación</td><td>pHmetro</td><td>Fuera de 5,8–6,2</td></tr>
+      <tr><td><strong>CE drenaje</strong></td><td>Diario (primer riego)</td><td>Conductímetro</td><td>&lt;70% de CE entrada</td></tr>
+      <tr><td><strong>pH drenaje</strong></td><td>Diario</td><td>pHmetro o tira</td><td>&lt;5,5 o &gt;6,8</td></tr>
+      <tr><td><strong>% drenaje</strong></td><td>Cada riego (o 1/día)</td><td>Probeta + cronómetro</td><td>&lt;15% o &gt;35%</td></tr>
+      <tr><td><strong>Observación foliar</strong></td><td>2 veces por semana</td><td>Visual</td><td>Nueva clorosis, quemado de bordes</td></tr>
+      <tr><td><strong>N° flores y frutos cuajados</strong></td><td>Semanal</td><td>Conteo en planta muestra</td><td>Disminución sostenida</td></tr>
+    </tbody>
+  </table>
+
+  <div class="call green">
+    <strong>📋 Qué hacer con los datos</strong>
+    Graficar la evolución del ratio CE drenaje/CE entrada semana a semana. Ese gráfico es la evidencia del avance del proceso de saturación del CEC del sustrato. Cuando la línea llega a 1,0 y se mantiene, el sistema está corregido.
+  </div>
+</section>
+
+<div class="footer">
+  <strong>Capacitación técnica · Nutrición y Equilibrio Iónico en Frutilla Hidropónica</strong><br>
+  La Serena, Región de Coquimbo · Sustrato: corteza de pino (66%) + capotillo de arroz (33%) · Agua de ósmosis inversa<br>
+  Variedades: Albión / San Andreas · Plantación: Oct 2025 – Ene 2026 · <em>Validar con análisis de savia.</em>
+</div>
+
+<script>
+// ── STAGE DATA ──
+const STAGES = [
+  {
+    id:'sat', name:'Saturación CEC del sustrato', emoji:'⚗️',
+    desc:'Protocolo de corrección activo. Aplicar hasta que CE drenaje ≥ 90% CE entrada. Actualmente necesario para todos los sectores.',
+    ec:1.8, ph:'5.8', months:'Ahora (Abr–May 2026)',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno principal', mmol:10.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal (máx. 5%)', mmol:0.5, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo', mmol:0.8, cat:false},
+      {name:'K⁺', role:'Potasio (reducido)', mmol:3.0, cat:true},
+      {name:'Ca²⁺', role:'Calcio ↑↑ para saturar CEC', mmol:7.0, cat:true},
+      {name:'Mg²⁺', role:'Magnesio', mmol:1.5, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:1.5, cat:false},
+    ],
+    notes:'⚠️ Ca²⁺ elevado a 7 mmol/L intencionalmente para saturar el CEC del sustrato. K/Ca = 0,43 — relación baja para favorecer absorción de Ca. Verificar con conductímetro y ajustar con micronutrientes.'
+  },
+  {
+    id:'est', name:'Establecimiento (semanas 1–4)', emoji:'🌱',
+    desc:'Post-trasplante. Fomentar desarrollo radical. Baja CE para no estresar la planta recién trasplantada.',
+    ec:1.6, ph:'5.9', months:'Primeras 4 semanas tras plantación',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno principal', mmol:10.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal (estimula raíz)', mmol:0.8, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo ↑ para raíz', mmol:1.2, cat:false},
+      {name:'K⁺', role:'Potasio', mmol:4.0, cat:true},
+      {name:'Ca²⁺', role:'Calcio', mmol:4.5, cat:true},
+      {name:'Mg²⁺', role:'Magnesio', mmol:1.5, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:1.5, cat:false},
+    ],
+    notes:'En esta etapa NH₄⁺ ligeramente más alto favorece el crecimiento radical. Asegurarse de que el sustrato esté pre-saturado con Ca antes de plantar.'
+  },
+  {
+    id:'veg', name:'Vegetativo activo (semanas 5–8)', emoji:'🍃',
+    desc:'Expansión de corona y hojas. Se incrementa N y Mg para sostener el crecimiento foliar.',
+    ec:2.0, ph:'5.9', months:'Semanas 5–8 post-trasplante',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno ↑ para hoja', mmol:12.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal', mmol:0.8, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo', mmol:1.2, cat:false},
+      {name:'K⁺', role:'Potasio', mmol:4.5, cat:true},
+      {name:'Ca²⁺', role:'Calcio', mmol:4.5, cat:true},
+      {name:'Mg²⁺', role:'Magnesio ↑ para clorofila', mmol:1.8, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:2.0, cat:false},
+    ],
+    notes:'Monitorear que el relación K/Ca se mantenga bajo 1,2. El exceso de K compite con Ca en la absorción radical.'
+  },
+  {
+    id:'flor', name:'Floración y cuaje', emoji:'🌸',
+    desc:'Inicio de la producción. Se eleva K para síntesis de azúcares. Ca crítico para calidad de fruto.',
+    ec:2.2, ph:'5.9', months:'8–12 semanas post-trasplante',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno', mmol:12.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal (reducir)', mmol:0.5, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo', mmol:1.2, cat:false},
+      {name:'K⁺', role:'Potasio ↑ para cuaje', mmol:5.5, cat:true},
+      {name:'Ca²⁺', role:'Calcio (calidad fruto)', mmol:4.5, cat:true},
+      {name:'Mg²⁺', role:'Magnesio', mmol:2.0, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:2.0, cat:false},
+    ],
+    notes:'Reducir NH₄⁺ en floración — el exceso de amonio puede provocar quemado de pétalos y aborto de flores. pH debe mantenerse en 5,9 para disponibilidad de B (boron, esencial para cuaje).'
+  },
+  {
+    id:'prod', name:'Producción activa', emoji:'🍓',
+    desc:'Período principal de cosecha. Alta demanda de K (calidad brix), Ca (firmeza) y micronutrientes.',
+    ec:2.4, ph:'6.0', months:'Oct 2025 – actualmente (sect. 1–5)',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno sostenido', mmol:13.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal mínimo', mmol:0.5, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo', mmol:1.3, cat:false},
+      {name:'K⁺', role:'Potasio ↑↑ brix y color', mmol:6.5, cat:true},
+      {name:'Ca²⁺', role:'Calcio (firmeza fruto)', mmol:5.0, cat:true},
+      {name:'Mg²⁺', role:'Magnesio', mmol:2.0, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:2.0, cat:false},
+    ],
+    notes:'El aumento de K en producción mejora el brix y el color, pero puede competir con Ca. Vigilar ratio K/Ca ≤ 1,5. Si aparece blossom end rot (punta blanda en fruto), reducir K o aumentar Ca.'
+  },
+  {
+    id:'pico', name:'Pico de cosecha', emoji:'🏆',
+    desc:'Máxima carga productiva. Alta demanda hídrica y nutricional. Frecuencia de monitoreo máxima.',
+    ec:2.6, ph:'6.0', months:'Período de máxima producción',
+    ions:[
+      {name:'NO₃⁻', role:'Nitrógeno', mmol:14.0, cat:false},
+      {name:'NH₄⁺', role:'N amoniacal mínimo', mmol:0.5, cat:true},
+      {name:'H₂PO₄⁻', role:'Fósforo', mmol:1.5, cat:false},
+      {name:'K⁺', role:'Potasio máximo', mmol:7.0, cat:true},
+      {name:'Ca²⁺', role:'Calcio ↑ (firmeza máxima)', mmol:5.5, cat:true},
+      {name:'Mg²⁺', role:'Magnesio ↑', mmol:2.2, cat:true},
+      {name:'SO₄²⁻', role:'Sulfato', mmol:2.5, cat:false},
+    ],
+    notes:'En pico de cosecha la demanda hídrica puede duplicarse respecto al establecimiento. Ajustar el número de pulsos diarios según la radiación acumulada (ver módulo de riego). No reducir la CE sin un análisis de savia que lo respalde.'
+  },
+];
+
+const maxMmol = 14;
+
+function renderIonTable(ions) {
+  const cats = ions.filter(i=>i.cat);
+  const ans  = ions.filter(i=>!i.cat);
+  const catMeq = cats.reduce((s,i)=>s+i.mmol*(i.name.includes('²')&&i.cat?2:1),0);
+  const anMeq  = ans.reduce((s,i)=>s+i.mmol*(i.name.includes('²⁻')?2:1),0);
+
+  let rows = '';
+  cats.forEach(i=>{
+    const charge = i.name.includes('²') ? 2 : 1;
+    const meq = (i.mmol*charge).toFixed(1);
+    const bw = Math.round(i.mmol/maxMmol*100);
+    rows += `<tr class="ion-group-cat">
+      <td><div class="ion-name">${i.name}</div><div class="ion-role">${i.role}</div></td>
+      <td class="r">${i.mmol.toFixed(1)}</td>
+      <td class="r">${meq}</td>
+      <td><div class="bar-mini"><div class="bar-mini-fill" style="width:${bw}%;background:#0D6E6E"></div></div></td>
+    </tr>`;
+  });
+  ans.forEach(i=>{
+    const charge = i.name.includes('²')&&!i.cat ? 2 : 1;
+    const meq = (i.mmol*charge).toFixed(1);
+    const bw = Math.round(i.mmol/maxMmol*100);
+    rows += `<tr class="ion-group-an">
+      <td><div class="ion-name">${i.name}</div><div class="ion-role">${i.role}</div></td>
+      <td class="r">${i.mmol.toFixed(1)}</td>
+      <td class="r">${meq}</td>
+      <td><div class="bar-mini"><div class="bar-mini-fill" style="width:${bw}%;background:#D4820A"></div></div></td>
+    </tr>`;
+  });
+
+  const ratio = (catMeq/anMeq).toFixed(2);
+  const kca = (cats.find(i=>i.name==='K⁺').mmol / cats.find(i=>i.name==='Ca²⁺').mmol).toFixed(2);
+
+  rows += `<tr class="balance-row"><td colspan="2">Cationes totales</td><td class="r">${catMeq.toFixed(1)}</td><td></td></tr>`;
+  rows += `<tr class="balance-row"><td colspan="2">Aniones totales</td><td class="r">${anMeq.toFixed(1)}</td><td></td></tr>`;
+  rows += `<tr class="ratio-row"><td>Ratio Cat/An (meq)</td><td class="r" colspan="2">${ratio} ${parseFloat(ratio)>1.15?'⚠️ desbalance':parseFloat(ratio)>=0.9?'✓ OK':'⚠️'}</td><td></td></tr>`;
+  rows += `<tr class="ratio-row"><td>Ratio K⁺/Ca²⁺ (mmol)</td><td class="r" colspan="2">${kca} ${parseFloat(kca)>1.5?'⚠️ revisar':parseFloat(kca)<=1.3?'✓ OK':'aceptable'}</td><td></td></tr>`;
+
+  return `<table class="ion-table">
+    <thead><tr><th>Ion</th><th class="r">mmol/L</th><th class="r">meq/L</th><th>Proporción</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderStage(s) {
+  document.getElementById('stage-display').innerHTML = `
+    <div class="stage-card active">
+      <div class="stage-header">
+        <div>
+          <div style="font-size:.72rem;font-family:'DM Mono',monospace;color:var(--teal-lt);margin-bottom:.2rem">${s.months}</div>
+          <div class="stage-name">${s.emoji} ${s.name}</div>
+        </div>
+        <div class="stage-ec">
+          <span class="ec-val">${s.ec}</span>
+          <span class="ec-unit">mS/cm</span>
+          <span class="ec-unit">pH ${s.ph}</span>
+        </div>
+      </div>
+      <div class="stage-desc">${s.desc}</div>
+      ${renderIonTable(s.ions)}
+      <div class="call amber" style="margin-top:.8rem"><strong>📝 Nota</strong>${s.notes}</div>
+    </div>`;
+}
+
+// Build nav
+const nav = document.getElementById('stage-nav');
+let selStage = 0;
+STAGES.forEach((s,i) => {
+  const b = document.createElement('button');
+  b.className='stage-btn'+(i===0?' active':'');
+  b.textContent = s.emoji+' '+s.name.split(' ')[0]+' '+s.name.split(' ')[1];
+  b.onclick = () => {
+    selStage = i; renderStage(s);
+    nav.querySelectorAll('.stage-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  };
+  nav.appendChild(b);
+});
+renderStage(STAGES[0]);
+
+// ── ION VERIFIER ──
+function verifyIons() {
+  const no3=parseFloat(document.getElementById('vi-no3').value)||0;
+  const nh4=parseFloat(document.getElementById('vi-nh4').value)||0;
+  const po4=parseFloat(document.getElementById('vi-po4').value)||0;
+  const k  =parseFloat(document.getElementById('vi-k').value)||0;
+  const ca =parseFloat(document.getElementById('vi-ca').value)||0;
+  const mg =parseFloat(document.getElementById('vi-mg').value)||0;
+  const so4=parseFloat(document.getElementById('vi-so4').value)||0;
+
+  const cat = nh4+k+ca*2+mg*2;
+  const an  = no3+po4+so4*2;
+  const balance = cat/an;
+  const kca = ca>0 ? k/ca : 0;
+  const ec  = (cat+an)*0.1;
+
+  document.getElementById('vi-cat').textContent = cat.toFixed(1);
+  document.getElementById('vi-an').textContent  = an.toFixed(1);
+  document.getElementById('vi-balance').textContent = balance.toFixed(2);
+  document.getElementById('vi-kca').textContent = kca.toFixed(2);
+  document.getElementById('vi-ec').textContent  = ec.toFixed(2);
+
+  const st = document.getElementById('vi-status');
+  if(balance>=0.9&&balance<=1.15&&kca<=1.5){
+    st.className='ec-status ec-ok';st.style.display='block';
+    st.textContent='✅ Balance iónico correcto. Ratio K/Ca dentro del rango para frutilla.';
+  } else if(balance>1.15){
+    st.className='ec-status ec-high';st.style.display='block';
+    st.textContent='⚠️ Exceso de cationes sobre aniones ('+(balance).toFixed(2)+'). Ajustar aumentando NO₃⁻ o SO₄²⁻.';
+  } else if(balance<0.9){
+    st.className='ec-status ec-low';st.style.display='block';
+    st.textContent='⚠️ Exceso de aniones. Revisar las concentraciones de cationes o reducir SO₄²⁻.';
+  } else if(kca>1.5){
+    st.className='ec-status ec-high';st.style.display='block';
+    st.textContent='⚠️ Ratio K/Ca = '+(kca.toFixed(2))+' supera 1,5. Riesgo de inhibición de absorción de Ca. Reducir K o aumentar Ca.';
+  }
+}
+document.querySelectorAll('.ec-inp').forEach(i=>i.addEventListener('input',verifyIons));
+verifyIons();
+
+// ── DRAIN MONITOR ──
+function calcDrain(){
+  const inp=parseFloat(document.getElementById('d-in').value)||0;
+  const out=parseFloat(document.getElementById('d-out').value)||0;
+  const ph =parseFloat(document.getElementById('d-ph').value)||0;
+  const ratio=inp>0?out/inp:0;
+
+  document.getElementById('d-ratio').textContent=ratio.toFixed(2);
+
+  const st=document.getElementById('d-status');
+  st.style.display='block';
+  if(ratio<0.70){
+    st.className='drain-status ec-low';
+    st.textContent='🔴 Sustrato absorbiendo activamente. CEC muy insaturado. Mantener solución alta en Ca. Aumentar drenaje al 30 %.';
+  } else if(ratio<0.90){
+    st.className='drain-status ec-high';
+    st.textContent='🟡 Proceso de saturación en curso. Continuar con solución de corrección. Monitoreo diario.';
+  } else if(ratio<=1.05){
+    let msg='🟢 CEC saturado. El sustrato está estabilizado. Puede iniciar transición a solución de producción.';
+    if(ph<5.5) msg+=' ⚠️ pH bajo en drenaje — revisar acidez de la solución.';
+    if(ph>6.8) msg+=' ⚠️ pH alto en drenaje — posible acumulación de bicarbonatos o corteza sin estabilizar.';
+    st.className='drain-status ec-ok';
+    st.textContent=msg;
+  } else {
+    st.className='drain-status ec-high';
+    st.textContent='⚠️ Sales acumulándose en el sustrato (ratio > 1,05). Reducir CE de entrada o aumentar la frecuencia de riego para mayor drenaje.';
+  }
+}
+document.querySelectorAll('.drain-inp').forEach(i=>i.addEventListener('input',calcDrain));
+calcDrain();
+</script>
+</body>
+</html>

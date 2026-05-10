@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riego Frutilla Hidropónica · La Serena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sun:#F0A500;--sun-pale:#FEF3CD;--earth:#6B3A1F;--earth-dk:#3A1A08;
+  --green:#2D6A4F;--green-lt:#40916C;--sky:#1B4F72;--water:#2471A3;
+  --water-lt:#D6EAF8;--cream:#FAFAF5;--cream2:#F0EDE4;--ink:#1C1A17;
+  --muted:#7A7068;--line:#E2DDD5;--red:#C0392B;--red-pale:#FDEDEB;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);font-size:15px;line-height:1.65}
+
+/* HERO */
+.hero{background:var(--earth-dk);overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1fr 80px;min-height:210px}
+.hero-content{padding:2rem 1.5rem 1.8rem;z-index:2}
+.hero-sun{background:var(--sun);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.hero-tag{display:inline-block;background:rgba(240,165,0,0.2);border:1px solid rgba(240,165,0,0.35);color:var(--sun);font-size:0.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .65rem;border-radius:2px;margin-bottom:.85rem}
+.hero h1{font-family:'Instrument Serif',serif;font-size:2rem;color:#fff;line-height:1.1;margin-bottom:.5rem}
+.hero h1 em{color:var(--sun);font-style:italic}
+.hero-sub{font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:1rem}
+.hero-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);border-radius:20px;padding:.18rem .65rem;font-size:.72rem}
+
+/* NAV */
+.nav{background:var(--earth);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:rgba(255,255,255,.65);text-decoration:none;padding:.6rem 1rem;font-size:.75rem;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s}
+.nav a:hover{color:var(--sun);border-bottom-color:var(--sun)}
+
+/* SECTIONS */
+.section{padding:1.8rem 1.4rem;border-bottom:1px solid var(--line)}
+.section-alt{background:#fff}
+.sec-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.sec-title{font-family:'Instrument Serif',serif;font-size:1.35rem;color:var(--earth-dk);line-height:1.2;margin-bottom:1.1rem}
+p{font-size:.9rem;color:#2E2A24;margin-bottom:.8rem;line-height:1.65}
+p:last-child{margin-bottom:0}
+
+/* CALLOUT */
+.callout{border-left:3px solid var(--sun);background:var(--sun-pale);padding:.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:.85rem}
+.callout.water{border-color:var(--water);background:var(--water-lt)}
+.callout.red{border-color:var(--red);background:var(--red-pale)}
+.callout.green{border-color:var(--green);background:#E8F5EE}
+.callout strong{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;color:var(--earth-dk)}
+
+/* FACTORS */
+.factors-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1.1rem 0}
+.factor-card{background:var(--cream2);border:1.5px solid var(--line);border-radius:8px;padding:.9rem;position:relative}
+.factor-card.hl{background:var(--earth-dk);border-color:var(--sun);color:var(--cream);grid-column:1/-1}
+.f-icon{font-size:1.3rem;display:block;margin-bottom:.35rem}
+.f-name{font-weight:600;font-size:.82rem;display:block;margin-bottom:.2rem}
+.factor-card.hl .f-name{color:var(--sun);font-size:.9rem}
+.f-desc{font-size:.78rem;color:var(--muted);line-height:1.45}
+.factor-card.hl .f-desc{color:rgba(250,250,245,.75)}
+.f-badge{position:absolute;top:.6rem;right:.6rem;background:var(--sun);color:var(--earth-dk);font-size:.68rem;font-weight:700;padding:.12rem .45rem;border-radius:2px}
+
+/* BAR CHART */
+.chart-lbl{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:1.3rem 0 .7rem}
+.bar-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.bar-lbl{font-size:.78rem;width:100px;flex-shrink:0;font-weight:500}
+.bar-track{flex:1;background:var(--cream2);border-radius:3px;height:22px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:.72rem;font-weight:700}
+.bf-r{background:var(--sun);color:var(--earth-dk)}
+.bf-v{background:#E8734A;color:#fff}
+.bf-w{background:var(--muted);color:#fff}
+.bar-note{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:.3rem}
+
+/* UNITS */
+.unit-compare{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1.1rem 0}
+.unit-card{border-radius:10px;padding:1rem;text-align:center}
+.unit-card.watt{background:var(--earth-dk);color:var(--cream)}
+.unit-card.joule{background:var(--green);color:var(--cream)}
+.u-sym{font-family:'Instrument Serif',serif;font-size:1.6rem;font-weight:700;line-height:1;margin-bottom:.3rem;display:block}
+.unit-card.watt .u-sym{color:var(--sun)}
+.unit-card.joule .u-sym{color:#7AE0B8}
+.u-name{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;opacity:.65;margin-bottom:.4rem;display:block}
+.u-def{font-size:.78rem;line-height:1.45;opacity:.9}
+
+.analogy-box{background:#F0F4FF;border:1px solid #BCC8E8;border-radius:8px;padding:.95rem;margin:1rem 0}
+.analogy-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#3A4F8A;margin-bottom:.5rem}
+.a-row{font-size:.83rem;margin-bottom:.4rem;line-height:1.5}
+.a-row:last-child{margin-bottom:0}
+.sym{font-weight:700;color:#3A4F8A;font-family:'Instrument Serif',serif}
+
+/* CONV TABLE */
+.conv-table{width:100%;border-collapse:collapse;font-size:.8rem;margin:1rem 0}
+.conv-table th{background:var(--earth-dk);color:#fff;padding:.5rem .7rem;text-align:left;font-size:.73rem;font-weight:600}
+.conv-table td{padding:.5rem .7rem;border-bottom:1px solid var(--line)}
+.conv-table tr:nth-child(even) td{background:var(--cream2)}
+.conv-table .hl{color:var(--earth);font-weight:700}
+
+/* PARAMS */
+.params-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin:1rem 0}
+.param-box{background:var(--earth-dk);border-radius:8px;padding:.85rem;color:#fff;text-align:center}
+.param-box.g{background:var(--green)}
+.param-box.w{background:var(--water)}
+.p-val{font-family:'Instrument Serif',serif;font-size:1.6rem;color:var(--sun);line-height:1;display:block}
+.param-box.g .p-val{color:#7AE0B8}
+.param-box.w .p-val{color:#A9D5F5}
+.p-unit{font-size:.66rem;opacity:.65;display:block;margin-top:.2rem}
+.p-name{font-size:.72rem;font-weight:600;opacity:.85;margin-top:.3rem;display:block}
+
+/* ETo CHART */
+.chart-wrap{margin:1.2rem 0}
+.chart-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:.4rem}
+.ct-sm{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.ct-src{font-size:.65rem;color:var(--muted);font-style:italic}
+.eto-chart{display:flex;align-items:flex-end;gap:4px;height:120px;border-bottom:1.5px solid var(--line);padding-bottom:2px;padding-top:22px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bb{width:100%;border-radius:3px 3px 0 0;position:relative;cursor:default}
+.bb::after{content:attr(data-val);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:.58rem;font-weight:600;color:var(--earth);white-space:nowrap}
+.bl2{font-size:.56rem;color:var(--muted);text-align:center;line-height:1.2}
+.blo{background:#A8D5BA}.bme{background:var(--sun)}.bhi{background:#E8734A}
+
+/* MONTH TABLE */
+.month-table{width:100%;border-collapse:collapse;font-size:.78rem;margin:1rem 0}
+.month-table thead tr{background:var(--earth-dk);color:#fff}
+.month-table th{padding:.5rem .55rem;text-align:center;font-weight:600;font-size:.68rem}
+.month-table th:first-child{text-align:left}
+.month-table td{padding:.5rem .55rem;text-align:center;border-bottom:1px solid var(--line)}
+.month-table td:first-child{text-align:left;font-weight:600;color:var(--earth)}
+.month-table tr:nth-child(even) td{background:var(--cream2)}
+.hi2{color:var(--red);font-weight:700}.lo2{color:var(--green);font-weight:600}
+.warn-row td{background:#FEF3CD !important}
+.bdg{display:inline-block;font-size:.58rem;font-weight:700;padding:.1rem .35rem;border-radius:2px;text-transform:uppercase;letter-spacing:.04em}
+.bp{background:#D6EEE4;color:var(--green)}.bpr{background:#FEF3CD;color:var(--earth)}
+
+/* CALC */
+.pulse-card{background:var(--ink);border-radius:12px;padding:1.4rem;color:#fff;margin:1.2rem 0}
+.pulse-title{font-family:'Instrument Serif',serif;font-size:1.15rem;color:var(--sun);margin-bottom:.25rem}
+.pulse-sub{font-size:.76rem;color:rgba(255,255,255,.5);margin-bottom:1.2rem}
+.month-selector{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1rem}
+.month-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.65);border-radius:4px;padding:.3rem .6rem;font-size:.72rem;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .15s}
+.month-btn:hover{background:rgba(240,165,0,.2);color:var(--sun)}
+.month-btn.active{background:var(--sun);color:var(--earth-dk);font-weight:700;border-color:var(--sun)}
+.kc-row{display:flex;gap:.5rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.kc-btn{flex:1;min-width:80px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);border-radius:6px;padding:.45rem .5rem;font-size:.74rem;font-family:'Outfit',sans-serif;cursor:pointer;text-align:center;transition:all .15s}
+.kc-btn.active{background:var(--green-lt);color:#fff;border-color:var(--green-lt);font-weight:600}
+.results-4{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.8rem}
+.res-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.8rem;text-align:center}
+.res-box.main{grid-column:1/-1;background:rgba(240,165,0,.15);border-color:rgba(240,165,0,.4)}
+.res-val{font-family:'Instrument Serif',serif;font-size:2rem;color:var(--sun);display:block;line-height:1}
+.res-box.main .res-val{font-size:2.6rem}
+.res-unit{font-size:.66rem;color:rgba(255,255,255,.45);display:block;margin-top:.2rem}
+.res-label{font-size:.68rem;font-weight:600;color:var(--sun);display:block;margin-bottom:.3rem;letter-spacing:.05em;text-transform:uppercase}
+.pulse-warn{background:rgba(192,57,43,.2);border:1px solid rgba(192,57,43,.5);border-radius:6px;padding:.65rem .9rem;font-size:.76rem;color:#FFB5AF;display:none;line-height:1.5;margin-bottom:.6rem}
+.schedule-viz{background:rgba(255,255,255,.04);border-radius:6px;padding:.8rem;margin-top:.8rem}
+.sch-lbl{font-size:.65rem;color:rgba(255,255,255,.45);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.07em;font-family:'DM Mono',monospace}
+.timeline{display:flex;align-items:center;height:24px;background:rgba(0,0,0,.3);border-radius:4px;overflow:hidden;position:relative}
+.riego-block{height:100%;background:var(--water);border-right:1px solid rgba(0,0,0,.25);position:absolute}
+.tl-labels{display:flex;justify-content:space-between;margin-top:4px}
+.tl-labels span{font-size:.54rem;color:rgba(255,255,255,.3);font-family:'DM Mono',monospace}
+
+/* SOURCE */
+.source-card{background:var(--water-lt);border:1.5px solid #A9D5F5;border-radius:10px;padding:1rem 1.1rem;margin:1rem 0}
+.src-t{font-weight:700;font-size:.82rem;color:var(--sky);margin-bottom:.5rem}
+.source-card p{font-size:.8rem;color:#1B4F72;margin-bottom:.35rem}
+.ref{font-size:.73rem;color:#2471A3;font-style:italic;padding-left:.8rem;border-left:2px solid #2471A3;margin:.3rem 0;display:block}
+
+/* STEPS */
+.step-list{margin:1rem 0}
+.step-item{display:flex;gap:.9rem;margin-bottom:1rem;align-items:flex-start}
+.step-num{width:30px;height:30px;background:var(--earth-dk);color:var(--sun);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:.9rem;font-weight:700;flex-shrink:0}
+.step-t{font-weight:600;font-size:.88rem;color:var(--earth-dk);margin-bottom:.2rem}
+.step-d{font-size:.8rem;color:var(--muted);line-height:1.45}
+
+.footnote{background:var(--cream2);border:1px dashed var(--muted);border-radius:6px;padding:.8rem 1rem;font-size:.75rem;color:var(--muted);margin:1rem 0;line-height:1.6}
+.footer{background:var(--ink);color:rgba(255,255,255,.45);padding:1.5rem 1.4rem;font-size:.72rem;text-align:center;line-height:1.7}
+.footer strong{color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <div class="hero-tag">Capacitación técnica</div>
+      <h1>Riego Frutilla<br><em>Hidropónica</em></h1>
+      <p class="hero-sub">Demanda hídrica y criterios de riego basados en datos reales de La Serena</p>
+      <div class="hero-chips">
+        <span class="chip">📍 La Serena, Coquimbo</span>
+        <span class="chip">🍓 Albión / San Andreas</span>
+        <span class="chip">🪴 Corteza pino + capotillo arroz</span>
+        <span class="chip">💧 Sistema hidropónico en banquetas</span>
+      </div>
+    </div>
+    <div class="hero-sun">☀️</div>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#demanda">1. Demanda atmosférica</a>
+  <a href="#unidades">2. Unidades de energía</a>
+  <a href="#sistema">3. Sistema de riego</a>
+  <a href="#eto">4. ETo y radiación</a>
+  <a href="#calc">5. Calculadora</a>
+  <a href="#tabla">6. Tabla mensual</a>
+  <a href="#protocolo">7. Ciclo diario del sustrato</a>
+</nav>
+
+<!-- ══ 1. DEMANDA ══ -->
+<section class="section" id="demanda">
+  <div class="sec-label">Módulo 01</div>
+  <div class="sec-title">¿Qué determina cuánta agua necesita el cultivo cada día?</div>
+  <p>La planta pierde agua continuamente hacia el aire que la rodea. Esa "sed del ambiente" se denomina <strong>demanda evapotranspirativa</strong>. Múltiples factores la gobiernan, pero su peso relativo es muy distinto entre sí.</p>
+
+  <div class="factors-grid">
+    <div class="factor-card hl">
+      <span class="f-icon">☀️</span>
+      <span class="f-badge">&gt; 80 %</span>
+      <span class="f-name">Radiación solar acumulada diaria</span>
+      <p class="f-desc">Es el motor principal de la evapotranspiración. La energía del sol es la que evapora el agua del sustrato y transpira la planta. En invernadero, la radiación diaria acumulada explica más del 80 % de la variación en el consumo de agua día a día. Los demás factores cambian en su mayoría como consecuencia directa de la misma radiación.</p>
+    </div>
+    <div class="factor-card">
+      <span class="f-icon">🌡️</span>
+      <span class="f-name">Temperatura + HR (VPD)</span>
+      <p class="f-desc" style="color:#555">El déficit de presión de vapor (VPD) determina la "capacidad de secado" del aire. Está fuertemente correlacionado con la radiación: cuando hay sol, la temperatura sube y la humedad relativa baja.</p>
+    </div>
+    <div class="factor-card">
+      <span class="f-icon">💨</span>
+      <span class="f-name">Ventilación del invernadero</span>
+      <p class="f-desc" style="color:#555">Renueva el aire saturado cerca de la hoja. En invernadero cerrado su influencia es considerablemente menor que en campo abierto.</p>
+    </div>
+  </div>
+
+  <div class="chart-lbl">Peso relativo en la demanda hídrica diaria (invernadero)</div>
+  <div class="bar-row"><div class="bar-lbl">Radiación</div><div class="bar-track"><div class="bar-fill bf-r" style="width:85%">&gt; 80 %</div></div></div>
+  <div class="bar-row"><div class="bar-lbl">Temperatura / VPD</div><div class="bar-track"><div class="bar-fill bf-v" style="width:12%">~12 %</div></div></div>
+  <div class="bar-row"><div class="bar-lbl">Ventilación</div><div class="bar-track"><div class="bar-fill bf-w" style="width:4%">~3 %</div></div></div>
+  <p class="bar-note">Basado en: Baille et al. (1994), Fernández et al. (2010 — frutilla en invernadero), Jolliet & Bailey (1992).</p>
+
+  <div class="source-card">
+    <div class="src-t">📚 Respaldo bibliográfico del modelo ET = k × Rs</div>
+    <p>La relación lineal entre evapotranspiración (ET) y radiación solar (Rs) dentro del invernadero está documentada en:</p>
+    <span class="ref">Baille, M., Baille, A. & Laury, J.C. (1994). <em>"A simplified model for predicting evapotranspiration rate of nine ornamental species vs. climate factors and leaf area."</em> Scientia Horticulturae, 59(3-4), 217–232.</span>
+    <span class="ref">Fernández, M.D. et al. (2010). <em>"Transpiration of a greenhouse strawberry crop."</em> Biosystems Engineering, 107(2), 96–104. <strong>→ Específico para frutilla en invernadero.</strong></span>
+    <span class="ref">Jolliet, O. & Bailey, B.J. (1992). <em>"The effect of climate on tomato transpiration in greenhouses."</em> Agricultural and Forest Meteorology, 58(1-2), 43–62.</span>
+    <p style="margin-top:.6rem">En estos estudios la radiación explica entre <strong>75 y 92 %</strong> de la varianza diaria de ET en invernadero. Para comunicar en campo: <em>"más del 80 %"</em> es el rango más conservador y técnicamente respaldado.</p>
+  </div>
+
+  <div class="callout">
+    <strong>🔑 Idea clave para el equipo de campo</strong>
+    El primer dato que hay que revisar cada mañana es la <strong>radiación acumulada del día anterior</strong> (o el pronóstico). Ese número explica casi todo lo que se necesita para decidir cuánto y cuándo regar.
+  </div>
+</section>
+
+<!-- ══ 2. UNIDADES ══ -->
+<section class="section section-alt" id="unidades">
+  <div class="sec-label">Módulo 02</div>
+  <div class="sec-title">¿Qué miden W/m² y MJ/m²? La diferencia que importa</div>
+  <p>La estación agroclimática puede mostrar la radiación de dos formas distintas. Confundirlas lleva a errores de interpretación.</p>
+
+  <div class="unit-compare">
+    <div class="unit-card watt">
+      <span class="u-sym">W/m²</span>
+      <span class="u-name">Watt por metro cuadrado</span>
+      <p class="u-def">Potencia <strong>instantánea</strong>: cuánta energía llega a 1 m² en este preciso momento. Varía durante el día: cero de noche, máximo al mediodía.</p>
+    </div>
+    <div class="unit-card joule">
+      <span class="u-sym">MJ/m²</span>
+      <span class="u-name">Megajoule por metro cuadrado</span>
+      <p class="u-def">Energía <strong>acumulada</strong> en el día. Es la suma de todos los valores de W/m² desde el amanecer hasta el atardecer. Esto es lo que determina la demanda hídrica diaria.</p>
+    </div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="analogy-title">🚿 Analogía con el agua — para explicar en campo</div>
+    <div class="a-row"><span class="sym">W/m²</span> = La presión de la manguera en este momento → varía todo el día</div>
+    <div class="a-row"><span class="sym">MJ/m²/día</span> = Los litros totales que pasaron durante todo el día → ese es el número que define cuánto regar</div>
+  </div>
+
+  <table class="conv-table">
+    <tr><th>Unidad</th><th>Representa</th><th>Equivalencia</th></tr>
+    <tr><td><strong>1 W/m²</strong></td><td>Potencia instantánea</td><td>= 1 joule por segundo en 1 m²</td></tr>
+    <tr><td><strong>1 MJ/m²</strong></td><td>Energía diaria acumulada</td><td class="hl">= 100 J/cm² = 1.000.000 J/m²</td></tr>
+    <tr><td><strong>1 J/cm²</strong></td><td>Energía acumulada (escala menor)</td><td>= 0,01 MJ/m²</td></tr>
+  </table>
+
+  <div class="callout water">
+    <strong>📍 Valores de radiación medidos en La Serena (estación local)</strong>
+    Exterior verano (Dic): ~15,7 MJ/m²/día · Exterior invierno (Jun): ~6,4 MJ/m²/día<br>
+    Dentro del invernadero (transmisividad ≈ 65 %): verano ~10 MJ/m²/día · invierno ~4 MJ/m²/día
+  </div>
+</section>
+
+<!-- ══ 3. SISTEMA ══ -->
+<section class="section" id="sistema">
+  <div class="sec-label">Módulo 03</div>
+  <div class="sec-title">El sistema de riego: parámetros que definen cada decisión</div>
+
+  <div class="params-grid">
+    <div class="param-box"><span class="p-val">13.600</span><span class="p-unit">metros lineales de banqueta por hectárea</span><span class="p-name">Longitud total de sustrato</span></div>
+    <div class="param-box"><span class="p-val">1,2</span><span class="p-unit">L / hora / gotero (presión de trabajo ajustada)</span><span class="p-name">Caudal operativo real</span></div>
+    <div class="param-box g"><span class="p-val">90.667</span><span class="p-unit">goteros por hectárea (cada 15 cm)</span><span class="p-name">Densidad de emisores</span></div>
+    <div class="param-box g"><span class="p-val">108,8</span><span class="p-unit">m³ / hora / hectárea</span><span class="p-name">Caudal total del sistema</span></div>
+    <div class="param-box w" style="grid-column:1/-1"><span class="p-val">10,88 mm/hr</span><span class="p-unit">equivalente a 10,88 L/m²/hr · 1 mm de agua = 1 L/m²</span><span class="p-name">Tasa de precipitación del sistema</span></div>
+  </div>
+
+  <div class="callout red">
+    <strong>⚠️ Restricción operativa clave: pulso mínimo de 4 minutos</strong>
+    El sistema no cuenta con goteros antidrenantes ni autocompensados. El tiempo mínimo de riego es 4 minutos (incluye 30–40 s de estabilización de presión). Esto fija un <strong>volumen mínimo por evento de 0,725 mm (0,725 L/m²)</strong>. Toda la programación diaria debe ser múltiplo de este valor.
+  </div>
+
+  <div class="footnote">
+    📝 <strong>Contexto del emisor:</strong> El proyecto fue diseñado para cintas de 1,2 L/hr. Se recibieron cintas de 1,4 L/hr (mayor descarga). Para operar en el caudal de diseño se redujo la presión de trabajo hasta obtener ~1,2 L/hr en campo. Se recomienda verificar el coeficiente de uniformidad (CU) a esa presión reducida, en particular en los sectores más alejados de la bomba.
+  </div>
+</section>
+
+<!-- ══ 4. ETo ══ -->
+<section class="section section-alt" id="eto">
+  <div class="sec-label">Módulo 04</div>
+  <div class="sec-title">ETo medida y radiación estimada mes a mes</div>
+  <p>La estación meteorológica local registró la evapotranspiración de referencia (ETo) entre marzo 2025 y febrero 2026, período que cubre el ciclo completo del cultivo. A partir de estos valores se estima la radiación solar real dentro del invernadero.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-top">
+      <span class="ct-sm">ETo acumulada mensual (mm) · Estación meteorológica La Serena</span>
+      <span class="ct-src">Mar 2025 – Feb 2026</span>
+    </div>
+    <div class="eto-chart" id="eto-chart"></div>
+    <div style="display:flex;gap:.9rem;margin-top:.5rem;font-size:.64rem;color:var(--muted)">
+      <span>🟢 &lt;50 mm/mes</span><span>🟡 50–80 mm</span><span>🟠 &gt;80 mm</span>
+    </div>
+  </div>
+
+  <p>Con la ETo diaria promedio de cada mes se estima la radiación exterior usando la relación energética del modelo Penman-Monteith simplificado. Luego se aplica la transmisividad del invernadero (τ = 0,65) para obtener la radiación interior disponible para el cultivo.</p>
+
+  <div class="callout water">
+    <strong>📐 Metodología de estimación de Rs interior</strong>
+    ETo (mm/d) × 2,45 = ETo (MJ/m²/d) → Rs_exterior = ETo_MJ ÷ (0,65 × 0,75) → Rs_interior = Rs_ext × 0,65<br>
+    <span style="font-size:.78rem;opacity:.85">Factores: 0,65 = fracción de Rn destinada a ET · 0,75 = relación Rn/Rs en clima semiárido costero · τ = 0,65 = transmisividad del polietileno agrícola.</span>
+  </div>
+
+  <table class="month-table">
+    <thead><tr><th>Mes</th><th>ETo (mm/d)</th><th>Rs exterior (MJ/m²/d)</th><th>Rs interior (MJ/m²/d)</th><th>Estado fenológico</th></tr></thead>
+    <tbody id="rs-tbody"></tbody>
+  </table>
+</section>
+
+<!-- ══ 5. CALC ══ -->
+<section class="section" id="calc">
+  <div class="sec-label">Módulo 05</div>
+  <div class="sec-title">Calculadora de riego diario por mes</div>
+  <p>Selecciona el mes y el estado fenológico del cultivo para obtener el número de pulsos diarios, el volumen a aplicar y la distribución orientativa en el día.</p>
+
+  <div class="pulse-card">
+    <div class="pulse-title">🌊 Programa de riego diario</div>
+    <div class="pulse-sub">13.600 m/ha · 1,2 L/hr · goteros cada 15 cm · pulso mínimo 4 min = 0,725 L/m² · drenaje objetivo 20 %</div>
+    <div class="month-selector" id="month-sel"></div>
+    <div class="kc-row">
+      <div class="kc-btn active" data-kc="0.55">🌱 Inicio / trasplante<br><small>Kc 0,55</small></div>
+      <div class="kc-btn" data-kc="0.70">🍃 Vegetativo<br><small>Kc 0,70</small></div>
+      <div class="kc-btn" data-kc="0.85">🍓 Plena producción<br><small>Kc 0,85</small></div>
+    </div>
+    <div class="results-4">
+      <div class="res-box main"><span class="res-label">Pulsos recomendados / día</span><span class="res-val" id="r-pulsos">—</span><span class="res-unit">riegos/día · cada pulso = 4 minutos</span></div>
+      <div class="res-box"><span class="res-label">ETc cultivo</span><span class="res-val" id="r-etc">—</span><span class="res-unit">mm / día (neto)</span></div>
+      <div class="res-box"><span class="res-label">Vol. total + drenaje</span><span class="res-val" id="r-vol">—</span><span class="res-unit">L/m²/día (con 20 % drenaje)</span></div>
+      <div class="res-box"><span class="res-label">Minutos riego / día</span><span class="res-val" id="r-min">—</span><span class="res-unit">min totales</span></div>
+      <div class="res-box"><span class="res-label">Rs interior estimado</span><span class="res-val" id="r-rs">—</span><span class="res-unit">MJ/m²/día dentro del invernadero</span></div>
+    </div>
+    <div class="pulse-warn" id="p-warn"></div>
+    <div class="schedule-viz">
+      <div class="sch-lbl">Distribución ilustrativa — los horarios dependen de los criterios de radiación del día</div>
+      <div style="position:relative"><div class="timeline" id="timeline"></div>
+      <div class="tl-labels"><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>20:00</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 6. TABLA ══ -->
+<section class="section section-alt" id="tabla">
+  <div class="sec-label">Módulo 06</div>
+  <div class="sec-title">Tabla de referencia mensual: ETo → Programa de riego</div>
+  <p>Basada en la ETo real de la estación meteorológica local. Kc según estado fenológico del proyecto (Albión/San Andreas, plantación octubre 2025).</p>
+  <table class="month-table">
+    <thead><tr><th>Mes</th><th>ETo (mm/d)</th><th>Rs int. (MJ/m²/d)</th><th>Kc</th><th>ETc (mm/d)</th><th>Vol+drn (L/m²/d)</th><th>Pulsos/día</th><th>Min/día</th></tr></thead>
+    <tbody id="full-tbody"></tbody>
+  </table>
+  <div class="footnote">
+    ⚠️ <strong>Meses de baja demanda (Jun–Ago):</strong> 2 pulsos/día entregan ~1,45 L/m²/día. En días nublados la ETc real puede ser menor. Monitorear drenaje: si supera el 30 %, suspender el segundo pulso del día.<br><br>
+    📐 <strong>Fórmulas:</strong> ETc = Kc × ETo exterior · Vol. total = ETc ÷ 0,80 (drenaje 20 %) · Pulsos = redondeo(Vol. total ÷ 0,725 mm/pulso)
+  </div>
+</section>
+
+<!-- ══ 7. CICLO DIARIO ══ -->
+<section class="section" id="protocolo">
+  <div class="sec-label">Módulo 07</div>
+  <div class="sec-title">El ciclo diario del sustrato: de la turgencia máxima al reinicio</div>
+
+  <p>La lógica del riego en sustrato hidropónico no se organiza por horarios fijos, sino por <strong>estados del sustrato y de la planta</strong> que se suceden en un ciclo diario bien definido. Comprender ese ciclo es la base de todas las decisiones de riego.</p>
+
+  <!-- CICLO VISUAL SVG -->
+  <div style="margin:1.2rem 0">
+  <svg viewBox="0 0 360 215" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:440px;display:block;margin:0 auto">
+    <!-- background -->
+    <rect width="360" height="215" fill="#F7FAFA" rx="8"/>
+    <!-- night zones -->
+    <rect x="0" y="0" width="58" height="215" fill="#E8F0F8" rx="4"/>
+    <rect x="295" y="0" width="65" height="215" fill="#E8F0F8" rx="4"/>
+    <!-- night labels -->
+    <text x="29" y="14" text-anchor="middle" font-size="7" fill="#6B8AAA" font-family="monospace">NOCHE</text>
+    <text x="327" y="14" text-anchor="middle" font-size="7" fill="#6B8AAA" font-family="monospace">NOCHE</text>
+    <!-- solar noon marker -->
+    <line x1="177" y1="18" x2="177" y2="192" stroke="#F0A500" stroke-width="1.2" stroke-dasharray="3,2"/>
+    <text x="177" y="14" text-anchor="middle" font-size="6.5" fill="#D4820A" font-weight="bold" font-family="monospace">MEDIODÍA SOLAR</text>
+
+    <!-- ── HUMIDITY CURVE ──
+         Dawn: high turgidity y=50
+         Pre-first-pulse: nocturnal drying to y=68 (6-8%)
+         Pulse 1: jump up, NO drainage (red dot)
+         Pulses 2-4: rising to maximum at y=34 (BEFORE solar noon ~x=148)
+         Pulses 5-last: FLAT plateau at y=34 (inter-pulse drying = pulse input)
+         Last pulse: same level, minimum drainage
+         Night: slow drop
+    -->
+    <!-- Night turgidity -->
+    <path d="M5,50 Q29,48 58,52" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <!-- Nocturnal drying (dashed) -->
+    <path d="M58,52 Q71,58 82,68" fill="none" stroke="#2471A3" stroke-width="2" stroke-dasharray="3,2"/>
+    <!-- Pulse 1: jump, NO drainage — red marker -->
+    <line x1="82" y1="68" x2="82" y2="56" stroke="#C0392B" stroke-width="2" stroke-dasharray="2,1.5"/>
+    <circle cx="82" cy="56" r="4" fill="#C0392B" stroke="white" stroke-width="1.5"/>
+    <!-- inter-pulse drying then pulse 2 -->
+    <path d="M82,56 Q90,58 96,61" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="96" y1="61" x2="96" y2="49" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="96" cy="49" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+    <!-- pulse 3 -->
+    <path d="M96,49 Q104,51 111,54" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="111" y1="54" x2="111" y2="42" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="111" cy="42" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+    <!-- pulse 4: reaches MAXIMUM before noon -->
+    <path d="M111,42 Q120,44 128,46" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="128" y1="46" x2="128" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="128" cy="34" r="4" fill="#1B4F72" stroke="white" stroke-width="1.5"/>
+    <text x="128" y="28" text-anchor="middle" font-size="5.5" fill="#1B4F72" font-family="sans-serif" font-weight="bold">HUM. MÁX.</text>
+
+    <!-- ── FLAT PLATEAU from pulse 4 to last pulse ──
+         Each inter-pulse drying (small drop) is exactly compensated by next pulse
+         Net humidity = constant at y=34 through noon and all afternoon
+    -->
+    <path d="M128,34 Q138,36 145,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="145" y1="38" x2="145" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="145" cy="34" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+
+    <!-- noon crosses at x=177 -->
+    <path d="M145,34 Q156,36 163,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="163" y1="38" x2="163" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="163" cy="34" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+
+    <path d="M163,34 Q170,36 177,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="177" y1="38" x2="177" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="177" cy="34" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+
+    <path d="M177,34 Q187,36 195,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="195" y1="38" x2="195" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="195" cy="34" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+
+    <path d="M195,34 Q207,36 216,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="216" y1="38" x2="216" y2="34" stroke="#2471A3" stroke-width="1.5" stroke-dasharray="2,1"/>
+    <circle cx="216" cy="34" r="3" fill="white" stroke="#2471A3" stroke-width="1.8"/>
+
+    <!-- LAST pulse: same level y=34, minimum drainage -->
+    <path d="M216,34 Q228,36 238,38" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+    <line x1="238" y1="38" x2="238" y2="34" stroke="#2471A3" stroke-width="2" stroke-dasharray="2,1"/>
+    <circle cx="238" cy="34" r="4" fill="#2471A3" stroke="white" stroke-width="1.8"/>
+    <text x="238" y="28" text-anchor="middle" font-size="5.5" fill="#2471A3" font-family="sans-serif">Último pulso</text>
+    <text x="238" y="23" text-anchor="middle" font-size="5.5" fill="#2D6A4F" font-family="sans-serif">↓ drn mín.</text>
+
+    <!-- Reference flat line to make plateau visible -->
+    <line x1="128" y1="34" x2="238" y2="34" stroke="#1B4F72" stroke-width="0.6" stroke-dasharray="2,3" opacity="0.4"/>
+
+    <!-- Post-last-pulse: slow nocturnal drop -->
+    <path d="M238,34 Q258,38 278,46 Q295,54 315,64 Q335,74 355,82" fill="none" stroke="#2471A3" stroke-width="2.5"/>
+
+    <!-- ── DRAINAGE % CURVE (unchanged — kept exactly as approved) ──
+         Pulse 1: zero drainage (red dot at bottom)
+         Rising to noon
+         Flat in afternoon
+         Last pulse: sharp drop
+    -->
+    <circle cx="82" cy="192" r="4" fill="#C0392B" stroke="white" stroke-width="1.5"/>
+    <text x="82" y="203" text-anchor="middle" font-size="5" fill="#C0392B" font-family="sans-serif">sin drenaje</text>
+    <path d="M82,192 Q96,178 111,162 Q128,143 145,128 Q156,118 163,113 Q170,109 177,107" fill="none" stroke="#40916C" stroke-width="1.8" stroke-dasharray="4,2"/>
+    <path d="M177,107 Q195,105 216,107 Q227,108 234,109" fill="none" stroke="#40916C" stroke-width="1.8" stroke-dasharray="4,2"/>
+    <path d="M234,109 Q236,120 238,152" fill="none" stroke="#40916C" stroke-width="2.2" stroke-dasharray="2,1.5"/>
+    <circle cx="238" cy="152" r="3.5" fill="#40916C" stroke="white" stroke-width="1.2"/>
+
+    <!-- drain annotations -->
+    <text x="148" y="103" text-anchor="middle" font-size="5.5" fill="#2D6A4F" font-family="sans-serif">Drn máx. antes</text>
+    <text x="148" y="109" text-anchor="middle" font-size="5.5" fill="#2D6A4F" font-family="sans-serif">del mediodía</text>
+    <text x="203" y="99" text-anchor="middle" font-size="5.5" fill="#2D6A4F" font-family="sans-serif">Drn similar tarde</text>
+    <text x="248" y="148" text-anchor="start" font-size="5.5" fill="#2D6A4F" font-family="sans-serif">Drn mín.</text>
+
+    <!-- general annotations -->
+    <text x="29" y="46" text-anchor="middle" font-size="6" fill="#1B4F72" font-family="sans-serif">Turgencia</text>
+    <text x="29" y="53" text-anchor="middle" font-size="6" fill="#1B4F72" font-family="sans-serif">máxima</text>
+    <text x="29" y="60" text-anchor="middle" font-size="6" fill="#1B4F72" font-family="sans-serif">(amanecer)</text>
+    <text x="70" y="78" text-anchor="middle" font-size="5.5" fill="#C0392B" font-family="sans-serif">6–8% secado</text>
+    <text x="70" y="84" text-anchor="middle" font-size="5.5" fill="#C0392B" font-family="sans-serif">nocturno</text>
+    <text x="68" y="50" text-anchor="middle" font-size="5.5" fill="#C0392B" font-family="sans-serif">1er pulso:</text>
+    <text x="68" y="56" text-anchor="middle" font-size="5.5" fill="#C0392B" font-family="sans-serif">sin drenaje</text>
+    <text x="327" y="52" text-anchor="middle" font-size="5.5" fill="#6B8AAA" font-family="sans-serif">Secado lento</text>
+    <text x="327" y="59" text-anchor="middle" font-size="5.5" fill="#6B8AAA" font-family="sans-serif">nocturno</text>
+    <!-- flat zone label -->
+    <text x="185" y="44" text-anchor="middle" font-size="5" fill="#1B4F72" font-family="sans-serif" opacity="0.75">secado entre pulsos = aporte por pulso → humedad estable</text>
+
+    <!-- legend -->
+    <circle cx="12" cy="208" r="3" fill="#2471A3"/>
+    <text x="18" y="211" font-size="6" fill="#2471A3" font-family="sans-serif">Humedad sustrato (○ = pulso)</text>
+    <line x1="175" y1="208" x2="185" y2="208" stroke="#40916C" stroke-width="1.8" stroke-dasharray="4,2"/>
+    <text x="188" y="211" font-size="6" fill="#40916C" font-family="sans-serif">% drenaje por pulso</text>
+  </svg>
+  </div>
+
+  <p>El ciclo tiene cuatro fases que se repiten cada día. Ninguna de ellas se define por un horario de reloj — se definen por condiciones medibles del sustrato y la radiación.</p>
+
+  <!-- FASE 1 -->
+  <div style="margin:1.1rem 0">
+  <div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:1rem">
+    <div class="step-num" style="background:#0B2B3C;color:#A9D5F5;flex-shrink:0">1</div>
+    <div>
+      <div class="step-t">Período nocturno: recuperación por presión radicular</div>
+      <div class="step-d">Durante la noche, sin transpiración, la planta recupera su turgencia a través de la <strong>presión radicular</strong>. Al amanecer la planta está en su máxima turgencia. El sustrato se va secando lentamente durante este período — un <strong>6–8 % de contenido de agua aprovechable</strong> se pierde entre el último pulso del día anterior y el amanecer. Este secado nocturno es deseable: estimula a la raíz a explorar el sustrato y favorece la oxigenación.</div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:1rem">
+    <div class="step-num" style="flex-shrink:0">2</div>
+    <div>
+      <div class="step-t">Criterios para el primer pulso del día</div>
+      <div class="step-d">El primer pulso <strong>no se da por horario</strong>. Se dan dos condiciones que deben cumplirse simultáneamente:</div>
+    </div>
+  </div>
+
+  <div style="margin-left:3.2rem;margin-bottom:1rem">
+    <div class="callout" style="margin:.4rem 0">
+      <strong>Criterio A — Estado del sustrato</strong>
+      El sustrato debe haber alcanzado el límite inferior de humedad aprovechable definido como objetivo (el 6–8 % de secado nocturno esperado). Si el sustrato aún retiene humedad suficiente desde el día anterior, se posterga el primer pulso.
+    </div>
+    <div class="callout" style="margin:.4rem 0">
+      <strong>Criterio B — Actividad de la planta (radiación)</strong>
+      La planta debe ser capaz de transpirar. Para eso deben cumplirse dos subcriterios de radiación:<br><br>
+      <strong>B1 — Umbral de radiación instantánea:</strong> debe superarse un valor mínimo de radiación global (típicamente <strong>50–100 W/m²</strong> al interior del invernadero) para que los estomas se abran y la planta comience a transpirar activamente.<br><br>
+      <strong>B2 — Radiación acumulada desde el amanecer:</strong> deben haberse acumulado al menos <strong>50–100 J/cm²</strong> desde el inicio del día. Esto asegura que la apertura de estomas sea estable y no momentánea.
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:1rem">
+    <div class="step-num" style="flex-shrink:0">3</div>
+    <div>
+      <div class="step-t">Pulsos de la mañana al mediodía solar: drenaje creciente</div>
+      <div class="step-d">Desde el primer pulso hasta el mediodía solar, los pulsos se dan en función de la <strong>radiación acumulada entre pulsos</strong>. Se fija un umbral de acumulación (por ejemplo, <strong>100–150 J/cm² por pulso</strong>) y cada vez que se alcanza ese umbral se activa el siguiente riego.<br><br>Durante esta fase el porcentaje de drenaje va <strong>aumentando progresivamente</strong> a medida que el sustrato se va cargando de agua. El objetivo es llegar al mediodía solar con el <strong>drenaje máximo del día (25–35 %)</strong>.</div>
+    </div>
+  </div>
+
+  <div class="callout amber" style="margin-left:3.2rem;margin-bottom:1rem">
+    <strong>☀️ Por qué el máximo drenaje debe coincidir con el mediodía solar</strong>
+    Al mediodía la planta alcanza su <strong>máxima tasa transpiratoria</strong> y, paradójicamente, su <strong>mínima tasa de absorción de nutrientes</strong>. La solución en la zona radicular se concentra: hay más sales en menos agua. Un drenaje alto en ese momento elimina ese exceso de concentración y evita el estrés salino en la raíz, que se traduciría en quemado de raíces finas y caída de producción.
+  </div>
+
+  <!-- FASE 4 -->
+  <div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:1rem">
+    <div class="step-num" style="flex-shrink:0">4</div>
+    <div>
+      <div class="step-t">Pulsos de la tarde: humedad estable por equilibrio entre secado y riego</div>
+      <div class="step-d">A partir del momento en que se alcanza la humedad máxima (antes del mediodía solar), el sistema entra en un estado de <strong>equilibrio dinámico</strong>: el secado que ocurre entre un pulso y el siguiente es exactamente compensado por el agua que aporta el pulso. La humedad del sustrato se mantiene <strong>constante al mismo nivel máximo</strong> hasta el último pulso del día. El porcentaje de drenaje de los pulsos de la tarde se mantiene similar al del mediodía solar.</div>
+    </div>
+  </div>
+
+  <!-- FASE 5 -->
+  <div style="display:flex;gap:.9rem;align-items:flex-start;margin-bottom:1rem">
+    <div class="step-num" style="flex-shrink:0">5</div>
+    <div>
+      <div class="step-t">El último pulso: único momento en que se reduce el drenaje desde el mediodía</div>
+      <div class="step-d">El último pulso del día es el <strong>único pulso en que se reduce intencionalmente el drenaje</strong> respecto al nivel del mediodía. Debe producir el menor porcentaje de drenaje del período vespertino (5–10 %), de manera que el sustrato quede en su <strong>máxima humedad del día</strong> para sostener la actividad radicular nocturna y la recuperación de turgencia por presión radicular.<br><br>Este último pulso se da cuando se han acumulado <strong>150–250 J/cm²</strong> hacia el anochecer. Si se da demasiado tarde o con exceso de volumen, el sustrato queda con agua libre y la recuperación nocturna es deficiente.</div>
+    </div>
+  </div>
+  </div>
+
+  <div class="callout green">
+    <strong>📋 Registro diario mínimo</strong>
+    ① Radiación acumulada total del día (J/cm²) · ② Hora y Rs acumulada al primer pulso · ③ % drenaje al mediodía solar · ④ % drenaje en último pulso · ⑤ Hora del último pulso · ⑥ N° total de pulsos por sector · ⑦ Observaciones (nubosidad, incidencias)
+  </div>
+
+  <div class="footnote">
+    📝 <strong>Sobre los umbrales de radiación:</strong> los valores exactos (W/m² para apertura de estomas, J/cm² por pulso, J/cm² acumulados antes del último riego) deben ajustarse para cada proyecto según la estación meteorológica disponible, el tipo de cobertura del invernadero y el estado fenológico del cultivo. Los rangos indicados son valores de referencia bibliográficamente respaldados para frutilla en invernadero (Lieten, 1997; Heuvelink & Dorais, 2005).
+  </div>
+</section>
+
+<div class="footer">
+  <strong>Capacitación técnica · Riego en Frutilla Hidropónica</strong><br>
+  La Serena, Región de Coquimbo · Sustrato: corteza de pino (66 %) + capotillo de arroz (33 %)<br>
+  ETo: estación meteorológica local Mar 2025 – Feb 2026 · 13.600 m/ha · 1,2 L/hr · pulso mín. 4 min<br>
+  <em>Valores estimativos. Validar con el porcentaje de drenaje real medido en campo.</em>
+</div>
+
+<script>
+const DATA=[
+  {mes:'Mar 25',eto_d:2.03,Rs_int:6.6, kc_ref:0.80,eto_mm:63},
+  {mes:'Abr 25',eto_d:2.10,Rs_int:6.9, kc_ref:0.80,eto_mm:63},
+  {mes:'May 25',eto_d:1.52,Rs_int:5.0, kc_ref:0.80,eto_mm:47},
+  {mes:'Jun 25',eto_d:1.27,Rs_int:4.1, kc_ref:0.80,eto_mm:38},
+  {mes:'Jul 25',eto_d:1.45,Rs_int:4.7, kc_ref:0.80,eto_mm:45},
+  {mes:'Ago 25',eto_d:1.71,Rs_int:5.6, kc_ref:0.80,eto_mm:53},
+  {mes:'Sep 25',eto_d:2.27,Rs_int:7.4, kc_ref:0.80,eto_mm:68},
+  {mes:'Oct 25',eto_d:2.29,Rs_int:7.5, kc_ref:0.55,eto_mm:71},
+  {mes:'Nov 25',eto_d:3.07,Rs_int:10.0,kc_ref:0.55,eto_mm:92},
+  {mes:'Dic 25',eto_d:3.13,Rs_int:10.2,kc_ref:0.80,eto_mm:97},
+  {mes:'Ene 26',eto_d:2.90,Rs_int:9.5, kc_ref:0.80,eto_mm:90},
+  {mes:'Feb 26',eto_d:2.75,Rs_int:9.0, kc_ref:0.80,eto_mm:77},
+];
+const PULSE=0.7253,DRAIN=0.20;
+function calc(e,k){const etc=e*k,vol=etc/(1-DRAIN),n=Math.max(1,Math.round(vol/PULSE));return{etc,vol,n,min:n*4}}
+
+// ETo chart
+const ch=document.getElementById('eto-chart');
+DATA.forEach(d=>{
+  const h=Math.round((d.eto_mm/125)*100);
+  const c=d.eto_mm>=80?'bhi':d.eto_mm>=50?'bme':'blo';
+  ch.innerHTML+=`<div class="bc"><div class="bb ${c}" style="height:${h}px" data-val="${d.eto_mm}mm"></div><div class="bl2">${d.mes}</div></div>`;
+});
+
+// Rs table
+const rt=document.getElementById('rs-tbody');
+DATA.forEach(d=>{
+  const re=((d.eto_d*2.45)/(0.65*0.75)).toFixed(1);
+  const hc=d.Rs_int>=9?'hi2':d.Rs_int<=5?'lo2':'';
+  const bdg=d.kc_ref===0.55?'<span class="bdg bp">Inicio</span>':'<span class="bdg bpr">Producción</span>';
+  rt.innerHTML+=`<tr><td>${d.mes}</td><td>${d.eto_d.toFixed(2)}</td><td>${re}</td><td class="${hc}">${d.Rs_int.toFixed(1)}</td><td>${bdg}</td></tr>`;
+});
+
+// Selector
+let selM=9,selK=0.55;
+const sel=document.getElementById('month-sel');
+DATA.forEach((d,i)=>{
+  const b=document.createElement('button');
+  b.className='month-btn'+(i===selM?' active':'');
+  b.textContent=d.mes;
+  b.onclick=()=>{selM=i;render();sel.querySelectorAll('.month-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')};
+  sel.appendChild(b);
+});
+document.querySelectorAll('.kc-btn').forEach(b=>{
+  b.onclick=()=>{selK=parseFloat(b.dataset.kc);document.querySelectorAll('.kc-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()};
+});
+
+function renderTL(n){
+  const tl=document.getElementById('timeline');tl.innerHTML='';
+  const dm=14*60,pp=(4/dm)*100,iv=dm/(n+1);
+  for(let i=1;i<=n;i++){const pos=(i*iv/dm)*100;const b=document.createElement('div');b.className='riego-block';b.style.cssText=`left:${pos}%;width:${pp}%;height:100%`;tl.appendChild(b)}
+}
+function render(){
+  const d=DATA[selM];const{etc,vol,n,min}=calc(d.eto_d,selK);
+  document.getElementById('r-pulsos').textContent=n;
+  document.getElementById('r-etc').textContent=etc.toFixed(2);
+  document.getElementById('r-vol').textContent=vol.toFixed(2);
+  document.getElementById('r-min').textContent=min;
+  document.getElementById('r-rs').textContent=d.Rs_int.toFixed(1);
+  renderTL(n);
+  const w=document.getElementById('p-warn');
+  if(n<=2&&etc<1.5){w.style.display='block';w.textContent='⚠️ Demanda baja. Con '+n+' pulsos el volumen entregado puede superar la ETc en días nublados. Medir drenaje: si supera el 30 %, suspender el pulso de menor temperatura del día.'}
+  else if(d.Rs_int>=9.5){w.style.display='block';w.textContent='🌡️ Mes de alta demanda. Verificar ventilación activa y monitorear sustrato entre riegos. Si el drenaje baja del 15 %, considerar un pulso adicional.'}
+  else{w.style.display='none'}
+}
+
+// Full table
+const ft=document.getElementById('full-tbody');
+DATA.forEach(d=>{
+  const r=calc(d.eto_d,d.kc_ref);
+  const wr=(d.kc_ref===0.55||r.n<=2)?'class="warn-row"':'';
+  ft.innerHTML+=`<tr ${wr}><td>${d.mes}</td><td>${d.eto_d.toFixed(2)}</td><td>${d.Rs_int.toFixed(1)}</td><td>${d.kc_ref.toFixed(2)}</td><td>${r.etc.toFixed(2)}</td><td>${r.vol.toFixed(2)}</td><td><strong>${r.n}</strong></td><td>${r.min}</td></tr>`;
+});
+render();
+</script>
+</body>
+</html>
