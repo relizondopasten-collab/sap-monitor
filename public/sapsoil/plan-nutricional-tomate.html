@@ -1762,32 +1762,52 @@ function renderRecetas() {
     const need_Ca_mmol = Math.max(0, obj_Ca_mmol - agua.ca);
     const need_Mg_mmol = Math.max(0, obj_Mg_mmol - agua.mg);
 
-    // Convertir necesidades a g/eje de cada fertilizante
+    // ───────────────────────────────────────────────────────────
+    // Conversión correcta: mmol/L → g/L de fertilizante
+    // mmol/L × PM (g/mol) = mg/L
+    // mg/L / 1000 = g/L de elemento
+    // g/L de elemento / fracción del elemento en el fertilizante = g/L de fertilizante
+    // ───────────────────────────────────────────────────────────
+
     // cano3 aporta SOLO Ca → ajuste directo
-    const factor_cano3_Ca = FERTS.cano3.cao * FACTOR_OX.cao_ca / 100; // % Ca del producto
-    const new_cano3_gL = need_Ca_mmol > 0 ? (need_Ca_mmol * PM_EL.ca / 10) / factor_cano3_Ca : 0;
+    // Fracción de Ca en cano3 = cao(%) × cao→ca / 100
+    const frac_cano3_Ca = (FERTS.cano3.cao * FACTOR_OX.cao_ca) / 100; // ej: 0.193
+    const new_cano3_gL = need_Ca_mmol > 0
+      ? (need_Ca_mmol * PM_EL.ca / 1000) / frac_cano3_Ca
+      : 0;
 
     // mgno3 aporta SOLO Mg → ajuste directo
-    const factor_mgno3_Mg = FERTS.mgno3.mgo * FACTOR_OX.mgo_mg / 100;
-    const new_mgno3_gL = need_Mg_mmol > 0 ? (need_Mg_mmol * PM_EL.mg / 10) / factor_mgno3_Mg : 0;
+    const frac_mgno3_Mg = (FERTS.mgno3.mgo * FACTOR_OX.mgo_mg) / 100;
+    const new_mgno3_gL = need_Mg_mmol > 0
+      ? (need_Mg_mmol * PM_EL.mg / 1000) / frac_mgno3_Mg
+      : 0;
 
-    // El N que ya aportan los nuevos cano3 + mgno3 ajustados
-    const N_de_cano3_ajustado = new_cano3_gL * FERTS.cano3.n * 10 / PM_EL.n; // mmol/L
-    const N_de_mgno3_ajustado = new_mgno3_gL * FERTS.mgno3.n * 10 / PM_EL.n;
+    // Cuánto N aportan los nuevos cano3 + mgno3 ajustados (en mmol/L)
+    // gL × n(%) / 100 = g/L de N → ×1000 = mg/L → /PM = mmol/L
+    const N_de_cano3_ajustado = (new_cano3_gL * FERTS.cano3.n / 100) * 1000 / PM_EL.n;
+    const N_de_mgno3_ajustado = (new_mgno3_gL * FERTS.mgno3.n / 100) * 1000 / PM_EL.n;
 
-    // El N que tienen que aportar kno3 + map (los demás no cambian)
-    const N_de_map_orig  = orig_gL.map  * FERTS.map.n  * 10 / PM_EL.n;
-    const N_de_kno3_orig = orig_gL.kno3 * FERTS.kno3.n * 10 / PM_EL.n;
+    // Cuánto N aportaban originalmente cano3 + mgno3
+    const N_de_cano3_orig = (orig_gL.cano3 * FERTS.cano3.n / 100) * 1000 / PM_EL.n;
+    const N_de_mgno3_orig = (orig_gL.mgno3 * FERTS.mgno3.n / 100) * 1000 / PM_EL.n;
 
-    // Si ajustamos cano3/mgno3 hacia abajo, el N total bajaría → debemos compensar con kno3
-    // Pero solo si el ajuste reduce N significativamente (>0.5 mmol/L)
-    const N_perdido = (orig_gL.cano3 * FERTS.cano3.n * 10 / PM_EL.n - N_de_cano3_ajustado) +
-                      (orig_gL.mgno3 * FERTS.mgno3.n * 10 / PM_EL.n - N_de_mgno3_ajustado);
+    // N que se "perdió" al ajustar cano3/mgno3 hacia abajo
+    const N_perdido = (N_de_cano3_orig - N_de_cano3_ajustado) + (N_de_mgno3_orig - N_de_mgno3_ajustado);
 
-    // Compensar con kno3 (aporta N + K)
-    const N_compensar = Math.max(0, N_perdido);
-    const factor_kno3_N = FERTS.kno3.n / 100;
-    const kno3_extra_gL = N_compensar > 0 ? (N_compensar * PM_EL.n / 10) / factor_kno3_N : 0;
+    // Compensar el N perdido aumentando kno3 (mientras N_total no exceda objetivo - agua)
+    // Solo compensamos el N que excede lo que ya aportan map + kno3 original + agua
+    const N_total_objetivo = obj_N_mmol;
+    const N_actualmente_disponible = N_de_cano3_ajustado + N_de_mgno3_ajustado +
+                                     (orig_gL.kno3 * FERTS.kno3.n / 100 * 1000 / PM_EL.n) +
+                                     (orig_gL.map * FERTS.map.n / 100 * 1000 / PM_EL.n) +
+                                     agua.n;
+    const N_faltante = Math.max(0, N_total_objetivo - N_actualmente_disponible);
+
+    // Convertir N_faltante (mmol/L) a g/L de kno3 extra
+    const frac_kno3_N = FERTS.kno3.n / 100;
+    const kno3_extra_gL = N_faltante > 0
+      ? (N_faltante * PM_EL.n / 1000) / frac_kno3_N
+      : 0;
     const new_kno3_gL = orig_gL.kno3 + kno3_extra_gL;
 
     // map y k2so4 quedan iguales por ahora (no afectados por agua)
