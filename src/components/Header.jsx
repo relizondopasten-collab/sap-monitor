@@ -1,6 +1,9 @@
-import { FlaskConical, Plus, Database, BarChart3, Building2, LogOut } from "lucide-react";
+import { FlaskConical, Plus, Database, BarChart3, Building2, LogOut, Layers } from "lucide-react";
 
 export default function Header({ profile, onLogout, tab, setTab, empresaNombre }) {
+  // El tab "sapsoil" es activo si tab === "sapsoil" o si empieza con "modulo:"
+  const sapsoilActive = tab === "sapsoil" || (tab || "").startsWith("modulo:");
+
   return (
     <header style={{ borderBottom: "1px solid var(--rule)", background: "rgba(245,241,230,0.95)", backdropFilter: "blur(8px)", position: "sticky", top: 0, zIndex: 10 }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
@@ -23,6 +26,14 @@ export default function Header({ profile, onLogout, tab, setTab, empresaNombre }
           </button>
           <button className={`tab-btn ${tab === "charts" ? "active" : ""}`} onClick={() => setTab("charts")}>
             <BarChart3 size={14} /> Gráficas
+          </button>
+          {/* NUEVO · Sap & Soil suite */}
+          <button
+            className={`tab-btn tab-btn-amber ${sapsoilActive ? "active" : ""}`}
+            onClick={() => setTab("sapsoil")}
+            title="Suite agronómica Sap & Soil"
+          >
+            <Layers size={14} /> Suite
           </button>
         </nav>
 
