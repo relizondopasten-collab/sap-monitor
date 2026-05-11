@@ -9,6 +9,7 @@ import HistoryTable from "./components/HistoryTable";
 import ChartsPanel from "./components/ChartsPanel";
 import HubSapSoil from "./components/HubSapSoil";
 import ModuleViewer from "./components/ModuleViewer";
+import DiagnosticoSavia from "./components/DiagnosticoSavia";
 
 import { onAuthStateChange, logout } from "./lib/auth";
 import { fetchEmpresas, fetchPredios, fetchMyProfile, fetchMyAssignedPredios, fetchRegistros, fetchRangos } from "./lib/db";
@@ -165,6 +166,15 @@ export default function App() {
 
       {tab === "charts" && (
         <ChartsPanel
+          profile={profile}
+          registros={registros}
+          empresas={empresas}
+          rangos={rangos}
+        />
+      )}
+
+      {tab === "diagnostico" && (
+        <DiagnosticoSavia
           profile={profile}
           registros={registros}
           empresas={empresas}
