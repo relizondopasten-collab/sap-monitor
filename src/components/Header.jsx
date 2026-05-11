@@ -1,4 +1,4 @@
-import { FlaskConical, Plus, Database, BarChart3, Building2, LogOut, Layers } from "lucide-react";
+import { FlaskConical, Plus, Database, BarChart3, Gauge, Building2, LogOut, Layers } from "lucide-react";
 
 export default function Header({ profile, onLogout, tab, setTab, empresaNombre }) {
   // El tab "sapsoil" es activo si tab === "sapsoil" o si empieza con "modulo:"
@@ -27,7 +27,10 @@ export default function Header({ profile, onLogout, tab, setTab, empresaNombre }
           <button className={`tab-btn ${tab === "charts" ? "active" : ""}`} onClick={() => setTab("charts")}>
             <BarChart3 size={14} /> Gráficas
           </button>
-          {/* NUEVO · Sap & Soil suite · solo visible para admin */}
+          <button className={`tab-btn ${tab === "diagnostico" ? "active" : ""}`} onClick={() => setTab("diagnostico")}>
+            <Gauge size={14} /> Diagnóstico
+          </button>
+          {/* Sap & Soil suite · solo visible para admin */}
           {profile.rol === "admin" && (
             <button
               className={`tab-btn tab-btn-amber ${sapsoilActive ? "active" : ""}`}
